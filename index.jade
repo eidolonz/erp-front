@@ -4,6 +4,8 @@ html
 		link(rel="stylesheet", href="css/bootstrap.min.css")
 		link(rel="stylesheet", href="css/bootstrap-theme.min.css")
 		link(rel="stylesheet" , href="css/style.css")
+		script(src='js/jquery-1.11.3.min.js')
+		script(src='js/bootstrap.min.js')
 
 	body
 		
@@ -16,25 +18,57 @@ html
 					.row.h2 DSD Technology cooperate
 					.row.h3 Thailand
 				.col-md-3.profileGrid
-					.Profile Piyawat
-              
+					.Profile Mr.Piyawat SlowLife
+
+
 			.tessadf
 				//- side bar
 				div.col-md-2
 					.list-group
-						.list-group-item-heading Master Data
-						a(href="#" class="list-group-item ") Suppier
-						a(href="#" class="list-group-item") Product
-						a(href="#" class="list-group-item") Zone
-						a(href="#" class="list-group-item") Price
-						a(href="#" class="list-group-item") Purchase Order
-						a(href="#" class="list-group-item") Inventory
-						a(href="#" class="list-group-item") Adjust Inventory
-						a(href="#" class="list-group-item") Incoming
+						#accordion.panel-group(role='tablist', aria-multiselectable='true')
+						.panel.panel-default
+							#headingOne.panel-heading(role='tab')
+								h4.panel-title
+									a.collapsed(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
+										| Master Data
+							#collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+								.panel-body
+									a(href="Supplier.html")
+										| Supplier
+								.panel-body
+									a(href="Product.html")
+										| Product
+								.panel-body
+									a(href="Zone.html")
+										| Zone
+								.panel-body
+									a(href="Price.html")
+										| Price
+						.panel.panel-default
+							#headingTwo.panel-heading(role='tab')
+								h4.panel-title
+									a.collapsed(role='button', data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='false', aria-controls='collapseTwo')
+										| Purchase Order
+							#collapseTwo.panel-collapse.collapse(role='tabpanel', aria-labelledby='headingTwo')
+								.panel-body
+									| sub1
+								.panel-body
+									| sub2
+						.panel.panel-default
+							#headingThree.panel-heading(role='tab')
+								h4.panel-title
+									a.collapsed(role='button', data-toggle='collapse', data-parent='#accordion', href='#collapseThree', aria-expanded='false', aria-controls='collapseThree')
+										| Inventory
+							#collapseThree.panel-collapse.collapse(role='tabpanel', aria-labelledby='headingThree')
+								.panel-body
+									a(href="Adjust_inventory.html")
+										| Adjust Inventory
+								.panel-body
+									a(href="Incoming.html")
+										| Incoming
 
 				.col-md-10
-					block content
-						h2.page-header Topic name #{name}
+					h2.page-header Topic name #{name}
 
-						h2 Hello #{name}
-						a(class="btn btn-primary",href='http://www.google.com')
+					h2 Hello #{name}
+					a(class="btn btn-primary",href='http://www.google.com')
