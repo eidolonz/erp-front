@@ -34,7 +34,8 @@ html
 						a(href="#" class="list-group-item") Incoming
 
 				.col-md-10
-					h2.page-header Topic name #{name}
+					block content
+						h2.page-header Topic name #{name}
 
-					h2 Hello #{name}
-					a(class="btn btn-primary",href='http://www.google.com')
+						h2 Hello #{name}
+						a(class="btn btn-primary",href='http://www.google.com')
