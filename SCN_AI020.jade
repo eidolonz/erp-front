@@ -1,0 +1,48 @@
+//- index.jade
+extends ./index.jade
+
+block style
+	style.
+		.space { padding: 10; }
+		.label { text-align: left; }
+
+block content_title
+	p Maintenance Product in Inventory
+
+block content
+	.row
+		.col-sm-3.space Product Type:
+		.col-sm-3.space
+			select#disabledInput.form-control(name='product_type', disabled='')
+				option(value='Zone1') Product Type 1
+				option(value='Zone2') Product Type 2
+				option(value='Zone3') Product Type 3
+				option(value='Zone4') Product Type 4
+		.col-sm-2.space Zone:
+		.col-sm-3.space
+			select(name='zone').form-control
+				option(value='type1') Zone 1
+				option(value='type2') Zone 2
+				option(value='type3') Zone 3
+				option(value='type4') Zone 4
+		.col-sm-1.space
+		.col-sm-3.space Product Code:
+		.col-md-3.space
+			input#disabledInput.form-control(name='product_code', type='text', placeholder='Product Code', disabled='')
+		.col-sm-2.space Safety Stock:
+		.col-md-3.space
+			input.form-control(name='product_code', type='text', placeholder='Product Code', value='100')
+		.col-sm-1.space
+		.col-sm-3.space Product Name:
+		.col-md-3.space
+			input#disabledInput.form-control(name='product_name', type='text', placeholder='Product Name', disabled='')
+		.col-sm-2.space Qty On-Hands:
+		.col-md-3.space
+			input.form-control(name='product_code', type='text', placeholder='Product Code' value='1000')
+		.col-sm-1.space
+		.col-sm-7.space
+		.col-sm-2.space
+			button.btn.btn-primary.btn-lg.btn-block(type='button', name='save') Save
+		.col-sm-2.space
+			button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
+		.col-sm-1.space
