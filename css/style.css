@@ -14,6 +14,8 @@
 	border-radius: 10px;
 	background-color: #55ff88;
 	height: 110px;
+	padding: 10px;
+	font-weight: bold;
 }
 
 
@@ -29,4 +31,9 @@
 
 .head_list{
 	background-color: #111;
+}
+
+div.img{
+	text-align: center;
+
 }
