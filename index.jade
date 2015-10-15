@@ -1,12 +1,15 @@
 html
 	head 
 		title my jade templateThisis
+
 		link(rel="stylesheet", href="css/bootstrap.min.css")
 		link(rel="stylesheet", href="css/bootstrap-theme.min.css")
 		link(rel="stylesheet" , href="css/style.css")
+
 		script(src='js/jquery-1.11.3.min.js')
 		script(src='js/bootstrap.min.js')
 
+		block style
 	body
 		
 
@@ -68,7 +71,7 @@ html
 										| Incoming
 
 				.col-md-10
-					h2.page-header Topic name #{name}
+					h2.page-header
+						block content_title
 
-					h2 Hello #{name}
-					a(class="btn btn-primary",href='http://www.google.com')
+					block content
