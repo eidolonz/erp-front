@@ -67,11 +67,55 @@ block content
 					td [Edit] [Delete]
 		.col-sm-1.space
 
+	.row
+		.col-md-10.space
+		.col-md-1.space
+			a(href="#SCN_PO021" data-toggle='modal', data-target='#myModal')
+				img(src="images/addBtn.png", alt="add new PO")		
+			// Modal
+			#myModal.modal.fade(role='dialog')
+				.modal-dialog
+					// Modal content
+					.modal-content
+						.modal-header
+							button.close(type='button', data-dismiss='modal') x
+							h4.modal-title Please add product
+						.modal-body
+							.row
+								.col-md-3.space Product code :*
+								.col-md-9.space
+									input(name='product_code').form-control
+							.row
+								.col-md-3.space Product name :*
+								.col-md-9.space
+									input(name='product_name').form-control
+							.row
+								.col-md-3.space Qty :*
+								.col-md-9.space
+									input(name='qty').form-control
+							.row
+								.col-md-3.space Cost :
+								.col-md-9.space
+									input(name='product_code', readonly='true', value='0.00').form-control
+						.modal-footer
+							button.btn.btn-primary(type="submit", data-dismiss='modal') Confirm
+							button.btn.btn-default(type='button', data-dismiss='modal') Close
+      
+		.col-md-1.space
+
+
+	.row
+		.col-md-5.space
+		.col-md-2.space Total: 
+		.col-md-4.space
+			input(name='total').form-control
+		.col-md-1.space
+
 
 	.row		
 		.col-sm-7.space
 		.col-sm-2.space
 			button.btn.btn-primary.btn-lg.btn-block(type='button',name='save') Save
 		.col-sm-2.space
-			button.btn.btn-primary.btn-lg.btn-block(type='button',name='cancel') Cancel
+			button.btn.btn-default.btn-lg.btn-block(type='button',name='cancel') Cancel
 		.col-sm-1.space
