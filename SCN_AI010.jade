@@ -1,0 +1,103 @@
+//- index.jade
+extends ./index.jade
+
+block style
+	style.
+		.space { padding: 10; }
+		.label { text-align: left; }
+
+block content_title
+	p Current Inventory
+
+block content
+	.row
+		.col-sm-3 Zone:
+		.col-sm-3.space
+			select(name='zone').form-control
+				option(value='Zone1') Zone 1
+				option(value='Zone2') Zone 2
+				option(value='Zone3') Zone 3
+				option(value='Zone4') Zone 4
+		.col-sm-2.space Product Type:
+		.col-sm-3.space
+			select(name='product_type').form-control
+				option(value='type1') Product Type 1
+				option(value='type2') Product Type 2
+				option(value='type3') Product Type 3
+				option(value='type4') Product Type 4
+		.col-sm-1.space
+		.col-sm-3.space Product Name:
+		.col-md-3.space
+			input.form-control(type='text', placeholder='Product')
+		.col-sm-2.space
+			p Product Status:
+		.col-md-3.space
+			select(name='product_status').form-control
+				option(value='Status1') Status 1
+				option(value='Status2') Status 2
+
+				option(value='Status3') Status 3
+				option(value='Status4') Status 4
+		.col-sm-1.space
+		.col-sm-7.space
+		.col-sm-2.space
+			button.btn.btn-primary.btn-lg.btn-block(type='button', name='search') Search
+		.col-sm-2.space
+			button.btn.btn-default.btn-lg.btn-block(type='button', name='clear') Clear
+		.col-sm-1.space
+		.col-sm-12.space
+			table.product-table.table.table-striped(style="padding: 50;")
+				tr
+					th Product Code
+					th Product Type
+					th Product Name
+					th Zone
+					th Qty on-Hand
+					th Safety Stock
+					th Status
+					th Edit
+					th View
+				tr
+					td PD00001
+					td Type 1
+					td Product 1
+					td Zone 1
+					td 30
+					td 50
+					td Active
+					td [Edit]
+					td [View]
+				tr
+					td PD00002
+					td Type 2
+					td Product 2
+					td -
+					td 100
+					td 50
+					td New
+					td [Edit]
+					td [View]
+				tr
+					td PD00003
+					td Type 3
+					td Product 3
+					td Zone 1
+					td 8
+					td 20
+					td Active
+					td [Edit]
+					td [View]
+				tr
+					td PD00004
+					td Type 4
+					td Product 4
+					td Zone 2
+					td 100
+					td 10
+					td Inactive
+					td [Edit]
+					td [View]
+		.col-sm-7.space
+		.col-sm-4.space
+			button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Supply
+		.col-sm-1.space
