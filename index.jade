@@ -17,14 +17,30 @@ html
 
 			//- header
 			.navBar
-				.col-md-2.picTopicGrid 
-					img(src="images/pic.jpg", alt="logo")
+
+
+				//- Logo
+				.col-md-2.picTopicGrid
+					img.logo(src="images/sit.gif", alt="logo")
+
 				.col-md-7.nameTopicGrid
 					.row.h2 DSD Technology cooperate
 					.row.h3 Thailand
-				.col-md-3.profileGrid
-					.Profile Mr.Piyawat SlowLife
 
+				//- profile
+				.col-md-3.profileGrid
+					.Profile(style="height:100%")
+						.row  
+							//- picture profile
+							.col-md-5
+								div(style="height:100%")
+									img(src="images/profile.jpg" alt="profile" style="height:100%;margin: 0 12 0 12;")
+							//- detail profile
+							.col-md-7
+								div(style="margin: 14px auto;")
+									.row Name : Mr.Piyawat Narak
+									.row Position : XXX
+									.row Department : XXX
 
 			.tessadf
 				//- side bar
