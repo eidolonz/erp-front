@@ -1,13 +1,16 @@
 //- index.jade
 extends ./index.jade
 
+block title
+	title Supply Product
+
 block style
 	style.
 		.space { padding: 10; }
 		.label { text-align: left; }
 
 block content_title
-	p Maintenance Product in Inventory
+	p Supply Product
 
 block content
 	.row
@@ -20,24 +23,24 @@ block content
 		.col-sm-1.space
 		.col-sm-3.space Product Name:
 		.col-md-3.space
-			input#disabledInput.form-control(name='product_name', type='text', placeholder='Product 1', disabled='')
+			input#disabledInput.form-control(name='product_name', type='text', placeholder='Product Name', disabled='')
 		.col-sm-2.space Qty On-Hands:
 		.col-md-3.space
-			input#disabledInput.form-control(name='qty_on-hands', type='text', placeholder='Product Type', disabled='', value='1000')
+			input#disabledInput.form-control(name='qty_on-hands', type='text', placeholder='Qty On-Hands', disabled='', value='1000')
 		.col-sm-1.space
 		.col-sm-3.space Zone:
 		.col-md-3.space
 			input#disabledInput.form-control(name='zone', type='text', placeholder='Zone', disabled='')
 		.col-sm-2.space Qty Supply:
 		.col-md-3.space
-			input.form-control(name='qty_supply', type='text', placeholder='Product Code', value='100')
+			input.form-control(name='qty_supply', type='text', placeholder='Qty Suppl', value='100')
 		.col-sm-1.space
 		.col-sm-3.space Safety Stock:
 		.col-md-3.space
-			input#disabledInput.form-control(name='safety_stock', type='text', placeholder='100', disabled='')
+			input#disabledInput.form-control(name='safety_stock', type='text', placeholder='Safety Stock', disabled='')
 		.col-sm-2.space Qty remaining:
 		.col-md-3.space
-			input#disabledInput.form-control(name='qty_remaining', type='text', placeholder='Product Type', disabled='', value='900')
+			input#disabledInput.form-control(name='qty_remaining', type='text', placeholder='Qty remaining', disabled='', value='900')
 		.col-sm-1.space
 		.col-sm-7.space
 		.col-sm-2.space
