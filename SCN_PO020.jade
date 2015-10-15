@@ -1,0 +1,77 @@
+//- index.jade
+extends ./index.jade
+
+block title
+	title Create purchase order
+
+block style
+	style.
+		.space { padding: 10; }
+		.label { text-align: left; }
+
+block content_title
+	p Create purchase order
+
+block content
+	.row
+		.col-sm-3.space Supplier Code:*
+		.col-sm-3.space
+			input(name='supplier_code').form-control
+		.col-sm-6.space
+	.row
+		.col-sm-3.space Supplier Name:*
+		.col-sm-3.space
+			input(name='supplier_name').form-control
+		.col-sm-6.space
+	.row
+		.col-sm-3.space Order Date:*
+		.col-sm-3.space
+			.form-group
+				#datetimepicker1.input-group.date
+					input.form-control(type='text')
+					span.input-group-addon
+						span.glyphicon.glyphicon-calendar
+		script(type='text/javascript').
+			$(function () {
+			$('#datetimepicker1').datepicker();
+			});
+		
+		
+
+
+
+
+	.row		
+		.col-sm-11.space
+			table.product-table.table.table-striped(style="padding: 50;")
+				tr
+					th No.
+					th Product Name
+					th Cost
+					th Qty
+					th Total
+					th Action
+				tr
+					td 1
+					td product 2
+					td 100.00
+					td 4
+					td 400.00
+					td [Edit] [Delete]
+				tr
+					td 2
+					td product 5
+					td 123.00
+					td 3
+					td 369.00
+					td [Edit] [Delete]
+		.col-sm-1.space
+
+
+	.row		
+		.col-sm-7.space
+		.col-sm-2.space
+			button.btn.btn-primary.btn-lg.btn-block(type='button',name='save') Save
+		.col-sm-2.space
+			button.btn.btn-primary.btn-lg.btn-block(type='button',name='cancel') Cancel
+		.col-sm-1.space
