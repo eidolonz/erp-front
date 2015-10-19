@@ -1,0 +1,103 @@
+//- index.jade
+extends ./index.jade
+
+block title
+	title Price Detail
+
+block style
+	style.
+		.space { padding: 10; }
+		.label { text-align: left; }
+
+block content_title
+	p Price
+
+block content
+	.row
+		.col-sm-2.space Supplier Code:*
+		.col-sm-3.space
+			input.form-control(type='text', placeholder='Supplier Code')
+		.col-sm-1.space
+		.col-sm-2.space Supplier Name:*
+		.col-sm-3.space
+			input.form-control(type='text', placeholder='Supplier Name')
+		.col-sm-1.space
+	.row
+		.col-sm-2.space Product Code:*
+		.col-sm-3.space
+			input.form-control(type='text', placeholder='Product Code')
+		.col-sm-1.space
+		.col-sm-2.space Product Name:*
+		.col-sm-3.space
+			input.form-control(type='text', placeholder='Product Name')
+		.col-sm-1.space
+	.row
+		.col-sm-2.space Minimum Order:*
+		.col-sm-3.space
+			input.form-control(type='text', placeholder='Minimum Order')
+		.col-sm-1.space
+		.col-sm-2.space Price:* 
+		.col-sm-3.space 
+			input.form-control(type='text', placeholder='Price')
+		.col-sm-1.space
+	.row
+		.col-sm-2.space Effective Date:
+		.col-sm-3.space
+			input.form-control(type='date', placeholder='Date Picker')
+		.col-sm-1.space
+
+
+
+	.row
+		.col-sm-7.space
+		.col-sm-2.space
+			a(href="SCN_PR010.html" data-toggle='modal', data-target='#myModal')
+				button.btn.btn-primary.btn-lg.btn-block(type='button', name='save') Save
+
+			// Modal
+			#myModal.modal.fade(role='dialog')
+				.modal-dialog
+					// Modal content
+					.modal-content
+						.modal-header
+							button.close(type='button', data-dismiss='modal') x
+							h4.modal-title Comfirm Price Detail
+						.modal-body
+							.row
+								.col-md-3.space Supplier code :
+								.col-md-9.space
+									input(name='supplier_code', readonly='true', value='SC0001').form-control
+							.row
+								.col-md-3.space Supplier Name :
+								.col-md-9.space
+									input(name='supplier_name', readonly='true', value='IRPC Public Company Limited').form-control
+							.row
+								.col-md-3.space Product code :
+								.col-md-9.space
+									input(name='product_code', readonly='true', value='AR0258').form-control
+							.row
+								.col-md-3.space Product Name :
+								.col-md-9.space
+									input(name='product_name', readonly='true', value='Acetal Resin').form-control
+							.row
+								.col-md-3.space Minimum Order :
+								.col-md-9.space
+									input(name='minimum_order', readonly='true', value='100').form-control
+							.row
+								.col-md-3.space Price :
+								.col-md-9.space
+									input(name='price', readonly='true', value='123.50').form-control
+							.row
+								.col-md-3.space Effective Date :
+								.col-md-9.space
+									input(name='effective_date', readonly='true', value='24/09/2014').form-control
+						.modal-footer
+							a(href="SCN_PR010.html") 
+								button.btn.btn-primary(type="submit") Confirm
+							button.btn.btn-default(type='button', data-dismiss='modal') Close
+		.col-sm-2.space
+			a(href="SCN_PR010.html")
+				button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
+		.col-sm-1.space
+
+	

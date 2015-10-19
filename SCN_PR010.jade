@@ -1,0 +1,114 @@
+//- index.jade
+extends ./index.jade
+
+block title
+	title Price
+
+block style
+	style.
+		.space { padding: 10; }
+		.label { text-align: left; }
+
+block content_title
+	p Price
+
+block content
+	.row
+		.col-sm-2.space Supplier Code:
+		.col-sm-3.space
+			input.form-control(type='text', placeholder='Supplier Code')
+		.col-sm-1.space
+		.col-sm-2.space Supplier Name:
+		.col-sm-3.space
+			input.form-control(type='text', placeholder='Supplier Name')
+		.col-sm-1.space
+	.row
+		.col-sm-2.space Product Code:
+		.col-sm-3.space
+			input.form-control(type='text', placeholder='Product Code')
+		.col-sm-1.space
+		.col-sm-2.space Product Name:
+		.col-sm-3.space
+			input.form-control(type='text', placeholder='Product Name')
+		.col-sm-1.space
+	.row
+		.col-sm-2.space Price Range: 
+		.col-sm-3.space 
+			.row
+				.col-sm-5
+					input.form-control(type='text', placeholder='from')
+				.col-sm-2 -
+				.col-sm-5 
+					input.form-control(type='text', placeholder='to')
+		.col-sm-1.space
+
+		.col-sm-2.space Effective Date:
+		.col-sm-3.space
+			.row
+				.col-sm-5
+					input.form-control(type='date', placeholder='Date Picker')
+				.col-sm-2 -
+				.col-sm-5
+					input.form-control(type='date', placeholder='Date Picker')
+		.col-sm-1.space
+
+
+
+	.row
+		.col-sm-7.space
+		.col-sm-2.space
+			button.btn.btn-primary.btn-lg.btn-block(type='button', name='search') Search
+		.col-sm-2.space
+			button.btn.btn-default.btn-lg.btn-block(type='button', name='clear') Clear
+		.col-sm-1.space
+
+	.row
+		.col-sm-11.space
+			table.product-table.table.table-striped(style="padding: 50;")
+				tr
+					th Supplier
+					th Product
+					th Price
+					th Effective Date
+					th Min Order
+					th Action
+				tr
+					td IRPC Public Company Limited
+					td Acetal Resin
+					td 350.00
+					td 24/09/2014
+					td 100
+					td 
+						a(href='#', target="_blank") [Edit]
+				tr
+					td PTS Company Limited
+					td Acetal Resin
+					td 340.50
+					td 03/10/2014
+					td 50
+					td 
+						a(href='#', target="_blank") [Edit]
+				tr
+					td RIS Petrolium Company
+					td Acetal Resin
+					td 338.52
+					td 07/10/2014
+					td 100
+					td 
+						a(href='#', target="_blank") [Edit]
+				tr
+					td CARLTEX
+					td Acetal Resin
+					td 352.55
+					td 07/12/2014
+					td 80
+					td 
+						a(href='#', target="_blank") [Edit]
+		.col-sm-1.space
+
+	.row		
+		.col-sm-7.space
+		.col-sm-4.space
+			a(href="SCN_PR020.html")
+				button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Create Price PO
+		.col-sm-1.space
