@@ -1,0 +1,100 @@
+//- index.jade
+extends ./index.jade
+
+block title 
+	title Maintenance Product in Inventory
+
+block style
+	style.
+		.space { padding: 10; }
+		.label { text-align: left; }
+
+block content_title
+	p Product Transection
+
+block content
+	.row
+		// Begining of 1st row
+		.col-sm-3.space Search by Period:
+		.col-sm-3.space
+			select.form-control(name='search_by_period')
+				option(value='Zone1') Month
+				option(value='Zone2') Month
+				option(value='Zone3') Month
+				option(value='Zone4') Month
+		.col-sm-2.space Transaction Type:
+		.col-sm-3.space
+			select(name='zone').form-control
+				option(value='type1') Receive
+				option(value='type2') Receive
+				option(value='type3') Receive
+				option(value='type4') Receive
+		.col-sm-1.space
+
+		// Begining of 2nd row	
+		.col-sm-3.space Date From:
+		.col-md-3.space
+			input.form-control(name='date_from', type='date')
+		.col-sm-2.space Date To:
+		.col-md-3.space
+			input.form-control(name='date_to', type='date')
+		.col-sm-1.space
+
+		// Begining of 3rd row	
+		.col-sm-7.space
+		.col-sm-2.space
+			button.btn.btn-primary.btn-lg.btn-block(type='button', name='view_detail') View Detail
+		.col-sm-2.space
+			button.btn.btn-default.btn-lg.btn-block(type='button', name='clear') Clear
+		.col-sm-1.space
+
+		// Another content block
+		// Begining of 1st row
+		.col-md-12
+			h2.page-header Transaction Detail
+		.col-sm-3.space Product Type:
+		.col-sm-3.space
+			select#disabledInput.form-control(name='product_type', disabled='')
+				option(value='Zone1') Month
+				option(value='Zone2') Month
+				option(value='Zone3') Month
+				option(value='Zone4') Month
+		.col-sm-2.space Safety Stock:
+		.col-sm-3.space
+			input#disabledInput.form-control(name='date_to', type='date', value='100',  disabled='')
+		.col-sm-1.space
+
+		// Begining of 2nd row	
+		.col-sm-3.space Product Code:
+		.col-md-3.space
+			input#disabledInput.form-control(name='date_to', type='date', value='Product Code' disabled='')
+		.col-sm-2.space Qty On-Hands:
+		.col-md-3.space
+			input#disabledInput.form-control(name='date_to', type='date', value='10000', disabled='')
+		.col-sm-1.space
+
+		// Begining of 3rd row	
+		.col-sm-3.space Product Name:
+		.col-md-3.space
+			input#disabledInput.form-control(name='date_to', type='date', value='Product Name', disabled='')
+		.col-sm-6.space
+
+		// Begining of 4th row (table)
+		.col-sm-11.space
+			table.product-table.table.table-striped(style="padding: 50;")
+				tr
+					th Trans Date
+					th Trans Type
+					th Qty
+					th Reference
+				tr
+					td 29 Sep 2015
+					td Receive
+					td 1000
+					td xxxxxxxx
+				tr
+					td 30 Sep 2015
+					td Supply
+					td 100
+					td aaaaaaa
+		.col-sm-1.space
