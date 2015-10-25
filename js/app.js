@@ -35,6 +35,13 @@ function mainController($scope) {
     ];
 };
 
-angular.module('myApp', [])
-  .controller('MainController', mainController);
+function custCtrl($scope, $http) {
+  $http.get("http://www.w3schools.com/angular/customers.php")
+  .success(function (response) {$scope.names = response.records;});
+};
+
+var app = angular.module('myApp', []);
+app.controller('MainController', mainController);
+app.controller('CustomersCtrl', custCtrl);
+
 
