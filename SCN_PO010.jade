@@ -50,9 +50,9 @@ block content
 						th Deliver Date
 						th Status
 						th Action
-					tr(ng-repeat="pointer in pirates")
-						td {{ pointer.name }}
-						td {{ pointer.supplireName }}
+					tr(ng-repeat="pointer in purchaseOrder")
+						td {{ pointer.number }}
+						td {{ pointer.supplierName }}
 						td {{ pointer.orderDate }}
 						td {{ pointer.deliverDate }}
 						td {{ pointer.status }}
