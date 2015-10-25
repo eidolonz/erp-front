@@ -3,6 +3,7 @@ function mainController($scope) {
   $scope.message = "Hello AngularJS";
   $scope.name = '';
   $scope.purchaseOrder = po;
+  $scope.productList = product;
   $scope.pirates = [
     {
       "number": "PD00004",
@@ -91,6 +92,39 @@ var po = [
       "deliverDate": "September 25, 2015",
       "status": "Close",
       "action": "[View]"
+            
+    }
+  ];
+
+
+
+
+  var product = [
+    {
+      "id":"55130500222",
+      "name":"Jumrus",
+      "picture":"Pee pea",
+      "position":"single"
+            
+    },
+    {
+      "id":"55130500222",
+      "name":"JumrusJa",
+      "picture":"purple",
+      "position":"single"
+            
+    },
+    {
+      "id":"55130500222",
+      "name":"JumrusJa",
+      "picture":"purple",
+      "position":"single"
+            
+    },{
+      "id":"55130500222",
+      "name":"JumrusJa",
+      "picture":"purple",
+      "position":"single"
             
     }
   ];

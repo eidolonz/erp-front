@@ -44,5 +44,12 @@ img.logo{
 	height: 90%;
 	display: block;
 	margin: 5px auto;
-	
 }
+
+.productPic{
+
+	height: 100%;
+	display: block;
+	margin: auto;
+}
+
