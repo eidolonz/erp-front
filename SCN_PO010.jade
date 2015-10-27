@@ -14,33 +14,40 @@ block content_title
 	p Purchase Order
 
 block content
-	div(ng-controller="MainController")
+	div(ng-controller="PoController")
 		.row
-			.col-sm-3.space PO Number:
-			.col-sm-3.space
-				input.form-control(type='text', placeholder='Find by PO number')
-			.col-sm-2.space Order Date:
-			.col-sm-3.space
-				input.form-control(type='date', placeholder='Date Picker')
-			.col-sm-1.space
-			.col-sm-3.space Supplier Name:
-			.col-md-3.space
-				input.form-control(type='text', placeholder='Find by supplier name')
-			.col-sm-2.space Status:
-			.col-md-3.space
-				select(name='product_status', value='Find by supplier name').form-control
-					option(value='Status1') Status 1
-					option(value='Status2') Status 2
+			form(id="searchForm")
+				.col-sm-3.space PO Number:
+				.col-sm-3.space
+					input.form-control(type='text', placeholder='Find by PO number')
+				.col-sm-2.space Order Date:
+				.col-sm-3.space
+					input.form-control(type='date', placeholder='Date Picker')
+				.col-sm-1.space
+				.col-sm-3.space Supplier Name:
+				.col-md-3.space
+					input.form-control(type='text', placeholder='Find by supplier name')
+				.col-sm-2.space Status:
+				.col-md-3.space
+					select(name='product_status', value='Find by supplier name').form-control
+						option(value='Status1') Status 1
+						option(value='Status2') Status 2
 
-					option(value='Status3') Status 3
-					option(value='Status4') Status 4
-			.col-sm-1.space
-			.col-sm-7.space
-			.col-sm-2.space
-				button.btn.btn-primary.btn-lg.btn-block(type='button', name='search') Search
-			.col-sm-2.space
-				button.btn.btn-default.btn-lg.btn-block(type='button', name='clear') Clear
-			.col-sm-1.space
+						option(value='Status3') Status 3
+						option(value='Status4') Status 4
+				.col-sm-1.space
+				.col-sm-7.space
+				.col-sm-2.space
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='search') Search
+				.col-sm-2.space
+					button.btn.btn-default.btn-lg.btn-block(type='button', onclick='clearFunc()', name="clear") Clear
+				.col-sm-1.space
+
+			script.
+				function clearFunc(){
+				document.getElementById("searchForm").reset();
+				}
+
 			.col-sm-11.space
 				table.product-table.table.table-striped(style="padding: 50;")
 					tr
@@ -51,8 +58,8 @@ block content
 						th Status
 						th Action
 					tr(ng-repeat="pointer in purchaseOrder")
-						td {{ pointer.number }}
-						td {{ pointer.supplierName }}
+						td {{ pointer.po_id }}
+						td {{ pointer.sp_id.name }}
 						td {{ pointer.orderDate }}
 						td {{ pointer.deliverDate }}
 						td {{ pointer.status }}

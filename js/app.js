@@ -45,10 +45,14 @@ function custCtrl($scope, $http) {
   .success(function (response) {$scope.names = response.records;});
 };
 
-function getPO(){
-	$http.get("http://www.w3schools.com/angular/customers.php")
-  .success(function (response) {$scope.names = response.records;});
+function getPO($scope, $http){
+	$http.get("http://54.179.174.140/api/po_header")
+  .success(function (response) {
+      $scope.purchaseOrder = response;
+    });
 };
+
+
 
 var app = angular.module('myApp', []);
 app.controller('MainController', mainController);
