@@ -40,16 +40,18 @@ function mainController($scope) {
     ];
 };
 
-function custCtrl($scope, $http) {
+function custCtrl() {
   $http.get("http://www.w3schools.com/angular/customers.php")
   .success(function (response) {$scope.names = response.records;});
 };
 
 function getPO($scope, $http){
-	$http.get("http://54.179.174.140/api/po_header")
+	alert("hey");
+  $http.get("http://54.179.174.140/api/po_header")
   .success(function (response) {
       $scope.purchaseOrder = response;
     });
+  e.preventDefault();
 };
 
 
@@ -57,8 +59,28 @@ function getPO($scope, $http){
 var app = angular.module('myApp', []);
 app.controller('MainController', mainController);
 app.controller('CustomersCtrl', custCtrl);
-app.controller('PoController', getPO);
+app.controller('PoController', controllerGetPO);
 
+function controllerGetPO($scope, $http){
+	
+	$scope.getpo = function(){
+		url = "http://54.179.174.140/api/po_header/search";
+		po_id = $('input[name="po_id"]').val();
+		order_date = $('input[name="order_date"]').val();
+		sp_name = $('input[name="sp_name"]').val();
+		po_status = $('select[name="po_status"]').val();
+		url = url + "?po_id=" + po_id + "&order_date=" + order_date + "&sp_name=" + sp_name + "&po_status=" + po_status;
+		$http.get(url)
+	  	.success(function (response) {
+	      $scope.purchaseOrder = response;
+	      console.log(response);
+	    });
+	};
+
+	$scope.getpo();
+	
+
+}
  
 var po = [
     {
