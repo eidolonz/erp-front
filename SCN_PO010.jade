@@ -16,20 +16,20 @@ block content_title
 block content
 	div(ng-controller="PoController")
 		.row
-			form(id="searchForm")
+			form(id="searchForm" action="api/po_header/search")
 				.col-sm-3.space PO Number:
 				.col-sm-3.space
-					input.form-control(type='text', placeholder='Find by PO number')
+					input.form-control(type='text', name="po_header" placeholder='Find by PO number')
 				.col-sm-2.space Order Date:
 				.col-sm-3.space
-					input.form-control(type='date', placeholder='Date Picker')
+					input.form-control(type='date', name="order_date" placeholder='Date Picker')
 				.col-sm-1.space
 				.col-sm-3.space Supplier Name:
 				.col-md-3.space
-					input.form-control(type='text', placeholder='Find by supplier name')
+					input.form-control(type='text', name="sp_name" placeholder='Find by supplier name')
 				.col-sm-2.space Status:
 				.col-md-3.space
-					select(name='product_status', value='Find by supplier name').form-control
+					select(name='po_status', value='Find by supplier name').form-control
 						option(value='Status1') Status 1
 						option(value='Status2') Status 2
 
@@ -38,7 +38,7 @@ block content
 				.col-sm-1.space
 				.col-sm-7.space
 				.col-sm-2.space
-					button.btn.btn-primary.btn-lg.btn-block(type='button', name='search') Search
+					button.btn.btn-primary.btn-lg.btn-block(type='button', onclick='searchFunc()' name='search') Search
 				.col-sm-2.space
 					button.btn.btn-default.btn-lg.btn-block(type='button', onclick='clearFunc()', name="clear") Clear
 				.col-sm-1.space
@@ -46,6 +46,9 @@ block content
 			script.
 				function clearFunc(){
 				document.getElementById("searchForm").reset();
+				}
+				function searchFunc(){
+				document.getElementById("searchForm")
 				}
 
 			.col-sm-11.space
@@ -60,9 +63,9 @@ block content
 					tr(ng-repeat="pointer in purchaseOrder")
 						td {{ pointer.po_id }}
 						td {{ pointer.sp_id.name }}
-						td {{ pointer.orderDate }}
-						td {{ pointer.deliverDate }}
-						td {{ pointer.status }}
+						td {{ pointer.order_date }}
+						td {{ pointer.expected_date }}
+						td {{ pointer.po_status }}
 						td {{ pointer.action }}	
 			.col-sm-1.space
 		.row		
