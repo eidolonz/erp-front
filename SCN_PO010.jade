@@ -30,6 +30,7 @@ block content
 				.col-sm-2.space Status:
 				.col-md-3.space
 					select(name='po_status', value='Find by supplier name').form-control
+						option(value='') Choose Status
 						option(value='Open') Open
 						option(value='Close') Close
 				.col-sm-1.space
@@ -46,22 +47,50 @@ block content
 				}
 				
 
+		.row
+			.col-sm-11.space
+				span.label Ordered by: {{orderByField}}, Reverse Sort: 	
+		.row
 			.col-sm-11.space
 				table.product-table.table.table-striped(style="padding: 50;")
-					tr
-						th PO Number
-						th Supplier Name
-						th Order Date
-						th Deliver Date
-						th Status
-						th Action
-					tr(ng-repeat="pointer in purchaseOrder")
-						td {{ pointer.po_id }}
-						td {{ pointer.sp_id.name }}
-						td {{ pointer.order_date }}
-						td {{ pointer.expected_date }}
-						td {{ pointer.po_status }}
-						td {{ pointer.action }}	
+					thead
+						tr
+							th 
+								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+									|	PO Number 
+									span(ng-show="!reverseSort") ^
+									span(ng-show="reverseSort") v
+							th 
+								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+									|	Supplier Name 
+									span(ng-show="!reverseSort") ^
+									span(ng-show="reverseSort") v
+							th 
+								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+									|	Order Date 
+									span(ng-show="!reverseSort") ^
+									span(ng-show="reverseSort") v
+							th 
+								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+									|	Deliver Date
+									span(ng-show="!reverseSort") ^
+									span(ng-show="reverseSort") v
+							th 
+								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+									|	Status 
+									span(ng-show="!reverseSort") ^
+									span(ng-show="reverseSort") v
+							th Action
+								
+					tbody
+						tr(ng-repeat="pointer in purchaseOrder|orderBy:orderByField:reverseSort")
+							td {{ pointer.po_id }}
+							td {{ pointer.sp_id.name }}
+							td {{ pointer.order_date }}
+							td {{ pointer.expected_date }}
+							td {{ pointer.po_status }}
+							td {{ pointer.action }}	
+
 			.col-sm-1.space
 		.row		
 			.col-sm-7.space

@@ -16,6 +16,8 @@ function getPO($scope, $http){
 
 function controllerGetPO($scope, $http){
 	
+	$scope.orderByField = 'po_id';
+	$scope.reverseSort = 'false';
 	$scope.getpo = function(){
 		url = "http://54.179.174.140/api/po_header/search";
 		po_id = $('input[name="po_id"]').val();
@@ -29,6 +31,7 @@ function controllerGetPO($scope, $http){
 	      console.log(response);
 	    });
 	};
+
 
 	$scope.getpo();
 
