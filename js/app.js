@@ -59,3 +59,4 @@ function supplierController($scope, $http){
   };
 
   $scope.getSuppliers();
+ }
