@@ -8,7 +8,7 @@ app.controller('InventoryController', controllerGetAI);
 //_______________________ PO ____________________________________
 function controllerGetPO($scope, $http){
 	// setting Pagination properties
-	$scope.filteredTodos = []
+	$scope.filteredPO = []
 	,$scope.currentPage = 1
 	,$scope.numPerPage = 10
 	,$scope.maxSize = 5;
