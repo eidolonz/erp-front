@@ -50,16 +50,11 @@ block content
 			function clearFunc(){
 			document.getElementById("searchForm").reset();
 			}
-				
-		.row
-			.col-sm-1.space
-			.col-sm-10.space		
-				div(data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true")
-			.col-sm-1.space
+
 		.row
 			.col-sm-1.space
 			.col-sm-10.space
-				table.product-table.table.table-striped(style="padding: 50;")
+				table.product-table.table.table-striped(style="padding: 50; margin-bottom:0;")
 					thead
 						tr
 							th 
@@ -99,13 +94,12 @@ block content
 							td {{ pointer.action }}	
 			.col-sm-1.space
 		.row
-			.col-sm-1.space
-			.col-sm-10.space		
-				div(data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true")
+			.col-sm-11.space.text-right		
+				div(data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true" style="margin-top:0;")
 			.col-sm-1.space
 		.row		
 			.col-sm-7.space
-			.col-sm-4.space
+			.col-sm-4.space.text-right
 				a(href="SCN_PO020.html")
 					button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Create New PO
 			.col-sm-1.space
