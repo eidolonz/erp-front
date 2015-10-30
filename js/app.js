@@ -1,23 +1,23 @@
 
-var app = angular.module('myApp', []);
+var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('PoController', controllerGetPO);
 app.controller('SupplierController', supplierController);
 app.controller('InventoryController', controllerGetAI);
 
-function getPO($scope, $http){
-	alert("hey");
-  $http.get("http://54.179.174.140/api/po_header")
-  .success(function (response) {
-      $scope.purchaseOrder = response;
-    });
-  e.preventDefault();
-};
 
-
+//_______________________ PO ____________________________________
 function controllerGetPO($scope, $http){
-	
+	// setting Pagination properties
+	$scope.filteredTodos = []
+	,$scope.currentPage = 1
+	,$scope.numPerPage = 10
+	,$scope.maxSize = 5;
+
+	// setting Ordering
 	$scope.orderByField = 'po_id';
 	$scope.reverseSort = 'false';
+
+	// get PO from DB
 	$scope.getpo = function(){
 		url = "http://54.179.174.140/api/po_header/search";
 		po_id = $('input[name="po_id"]').val();
@@ -25,17 +25,31 @@ function controllerGetPO($scope, $http){
 		sp_name = $('input[name="sp_name"]').val();
 		po_status = $('select[name="po_status"]').val();
 		url = url + "?po_id=" + po_id + "&order_date=" + order_date + "&sp_name=" + sp_name + "&po_status=" + po_status;
+		$scope.purchaseOrder = [];
 		$http.get(url)
 	  	.success(function (response) {
 	      $scope.purchaseOrder = response;
+	      $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
 	      console.log(response);
 	    });
 	};
-
-
 	$scope.getpo();
 
+	// setting number of Pagination
+	$scope.numPages = function () {
+		return Math.ceil($scope.purchaseOrder.length / $scope.numPerPage);
+	};
+	$scope.$watch('currentPage + numPerPage', function() {
+		var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		, end = begin + $scope.numPerPage;
+    
+	$scope.filteredPO = $scope.purchaseOrder.slice(begin, end);
+  });
+
+
 }
+
+ // _________________SP______________________
 
 function supplierController($scope, $http){
   

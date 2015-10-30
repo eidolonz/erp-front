@@ -15,16 +15,20 @@ block content_title
 
 block content
 	div(ng-controller="PoController")
-		.row
-			form(id="searchForm" action="http://54.179.174.140/api/po_header/search")
-				.col-sm-3.space PO Number:
+		
+		form(id="searchForm" action="http://54.179.174.140/api/po_header/search")
+			.row
+				.col-sm-1.space
+				.col-sm-2.space PO Number:
 				.col-sm-3.space
 					input.form-control(type='text', name="po_id" placeholder='Find by PO number')
 				.col-sm-2.space Order Date:
 				.col-sm-3.space
 					input.form-control(type='date', name="order_date" placeholder='Date Picker')
 				.col-sm-1.space
-				.col-sm-3.space Supplier Name:
+			.row
+				.col-sm-1.space
+				.col-sm-2.space Supplier Name:
 				.col-md-3.space
 					input.form-control(type='text', name="sp_name" placeholder='Find by supplier name')
 				.col-sm-2.space Status:
@@ -34,6 +38,7 @@ block content
 						option(value='Open') Open
 						option(value='Close') Close
 				.col-sm-1.space
+			.row
 				.col-sm-7.space
 				.col-sm-2.space
 					a.btn.btn-primary.btn-lg.btn-block(type='submit', name='search', ng-click="getpo()") Search
@@ -41,56 +46,62 @@ block content
 					button.btn.btn-default.btn-lg.btn-block(type='button', onclick='clearFunc()', ng-click='getpo()', name="clear") Clear
 				.col-sm-1.space
 
-			script.
-				function clearFunc(){
-				document.getElementById("searchForm").reset();
-				}
+		script.
+			function clearFunc(){
+			document.getElementById("searchForm").reset();
+			}
 				
-
 		.row
-			.col-sm-11.space
-				span.label Ordered by: {{orderByField}}, Reverse Sort: 	
+			.col-sm-1.space
+			.col-sm-10.space		
+				div(data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true")
+			.col-sm-1.space
 		.row
-			.col-sm-11.space
+			.col-sm-1.space
+			.col-sm-10.space
 				table.product-table.table.table-striped(style="padding: 50;")
 					thead
 						tr
 							th 
 								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
 									|	PO Number 
-									span(ng-show="!reverseSort") ^
-									span(ng-show="reverseSort") v
+									span(ng-show="!reverseSort") v
+									span(ng-show="reverseSort") ^
 							th 
 								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
 									|	Supplier Name 
-									span(ng-show="!reverseSort") ^
-									span(ng-show="reverseSort") v
+									span(ng-show="!reverseSort") v
+									span(ng-show="reverseSort") ^
 							th 
 								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
 									|	Order Date 
-									span(ng-show="!reverseSort") ^
-									span(ng-show="reverseSort") v
+									span(ng-show="!reverseSort") v
+									span(ng-show="reverseSort") ^
 							th 
 								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
 									|	Deliver Date
-									span(ng-show="!reverseSort") ^
-									span(ng-show="reverseSort") v
+									span(ng-show="!reverseSort") v
+									span(ng-show="reverseSort") ^
 							th 
 								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
 									|	Status 
-									span(ng-show="!reverseSort") ^
-									span(ng-show="reverseSort") v
+									span(ng-show="!reverseSort") v
+									span(ng-show="reverseSort") ^
 							th Action
 								
 					tbody
-						tr(ng-repeat="pointer in purchaseOrder|orderBy:orderByField:reverseSort")
+						tr(ng-repeat="pointer in filteredPO|orderBy:orderByField:reverseSort")
 							td {{ pointer.po_id }}
 							td {{ pointer.sp_id.name }}
 							td {{ pointer.order_date }}
 							td {{ pointer.expected_date }}
 							td {{ pointer.po_status }}
 							td {{ pointer.action }}	
-
+			.col-sm-1.space
+		.row
+			.col-sm-1.space
+			.col-sm-10.space		
+				div(data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true")
 			.col-sm-1.space
 		.row		
 			.col-sm-7.space
