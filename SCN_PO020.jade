@@ -13,53 +13,60 @@ block content_title
 	p Create purchase order
 
 block content
-	.row
-		.col-sm-3.space Supplier Code:*
-		.col-sm-3.space
-			input(name='supplier_code').form-control
-		.col-sm-6.space
-	.row
-		.col-sm-3.space Supplier Name:*
-		.col-sm-3.space
-			input(name='supplier_name').form-control
-		.col-sm-6.space
-	.row
-		.col-sm-3.space Order Date:*
-		.col-sm-3.space
-			input.form-control(type='date', placeholder='Date Picker')
+	div(ng-controller='SearchSupplier')
+		form#supplierSearchForm
+			.row
+				.col-sm-3.space Supplier Code:*
+				.col-sm-3.space
+					input(keyboard-poster post-function='searchSupplierCode' name='supplier_code' list='supplier_codes').form-control
+					datalist#supplier_codes
+						select#selectCode(name='_selectCode' ng-model='selectedSpCode' ng-options='k as v for (k,v) in SpCodes')
+				.col-sm-6.space
+			.row
+				.col-sm-3.space Supplier Name:*
+				.col-sm-3.space
+					input(keyboard-poster post-function='searchSupplierName' name='supplier_name' list='supplier_names').form-control
+					datalist#supplier_names
+						select#selectName(name='_selectName' ng-model='selectedSpName' ng-options='a as b for (a,b) in SpNames')
+				.col-sm-6.space
+			.row
+				.col-sm-3.space Order Date:*
+				.col-sm-3.space
+					input(type='date', placeholder='Date Picker').form-control
+				.col-sm-6.space
 
-	.row		
-		.col-sm-11.space
-			table.product-table.table.table-striped(style="padding: 50;")
-				tr
-					th No.
-					th Product Name
-					th Cost
-					th Qty
-					th Total
-					th Action
-				tr
-					td 1
-					td product 2
-					td 100.00
-					td 4
-					td 400.00
-					td [Edit] [Delete]
-				tr
-					td 2
-					td product 5
-					td 123.00
-					td 3
-					td 369.00
-					td [Edit] [Delete]
-		.col-sm-1.space
+		.row		
+			.col-sm-11.space
+				table.product-table.table.table-striped(style="padding: 50;")
+					tr
+						th No.
+						th Product Name
+						th Cost
+						th Qty
+						th Total
+						th Action
+					tr
+						td 1
+						td product 2
+						td 100.00
+						td 4
+						td 400.00
+						td [Edit] [Delete]
+					tr
+						td 2
+						td product 5
+						td 123.00
+						td 3
+						td 369.00
+						td [Edit] [Delete]
+			.col-sm-1.space
 
-	.row
-		.col-md-10.space
-		.col-md-1.space
-			a(href="#SCN_PO021" data-toggle='modal', data-target='#myModal')
-				img(src="images/addBtn.png", alt="add new PO")		
-			// Modal
+		.row
+			.col-md-10.space
+			.col-md-1.space.text-right
+				a(href="#SCN_PO021" data-toggle='modal', data-target='#myModal' name='addBtn')
+					img(src="images/addBtn.png", alt="add new PO")		
+				// Modal
 			#myModal.modal.fade(role='dialog')
 				.modal-dialog
 					// Modal content
@@ -68,42 +75,42 @@ block content
 							button.close(type='button', data-dismiss='modal') x
 							h4.modal-title Please add product
 						.modal-body
-							.row
-								.col-md-3.space Product code :*
-								.col-md-9.space
-									input(name='product_code').form-control
-							.row
-								.col-md-3.space Product name :*
-								.col-md-9.space
-									input(name='product_name').form-control
-							.row
-								.col-md-3.space Qty :*
-								.col-md-9.space
-									input(name='qty').form-control
-							.row
-								.col-md-3.space Cost :
-								.col-md-9.space
-									input(name='product_code', readonly='true', value='0.00').form-control
-						.modal-footer
-							button.btn.btn-primary(type="submit", data-dismiss='modal') Confirm
-							button.btn.btn-default(type='button', data-dismiss='modal') Close
-      
-		.col-md-1.space
+							form
+								.row
+									.col-md-3.space Product code :*
+									.col-md-9.space
+										input(name='product_code').form-control
+								.row
+									.col-md-3.space Product name :*
+									.col-md-9.space
+										input(name='product_name').form-control
+								.row
+									.col-md-3.space Qty :*
+									.col-md-9.space
+										input(name='qty').form-control
+								.row
+									.col-md-3.space Cost :
+									.col-md-9.space
+										input(name='product_code', readonly='true', value='0.00').form-control
+								.row.text-right(style="margin:0;")
+									button.btn.btn-primary(type="submit", data-dismiss='modal') Confirm
+									button.btn.btn-default(type='button', data-dismiss='modal') Close
+			.col-md-1.space
 
 
-	.row
-		.col-md-5.space
-		.col-md-2.space Total: 
-		.col-md-4.space
-			input(name='total').form-control
-		.col-md-1.space
+		.row
+			.col-md-5.space
+			.col-md-2.space Total: 
+			.col-md-4.space
+				input(name='total' readonly='true' placeholder='0.00').form-control.text-right
+			.col-md-1.space
 
 
-	.row		
-		.col-sm-7.space
-		.col-sm-2.space
-			button.btn.btn-primary.btn-lg.btn-block(type='button',name='save') Save
-		.col-sm-2.space
-			a(href="SCN_PO010.html")
-				button.btn.btn-default.btn-lg.btn-block(type='button',name='cancel') Cancel
-		.col-sm-1.space
+		.row		
+			.col-sm-7.space
+			.col-sm-2.space
+				button.btn.btn-primary.btn-lg.btn-block(type='button',name='save') Save
+			.col-sm-2.space
+				a(href="SCN_PO010.html")
+					button.btn.btn-default.btn-lg.btn-block(type='button',name='cancel') Cancel
+			.col-sm-1.space

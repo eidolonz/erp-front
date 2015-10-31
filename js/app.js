@@ -49,6 +49,84 @@ function controllerGetPO($scope, $http){
 
 }
 
+app.service('SupplierSearch', function($q, $http){
+	var API_URL = 'http://54.179.174.140/api/supplier/search?code=';
+	this.searchSupplierCode = function(code) {	
+		var deferred = $q.defer();
+		$http.get(API_URL+code).then(function(codes){
+			var _codes = {};
+			var codes = codes.data;
+			//alert(codes);
+			for(var i = 0, len = codes.length; i < len; i++) {
+				_codes[codes[i].code] = codes[i].code;
+			}
+			deferred.resolve(_codes);
+		}, function() {
+			deferred.reject(arguments);
+			});
+		return deferred.promise;
+	}
+	this.searchSupplierName = function(name, code) {	
+		var deferred = $q.defer();
+		$http.get(API_URL+code+'&name='+name).then(function(names){
+			var _names = {};
+			var names = names.data;
+			console.log(names);
+			for(var i = 0, len = names.length; i < len; i++) {
+				_names[names[i].name] = names[i].name;
+			}
+			deferred.resolve(_names);
+		}, function() {
+			deferred.reject(arguments);
+			});
+		return deferred.promise;
+	} 
+});
+app.controller('SearchSupplier', function($scope, $timeout, SupplierSearch) {
+  $scope.selectedSpCode = null;
+  $scope.SpCodes = {};  
+  $scope.searchSupplierCode = function(code) {
+    SupplierSearch.searchSupplierCode(code).then(function(SpCodes){
+      $scope.SpCodes = SpCodes;
+    });
+  }
+
+  $scope.selectedSpName = null;
+  $scope.SpNames = {};
+  $scope.searchSupplierName = function(name) {
+  	sp_code = $('input[name="supplier_code"]').val();
+  	if (sp_code == []){
+  		var text = 'Please enter Supplier Code first'; 
+	    alert(text);
+	    document.getElementById("supplierSearchForm").reset();
+	}else{
+		SupplierSearch.searchSupplierName(name, sp_code).then(function(SpNames){
+	      $scope.SpNames = SpNames;
+	      console.log(SpNames);
+	    });
+	}
+  }
+});
+app.directive('keyboardPoster', function($parse, $timeout){
+  var DELAY_TIME_BEFORE_POSTING = 0;
+  return function(scope, elem, attrs) {
+    
+    var element = angular.element(elem)[0];
+    var currentTimeout = null;
+   
+    element.oninput = function() {
+      var model = $parse(attrs.postFunction);
+      var poster = model(scope);
+      
+      if(currentTimeout) {
+        $timeout.cancel(currentTimeout)
+      }
+      currentTimeout = $timeout(function(){
+        poster(angular.element(element).val());
+      }, DELAY_TIME_BEFORE_POSTING)
+    }
+  }
+});
  // _________________SP______________________
 
 function supplierController($scope, $http){
