@@ -14,21 +14,27 @@ block content_title
 	p Suppliers
 
 block content
-	
+
 	script.
 		function clearFunc(){
 		document.getElementById("searchForm").reset();
-	}
+		}
 
 	div(ng-controller="SupplierController")
 		form(id="searchForm" action="http://54.179.174.140/api/supplier/search")
 			.row
 			.col-sm-3.space Supplier code:
 			.col-sm-3.space
-				input.form-control(name='supplier_code' type='text', placeholder='Supplier code' value='')
+				input.form-control(name='supplier_code' type='text', placeholder='Supplier code' value='' list='suplier_code')
+				datalist#suplier_code
+					option(value='{{supplier.code}}', ng-repeat='supplier in suppliers')
+
 			.col-sm-2.space Supplier Name:
 			.col-sm-3.space
-				input.form-control(name='supplier_name' type='text', placeholder='Supplier name' value='')
+				input.form-control(name='supplier_name' type='text', placeholder='Supplier name' value='' list='suplier_name')
+				datalist#suplier_name
+					option(value='{{supplier.name}}', ng-repeat='supplier in suppliers')
+						
 			.col-sm-1.space
 			.col-sm-3.space Supplier Status:
 			.col-md-3.space
