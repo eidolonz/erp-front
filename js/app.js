@@ -132,12 +132,13 @@ app.directive('keyboardPoster', function($parse, $timeout){
 function supplierController($scope, $http){
   
   $scope.getSuppliers = function(){
-    url         = "http://54.179.174.140/api/supplier";
-    // sp_id       = $('input[name="supplier_code"]').val();
-    // sp_name     = $('input[name="supplier_name"]').val();
-    // sp_status   = $('select[name="supplier_status"]').val();
-    // url         = url + "?sp_id=" + sp_id + "&sp_name=" + name + "&status=" + sp_status;
-    
+    url         = "http://54.179.174.140/api/supplier/search";
+    sp_code     = $('input[name="supplier_code"]').val();
+    sp_name     = $('input[name="supplier_name"]').val();
+    sp_status   = $('select[name="supplier_status"]').val();
+    url         = url + "?code=" + sp_code + "&name=" + sp_name + "&status=" + sp_status;
+    console.log(url);
+
     // get เรียก data // post สร้างดาต้า // put อัพเดด // delete ลบ
     
     $http.get(url)
@@ -149,8 +150,6 @@ function supplierController($scope, $http){
     //   name: 'Test',
     //   logo: 'path image'
     // });
-
-    console.log("http put");
   };
 
   $scope.getSuppliers();
