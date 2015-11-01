@@ -4,8 +4,11 @@
     <title>Create purchase order</title>
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/datepicker.css"/>
     <link rel="stylesheet" href="css/style.css"/>
+    <script data-require="angular.js@1.1.5" data-semver="1.1.5" src="http://code.angularjs.org/1.1.5/angular.min.js"></script>
+    <script data-require="angular-ui-bootstrap@0.3.0" data-semver="0.3.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.3.0.min.js"></script>
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="js/bootstrap-datepicker.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -28,7 +31,7 @@
         <div style="height:100%" class="Profile">
           <div class="row"> 
             <div class="col-md-5">
-              <div style="height:100%"><img src="images/profile.jpg" alt="profile" style="height:100%;margin: 0 12 0 12;"/></div>
+              <div style="height:100%"><img src="images/profilePic.jpg" alt="profile" style="height:100%;margin: 0 12 0 12;"/></div>
             </div>
             <div class="col-md-7">
               <div style="margin: 14px auto;">
@@ -50,10 +53,10 @@
               <h4 class="panel-title"><a role="tab" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="collapsed">Master Data</a></h4>
             </div>
             <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" class="panel-collapse collapse in">
-              <div class="panel-body"><a href="#">Supplier</a></div>
-              <div class="panel-body"><a href="SCN_AI030.html">Product</a></div>
+              <div class="panel-body"><a href="SCN_SP010.html">Supplier</a></div>
+              <div class="panel-body"><a href="SCN_PD010.html">Product</a></div>
               <div class="panel-body"><a href="SCN_ZN010.html">Zone</a></div>
-              <div class="panel-body"><a href="#">Price</a></div>
+              <div class="panel-body"><a href="SCN_PR010.html">Price</a></div>
             </div>
           </div>
           <div class="panel panel-default">
@@ -62,7 +65,6 @@
             </div>
             <div id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" class="panel-collapse collapse">
               <div class="panel-body"><a href="SCN_PO010.html">Purchase order</a></div>
-              <div class="panel-body">sub2</div>
             </div>
           </div>
           <div class="panel panel-default">
@@ -71,7 +73,7 @@
             </div>
             <div id="collapseThree" role="tabpanel" aria-labelledby="headingThree" class="panel-collapse collapse">
               <div class="panel-body"><a href="SCN_AI010.html">Adjust Inventory</a></div>
-              <div class="panel-body"><a href="#">Incoming</a></div>
+              <div class="panel-body"><a href="SCN_IN010.html">Incoming</a></div>
             </div>
           </div>
         </div>
@@ -80,61 +82,86 @@
         <h2 class="page-header">
           <p>Create purchase order</p>
         </h2>
-        <div class="row">
-          <div class="col-sm-3 space">Supplier Code:*</div>
-          <div class="col-sm-3 space">
-            <input name="supplier_code" class="form-control"/>
+        <div ng-controller="SearchSupplier">
+          <form id="supplierSearchForm">
+            <div class="row">
+              <div class="col-sm-3 space">Supplier Code:*</div>
+              <div class="col-sm-3 space">
+                <input keyboard-poster="keyboard-poster" post-function="searchSupplierCode" name="supplier_code" list="supplier_codes" ng-model="supplier.spCode" class="form-control"/>
+                <datalist id="supplier_codes">
+                  <select id="selectCode" name="_selectCode" ng-model="selectedSpCode" ng-options="k as v for (k,v) in SpCodes"></select>
+                </datalist>
+              </div>
+              <div class="col-sm-6 space"></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-3 space">Supplier Name:*</div>
+              <div class="col-sm-3 space">
+                <input keyboard-poster="keyboard-poster" post-function="searchSupplierName" name="supplier_name" list="supplier_names" ng-model="supplier.spName" id="supplier_name" class="form-control"/>
+                <datalist id="supplier_names">
+                  <select id="selectName" name="_selectName" ng-model="selectedSpName" ng-options="k as v for (k,v) in SpNames"></select>
+                </datalist>
+              </div>
+              <div class="col-sm-6 space"></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-3 space">Order Date:*</div>
+              <div class="col-sm-3 space">
+                <input type="date" id="datePicker" name="datePicker" class="form-control"/>
+                <script>
+                  var today = new Date();
+                  var dd = today.getDate();
+                  var mm = today.getMonth()+1; //January is 0!
+                  var yyyy = today.getFullYear();
+                  if(dd<10){
+                  	dd='0'+dd
+                  }
+                  if(mm<10){
+                  	mm='0'+mm
+                  }
+                  var today = yyyy+'-'+mm+'-'+dd;
+                  document.getElementById("datePicker").value = today;
+                </script>
+              </div>
+              <div class="col-sm-6 space"></div>
+            </div>
+          </form>
+          <div class="row">
+            <div class="col-sm-11 space">
+              <table style="padding: 50;" class="product-table table table-striped">
+                <tr>
+                  <th>No.</th>
+                  <th>Product Name</th>
+                  <th>Cost</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                  <th>Action</th>
+                </tr>
+                <tr>
+                  <td>1</td>
+                  <td>product 2</td>
+                  <td>100.00</td>
+                  <td>4</td>
+                  <td>400.00</td>
+                  <td>[Edit] [Delete]</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>product 5</td>
+                  <td>123.00</td>
+                  <td>3</td>
+                  <td>369.00</td>
+                  <td>[Edit] [Delete]</td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-sm-1 space"></div>
           </div>
-          <div class="col-sm-6 space"></div>
-        </div>
-        <div class="row">
-          <div class="col-sm-3 space">Supplier Name:*</div>
-          <div class="col-sm-3 space">
-            <input name="supplier_name" class="form-control"/>
-          </div>
-          <div class="col-sm-6 space"></div>
-        </div>
-        <div class="row">
-          <div class="col-sm-3 space">Order Date:*</div>
-          <div class="col-sm-3 space">
-            <input type="date" placeholder="Date Picker" class="form-control"/>
-          </div>
-        </div>
-        <div class="row">		
-          <div class="col-sm-11 space">
-            <table style="padding: 50;" class="product-table table table-striped">
-              <tr>
-                <th>No.</th>
-                <th>Product Name</th>
-                <th>Cost</th>
-                <th>Qty</th>
-                <th>Total</th>
-                <th>Action</th>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>product 2</td>
-                <td>100.00</td>
-                <td>4</td>
-                <td>400.00</td>
-                <td>[Edit] [Delete]</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>product 5</td>
-                <td>123.00</td>
-                <td>3</td>
-                <td>369.00</td>
-                <td>[Edit] [Delete]</td>
-              </tr>
-            </table>
-          </div>
-          <div class="col-sm-1 space"></div>
-        </div>
-        <div class="row">
-          <div class="col-md-10 space"></div>
-          <div class="col-md-1 space"><a href="#SCN_PO021" data-toggle="modal" data-target="#myModal"><img src="images/addBtn.png" alt="add new PO"/></a>
-            <!-- Modal-->
+          <div class="row">
+            <div class="col-md-10 space"></div>
+            <div class="col-md-1 space text-right"><a href="#SCN_PO021" data-toggle="modal" data-target="#myModal" name="addBtn" ng-click="addPdAlert()" ng-disabled="!(!!supplier.spCode &amp;&amp; !!supplier.spName)"><img src="images/addBtn.png" alt="add new PO"/></a>
+              <!-- Modal-->
+            </div>
             <div id="myModal" role="dialog" class="modal fade">
               <div class="modal-dialog">
                 <!-- Modal content-->
@@ -144,57 +171,59 @@
                     <h4 class="modal-title">Please add product</h4>
                   </div>
                   <div class="modal-body">
-                    <div class="row">
-                      <div class="col-md-3 space">Product code :*</div>
-                      <div class="col-md-9 space">
-                        <input name="product_code" class="form-control"/>
+                    <form>
+                      <div class="row">
+                        <div class="col-md-3 space">Product code :*</div>
+                        <div class="col-md-9 space">
+                          <input name="product_code" class="form-control"/>
+                        </div>
                       </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-3 space">Product name :*</div>
-                      <div class="col-md-9 space">
-                        <input name="product_name" class="form-control"/>
+                      <div class="row">
+                        <div class="col-md-3 space">Product name :*</div>
+                        <div class="col-md-9 space">
+                          <input name="product_name" class="form-control"/>
+                        </div>
                       </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-3 space">Qty :*</div>
-                      <div class="col-md-9 space">
-                        <input name="qty" class="form-control"/>
+                      <div class="row">
+                        <div class="col-md-3 space">Qty :*</div>
+                        <div class="col-md-9 space">
+                          <input name="qty" class="form-control"/>
+                        </div>
                       </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-3 space">Cost :</div>
-                      <div class="col-md-9 space">
-                        <input name="product_code" readonly="true" value="0.00" class="form-control"/>
+                      <div class="row">
+                        <div class="col-md-3 space">Cost :</div>
+                        <div class="col-md-9 space">
+                          <input name="product_code" readonly="true" value="0.00" class="form-control"/>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="submit" data-dismiss="modal" class="btn btn-primary">Confirm</button>
-                    <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
+                      <div style="margin:0;" class="row text-right">
+                        <button type="submit" data-dismiss="modal" class="btn btn-primary">Confirm</button>
+                        <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
             </div>
+            <div class="col-md-1 space"></div>
           </div>
-          <div class="col-md-1 space"></div>
-        </div>
-        <div class="row">
-          <div class="col-md-5 space"></div>
-          <div class="col-md-2 space">Total: </div>
-          <div class="col-md-4 space">
-            <input name="total" class="form-control"/>
+          <div class="row">
+            <div class="col-md-5 space"></div>
+            <div class="col-md-2 space">Total: </div>
+            <div class="col-md-4 space">
+              <input name="total" readonly="true" placeholder="0.00" class="form-control text-right"/>
+            </div>
+            <div class="col-md-1 space"></div>
           </div>
-          <div class="col-md-1 space"></div>
-        </div>
-        <div class="row">		
-          <div class="col-sm-7 space"></div>
-          <div class="col-sm-2 space">
-            <button type="button" name="save" class="btn btn-primary btn-lg btn-block">Save</button>
+          <div class="row">
+            <div class="col-sm-7 space"></div>
+            <div class="col-sm-2 space">
+              <button type="button" name="save" class="btn btn-primary btn-lg btn-block">Save</button>
+            </div>
+            <div class="col-sm-2 space"><a href="SCN_PO010.html">
+                <button type="button" name="cancel" class="btn btn-default btn-lg btn-block">Cancel</button></a></div>
+            <div class="col-sm-1 space"></div>
           </div>
-          <div class="col-sm-2 space"><a href="SCN_PO010.html">
-              <button type="button" name="cancel" class="btn btn-default btn-lg btn-block">Cancel</button></a></div>
-          <div class="col-sm-1 space"></div>
         </div>
       </div>
     </div>

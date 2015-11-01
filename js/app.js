@@ -47,18 +47,21 @@ function controllerGetPO($scope, $http){
   });
 
 
+
 }
 
 app.service('SupplierSearch', function($q, $http){
 	var API_URL = 'http://54.179.174.140/api/supplier/search?code=';
-	this.searchSupplierCode = function(code) {	
+	this.searchSupplierCode = function(code, name) {	
 		var deferred = $q.defer();
-		$http.get(API_URL+code).then(function(codes){
+		$http.get(API_URL+code+'&name='+name).then(function(codes){
 			var _codes = {};
+			var _names = {};
 			var codes = codes.data;
 			//alert(codes);
 			for(var i = 0, len = codes.length; i < len; i++) {
-				_codes[codes[i].code] = codes[i].code;
+				_codes[codes[i].code] = codes[i].code +' ['+codes[i].name+']';
+				
 			}
 			deferred.resolve(_codes);
 		}, function() {
@@ -66,14 +69,14 @@ app.service('SupplierSearch', function($q, $http){
 			});
 		return deferred.promise;
 	}
-	this.searchSupplierName = function(name, code) {	
+	this.searchSupplierName = function( code, name) {	
 		var deferred = $q.defer();
 		$http.get(API_URL+code+'&name='+name).then(function(names){
 			var _names = {};
 			var names = names.data;
 			console.log(names);
 			for(var i = 0, len = names.length; i < len; i++) {
-				_names[names[i].name] = names[i].name;
+				_names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
 			}
 			deferred.resolve(_names);
 		}, function() {
@@ -84,29 +87,39 @@ app.service('SupplierSearch', function($q, $http){
 });
 app.controller('SearchSupplier', function($scope, $timeout, SupplierSearch) {
   $scope.selectedSpCode = null;
+  $scope.selectedSpName = null;
+  $scope.SpNames = {};
   $scope.SpCodes = {};  
   $scope.searchSupplierCode = function(code) {
-    SupplierSearch.searchSupplierCode(code).then(function(SpCodes){
+  	sp_name = $('input[name="supplier_name"]').val();
+    SupplierSearch.searchSupplierCode(code, sp_name).then(function(SpCodes){
       $scope.SpCodes = SpCodes;
+      console.log(SpCodes);
     });
   }
 
-  $scope.selectedSpName = null;
-  $scope.SpNames = {};
   $scope.searchSupplierName = function(name) {
   	sp_code = $('input[name="supplier_code"]').val();
-  	if (sp_code == []){
-  		var text = 'Please enter Supplier Code first'; 
-	    alert(text);
-	    document.getElementById("supplierSearchForm").reset();
-	}else{
-		SupplierSearch.searchSupplierName(name, sp_code).then(function(SpNames){
-	      $scope.SpNames = SpNames;
-	      console.log(SpNames);
-	    });
-	}
+	SupplierSearch.searchSupplierName(sp_code, name).then(function(SpNames){
+      $scope.SpNames = SpNames;
+      //console.log(SpNames);
+    });
   }
+  $scope.addPdAlert = function(){
+  	code = $('input[name="supplier_code"]').val();
+  	name = $('input[name="supplier_name"]').val();
+  	if(code.length < 1 || name.length < 1){
+		alert('Please enter Supplier Code and Supplier Name.');
+		}
+	}
+	// date = $('input[name="datePicker"').val();
+	// if(date.slice(0,3) >= Date().getFullYear()){
+
+	// }
+
+
 });
+
 app.directive('keyboardPoster', function($parse, $timeout){
   var DELAY_TIME_BEFORE_POSTING = 0;
   return function(scope, elem, attrs) {
