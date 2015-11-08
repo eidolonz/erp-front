@@ -169,16 +169,17 @@ function supplierController($scope, $http){
  }
 
 
- // _________________AI______________________
+// _________________AI______________________
  function controllerGetAI($scope, $http){
   
-  $scope.getpo = function(){
+  $scope.getai = function(){
     url = "http://54.179.174.140/api/inventory/search";
-    zone_id = $('input[name="zone"]').val();
-    product_type = $('input[name="product_type"]').val();
+    zone_id = $('select[name="zone"]').val();
+    product_type = $('select[name="product_type"]').val();
     product_name = $('input[name="product_name"]').val();
     product_status = $('select[name="product_status"]').val();
-    url = url + "?zone_id=" + po_id + "&order_date=" + product_type + "&sp_name=" + sp_name + "&po_status=" + po_status;
+    url = url + "?zone_id=" + zone_id + "&product_type=" + product_type + "&product_name=" + product_name + "&product_status=" + product_status;
+    console.log(url)
     $http.get(url)
       .success(function (response) {
         $scope.inventory = response;
@@ -186,6 +187,7 @@ function supplierController($scope, $http){
       });
   };
 
-  $scope.getpo();
+  $scope.getai();
 
 }
+
