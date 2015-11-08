@@ -13,42 +13,33 @@ block content_title
 	p Create Zone
 
 block content
-	.row
-		
-		.row
-			.col-sm-1.space
-			.col-sm-2.space Zone Type:
-			.col-sm-3.space
-				select(name='zone').form-control
-					option(value='zone1') Zone 1
-					option(value='zone2') Zone 2
-					option(value='zone3') Zone 3
-					option(value='zone4') Zone 4
+	div(ng-controller='ZoneController')
+		.col-sm-6.space
+			.col-md-3.space
+			.col-md-3.space Zone Type:
+			.col-md-6.space
+				select(ng-init="zone_type = zone_type || options[0].value", ng-model='zone_type', ng-options="option.value as option.name for option in options").form-control
 			
-		
-		.row
-			.col-sm-1.space
-			.col-sm-2.space Zone Code:
 			.col-md-3.space
-				input.form-control(name='zone_code', type='text', placeholder='Zone Code', value='100')
+			.col-md-3.space Zone Code:
+			.col-md-6.space
+				input.form-control(name='zone_code' type='text' placeholder='Zone Code' value='' ng-model='zone_code')
 
-		.row
-			.col-sm-1.space
-			.col-sm-2.space Zone Name:
-			.col-md-3.space
-				input.form-control(name='zone_name', type='text', placeholder='Zone Name' value='1000')
+			.col-sm-3.space
+			.col-sm-3.space Zone Name:
+			.col-md-6.space
+				input.form-control(name='zone_name' type='text' placeholder='Zone Name' value='' ng-model='zone_name')
 
-		.row
-			.col-sm-1.space
-			.col-sm-2.space Zone Desc:
-			.col-md-3.space
-				textarea.form-control(rows="3",name='zone_desc', placeholder='Zone Desc') Description						
+			.col-sm-3.space
+			.col-sm-3.space Zone Desc:
+			.col-md-6.space
+				textarea.form-control(rows="3" name='zone_desc' placeholder='Zone Desc' value='' ng-model='zone_desc')
 
-		.row(style="margin-top:10px")
-			.col-md-3.space
-			.col-sm-2.space
-				button.btn.btn-primary.btn-lg.btn-block(type='button', name='save') Save
-			.col-sm-2.space
-				a(href="SCN_ZN010.html")
+			//- 5th line
+			.col-sm-6.space
+			.col-sm-3.space
+				button.btn.btn-primary.btn-lg.btn-block(href='SCN_ZN010.html' type='button', name='save', ng-click='createZone(zone_type, zone_code, zone_name, zone_desc)') Create
+			.col-sm-3.space
+				a(ng-href='SCN_ZN010.html')
 					button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
-			.col-sm-1.space
+
