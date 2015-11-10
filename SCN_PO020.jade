@@ -18,24 +18,37 @@ block content
 			.row
 				.col-sm-3.space Supplier Code:*
 				.col-sm-3.space
-					input(keyboard-poster post-function='searchSupplierCode' name='supplier_code' list='supplier_codes').form-control
+					input(keyboard-poster post-function='searchSupplierCode' name='supplier_code' list='supplier_codes' ng-model='supplier.spCode' id='supplier_code').form-control
 					datalist#supplier_codes
 						select#selectCode(name='_selectCode' ng-model='selectedSpCode' ng-options='k as v for (k,v) in SpCodes')
 				.col-sm-6.space
 			.row
 				.col-sm-3.space Supplier Name:*
 				.col-sm-3.space
-					input(keyboard-poster post-function='searchSupplierName' name='supplier_name' list='supplier_names').form-control
+					input(keyboard-poster post-function='searchSupplierName' name='supplier_name' list='supplier_names' ng-model='supplier.spName' id='supplier_name').form-control
 					datalist#supplier_names
-						select#selectName(name='_selectName' ng-model='selectedSpName' ng-options='a as b for (a,b) in SpNames')
+						select#selectName(name='_selectName' ng-model='selectedSpName' ng-options='k as v for (k,v) in SpNames')
 				.col-sm-6.space
 			.row
 				.col-sm-3.space Order Date:*
 				.col-sm-3.space
-					input(type='date', placeholder='Date Picker').form-control
+					input(type='date' id='datePicker' name='datePicker').form-control
+					script.
+						var today = new Date();
+						var dd = today.getDate();
+						var mm = today.getMonth()+1; //January is 0!
+						var yyyy = today.getFullYear();
+						if(dd<10){
+							dd='0'+dd
+						}
+						if(mm<10){
+							mm='0'+mm
+						}
+						var today = yyyy+'-'+mm+'-'+dd;
+						document.getElementById("datePicker").value = today;
 				.col-sm-6.space
 
-		.row		
+		.row
 			.col-sm-11.space
 				table.product-table.table.table-striped(style="padding: 50;")
 					tr
@@ -64,8 +77,10 @@ block content
 		.row
 			.col-md-10.space
 			.col-md-1.space.text-right
-				a(href="#SCN_PO021" data-toggle='modal', data-target='#myModal' name='addBtn')
-					img(src="images/addBtn.png", alt="add new PO")		
+				a(href="#SCN_PO021" data-toggle='modal', data-target='#myModal' name='addBtn' ng-click='addPdAlert()' ng-disabled="!(!!supplier.spCode && !!supplier.spName)")
+					img(src="images/addBtn.png", alt="add new PO")
+
+
 				// Modal
 			#myModal.modal.fade(role='dialog')
 				.modal-dialog
@@ -106,7 +121,7 @@ block content
 			.col-md-1.space
 
 
-		.row		
+		.row
 			.col-sm-7.space
 			.col-sm-2.space
 				button.btn.btn-primary.btn-lg.btn-block(type='button',name='save') Save

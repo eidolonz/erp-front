@@ -60,7 +60,8 @@ app.service('SupplierSearch', function($q, $http){
 			var codes = codes.data;
 			//alert(codes);
 			for(var i = 0, len = codes.length; i < len; i++) {
-				_codes[codes[i].code] = codes[i].code +' ['+codes[i].name+']';
+				// _codes[codes[i].code] = codes[i].code +' ['+codes[i].name+']';
+				_codes[codes[i].code] = codes[i].code;
 				
 			}
 			deferred.resolve(_codes);
@@ -76,7 +77,8 @@ app.service('SupplierSearch', function($q, $http){
 			var names = names.data;
 			console.log(names);
 			for(var i = 0, len = names.length; i < len; i++) {
-				_names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
+				// _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
+				_names[names[i].name] = names[i].name;
 			}
 			deferred.resolve(_names);
 		}, function() {
@@ -92,16 +94,37 @@ app.controller('SearchSupplier', function($scope, $timeout, SupplierSearch) {
   $scope.SpCodes = {};  
   $scope.searchSupplierCode = function(code) {
   	sp_name = $('input[name="supplier_name"]').val();
-    SupplierSearch.searchSupplierCode(code, sp_name).then(function(SpCodes){
+    SupplierSearch.searchSupplierCode(code, "").then(function(SpCodes){
       $scope.SpCodes = SpCodes;
-      console.log(SpCodes);
+      document.getElementById('supplier_name').value = "";
+      SupplierSearch.searchSupplierName(code, "").then(function(SpNames){
+      	for (key in SpNames){
+      		if(SpNames.hasOwnProperty(key)){
+      			var value = SpNames[key];
+      			document.getElementById('supplier_name').value = value;
+      		}else{      			
+      			document.getElementById('supplier_name').value = "";
+      		}
+      	}
+      });
     });
   }
 
   $scope.searchSupplierName = function(name) {
   	sp_code = $('input[name="supplier_code"]').val();
-	SupplierSearch.searchSupplierName(sp_code, name).then(function(SpNames){
+	SupplierSearch.searchSupplierName("", name).then(function(SpNames){
       $scope.SpNames = SpNames;
+      document.getElementById('supplier_code').value = "";
+      SupplierSearch.searchSupplierCode("", name).then(function(SpCodes){
+      	for (key in SpCodes){
+      		if(SpCodes.hasOwnProperty(key)){
+      			var value = SpCodes[key];
+      			document.getElementById('supplier_code').value = value;
+      		}else{      			
+      			document.getElementById('supplier_code').value = "";
+      		}
+      	}
+      });
       //console.log(SpNames);
     });
   }
