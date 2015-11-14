@@ -77,11 +77,11 @@ block content
 		.row
 			.col-md-10.space
 			.col-md-1.space.text-right
-				a(href="#SCN_PO021" data-toggle='modal', data-target='#myModal' name='addBtn' ng-click='addPdAlert()' ng-disabled="!(!!supplier.spCode && !!supplier.spName)")
+				a(href="#SCN_PO021" data-toggle='modal', data-target='#myModal' name='addBtn' ng-click='addPdAlert()' ng-disabled="!(!!supplier.spCode || !!supplier.spName)")
 					img(src="images/addBtn.png", alt="add new PO")
 
 
-				// Modal
+			// Modal
 			#myModal.modal.fade(role='dialog')
 				.modal-dialog
 					// Modal content
@@ -90,23 +90,30 @@ block content
 							button.close(type='button', data-dismiss='modal') x
 							h4.modal-title Please add product
 						.modal-body
-							form
+							form#productPriceSearchForm
 								.row
 									.col-md-3.space Product code :*
 									.col-md-9.space
-										input(name='product_code').form-control
+										//- input(name='product_code').form-control
+										input(keyboard-poster post-function='searchProductPriceCode' name='product_code' list='product_codes' ng-model='product.pdCode' id='product_code').form-control
+										datalist#product_codes
+											select#selectCode(name='_selectCode' ng-model='selectedPdCode' ng-options='k as v for (k,v) in PdCodes')
 								.row
 									.col-md-3.space Product name :*
 									.col-md-9.space
-										input(name='product_name').form-control
+										//- input(name='product_name').form-control
+										input(keyboard-poster post-function='searchProductPriceName' name='product_name' list='product_names' ng-model='product.pdName' id='product_name').form-control
+										datalist#product_names
+											select#selectName(name='_selectName' ng-model='selectedPdName' ng-options='k as v for (k,v) in PdNames')
 								.row
 									.col-md-3.space Qty :*
 									.col-md-9.space
-										input(name='qty').form-control
+										input(keyboard-poster post-function='addProductPrice' name='product_qty' id='product_qty' value="1").form-control
 								.row
 									.col-md-3.space Cost :
 									.col-md-9.space
-										input(name='product_code', readonly='true', value='0.00').form-control
+										//- input(name='product_price', readonly='true', value='0.00').form-control
+										input(name='product_price' list='product_prices' ng-model='product.pdPrice' id='product_price' readonly='true').form-control									
 								.row.text-right(style="margin:0;")
 									button.btn.btn-primary(type="submit", data-dismiss='modal') Confirm
 									button.btn.btn-default(type='button', data-dismiss='modal') Close
