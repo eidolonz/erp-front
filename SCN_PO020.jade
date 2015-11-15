@@ -58,20 +58,14 @@ block content
 						th Qty
 						th Total
 						th Action
-					tr
-						td 1
-						td product 2
-						td 100.00
-						td 4
-						td 400.00
+					tr(ng-repeat="item in items")
+						td {{$index+1}}
+						td {{item.ProductName}}
+						td {{item.Cost}}
+						td {{item.Qty}}
+						td {{item.Total}}
 						td [Edit] [Delete]
-					tr
-						td 2
-						td product 5
-						td 123.00
-						td 3
-						td 369.00
-						td [Edit] [Delete]
+
 			.col-sm-1.space
 
 		.row
@@ -115,8 +109,12 @@ block content
 										//- input(name='product_price', readonly='true', value='0.00').form-control
 										input(name='product_price' list='product_prices' ng-model='product.pdPrice' id='product_price' readonly='true').form-control									
 								.row.text-right(style="margin:0;")
-									button.btn.btn-primary(type="submit", data-dismiss='modal') Confirm
-									button.btn.btn-default(type='button', data-dismiss='modal') Close
+									input.btn.btn-primary(type="submit",value='submit', ng-click='addRow()' data-dismiss='modal')
+									button.btn.btn-default(type='button', onclick="clearFunc()" data-dismiss='modal') Close
+								script.
+									function clearFunc(){
+									document.getElementById("productPriceSearchForm").reset();
+									}
 			.col-md-1.space
 
 

@@ -149,6 +149,7 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch){
   $scope.PdNames = {};
   $scope.PdCodes = {};
   $scope.PdPrice = 0;
+  $scope.items = [];
   $scope.searchSupplierCode = function(code) {
   	sp_name = $('input[name="supplier_name"]').val();
     SupplierSearch.searchSupplierCode(code, "").then(function(SpCodes){
@@ -248,6 +249,19 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch){
   $scope.addProductPrice = function(){
   	var qty = document.getElementById('product_qty').value;
   	document.getElementById('product_price').value = $scope.PdPrice * qty;
+  }
+
+  $scope.addRow = function(){
+  	var name = document.getElementById('product_name').value;
+  	var qty = document.getElementById('product_qty').value;
+  	var total = document.getElementById('product_price').value;
+  	$scope.items.push({'ProductName': name, 'Cost': $scope.PdPrice, 'Qty': qty, 'Total':total});
+  	$scope.product_name = '';
+  	$scope.PdPrice = 0;
+  	$scope.product_qty = 1;
+  	$scope.product_price = 0;
+	document.getElementById("productPriceSearchForm").reset();
+
   }
 
   $scope.addPdAlert = function(){
