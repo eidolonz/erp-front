@@ -3,6 +3,7 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('PoController', controllerGetPO);
 app.controller('SupplierController', supplierController);
 app.controller('InventoryController', controllerGetAI);
+app.controller('ZoneController', zoneController);
 
 
 //_______________________ PO ____________________________________
@@ -350,3 +351,163 @@ function supplierController($scope, $http){
 
 }
 
+// ZONE CONTROLLER
+function zoneController($scope, $http, CurrentItem){
+
+  $scope.options = [
+    {
+      name: 'Zone type',
+      value: ''
+    },
+    {
+      name: 'Type 1 ',
+        value: 'type1'
+    }, 
+    {
+        name: 'Type 2',
+        value: 'type2'
+    },
+    {
+        name: 'Type 3',
+        value: 'type3'
+    },
+    {
+        name: 'Type 4',
+        value: 'type4'
+    }
+    ];
+
+  $scope.getZones = function(zone_type, zone_name){
+
+    if (angular.isUndefined(zone_type)) {
+      zone_type = ''
+    }
+
+    if (angular.isUndefined(zone_name)) {
+      zone_name = ''
+    }
+
+    console.log('getZones ' + zone_name + ' ' + zone_type)
+
+      url = "http://54.179.174.140/api/zone/search";
+      url = url + "?zone_type=" + zone_type + "&zone_name=" + zone_name;
+
+      $http.get(url)
+          .success(function (response) {
+          $scope.zones = response;
+        });
+  };
+
+  $scope.resetForm = function(){
+    $scope.zone_name = '';
+    $scope.zone_type = $scope.options[0].value;
+
+    $scope.getZones();
+  }
+
+  $scope.createZone = function(type, code, name, desc){
+
+    url = "http://54.179.174.140/api/zone";
+    console.log('create zone');
+    
+    $http.post(url, {
+      zone_name: name,
+        zone_type: type,
+        zone_desc: desc,
+        zone_id:   code
+    })
+      .success(function (response) {
+        console.log('succeed');
+          console.log(response);
+      });
+  }
+
+  $scope.deleteZone = function(id){
+
+    url = "http://54.179.174.140/api/zone/" + id;
+
+    console.log('delete zone');
+
+    $http.delete(url)
+      .success(function (response) {
+        console.log('succeed');
+          console.log(response);
+      });
+  }
+
+  $scope.updateZone = function(id){
+    url = "http://54.179.174.140/api/zone/" + id;
+
+    console.log('update zone : ')
+    console.log(url);
+    
+    type = $scope.current_zone_type
+    code = $('input[name="edit_zone_code"]').val();
+      name = $('input[name="edit_zone_name"]').val();
+    desc = $('textarea[name="edit_zone_desc"]').val();
+
+    console.log(type)
+    console.log(code)
+    console.log(name)
+    console.log(desc)
+
+    $http.put(url, {
+      zone_name: name,
+        zone_type: type,
+        zone_desc: desc,
+        zone_id:   code
+    })
+      .success(function (response) {
+        console.log('succeed');
+          console.log(response);
+      });
+  }
+
+  $scope.setCurrentZone = function(zone){
+    CurrentItem.set(zone);
+  }
+
+  $scope.getCurrentZone = function(zone){
+    return CurrentItem.get()
+  }
+
+  $scope.hasCurrentZone = function(){
+    
+    currentZone = $scope.getCurrentZone()
+    condition   = !(angular.isUndefined(currentZone) || currentZone === null)
+
+    if (condition) {
+
+      $scope.current_zone_type = currentZone.zone_type;
+      $scope.current_zone_name = currentZone.zone_name;
+      $scope.current_zone_code = currentZone.zone_id;
+      $scope.current_zone_desc = currentZone.zone_desc;
+
+      return condition
+    } 
+    else {
+      return condition
+    }
+  }
+
+
+  $scope.getZones();
+}
+
+app.factory('CurrentItem', function() {
+  
+  var item;
+  
+  function set(data) {
+      item = data;
+  }
+ 
+  function get() {
+      return item;
+  }
+
+  return {
+      set: set,
+      get: get
+  }
+});
