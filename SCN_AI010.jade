@@ -20,7 +20,9 @@ block content
 				.col-sm-3.space
 					select(name='zone').form-control
 						option(value='') Choose Zone
-						option(ng-repeat="pointer in inventory", value='{{pointer.zone_id.zone_id}}') {{pointer.zone_id.zone_id}}
+						//- option(ng-repeat="pointer in inventory", value='{{pointer.zone_id.zone_id}}') {{pointer.zone_id.zone_id}}
+						option(value='zn1001') zn1001
+						option(value='zn1002') zn1002
 				.col-sm-2.space Product Type:
 				.col-sm-3.space
 					select(name='product_type').form-control
@@ -35,7 +37,9 @@ block content
 				.col-md-3.space
 					select(name='product_status').form-control
 						option(value='') Choose Status
-						option(ng-repeat="pointer in inventory", value='{{pointer.pd_id.pd_status}}') {{pointer.pd_id.pd_status}}
+						//- option(ng-repeat="pointer in inventory", value='{{pointer.pd_id.pd_status}}') {{pointer.pd_id.pd_status}}
+						option(value='Active') Active
+						option(value='Inactive') Inactive
 				.col-sm-1.space
 				.col-sm-7.space
 				.col-sm-2.space
@@ -65,7 +69,7 @@ block content
 						td {{pointer.pd_id.pd_id}}
 						td {{pointer.pd_id.pd_type}}
 						td {{pointer.pd_id.pd_name}}
-						td {{pointer.zone_id.zone_name}}
+						td {{pointer.zone_id.zone_id}}
 						td {{pointer.quantity}}
 						td {{pointer.pd_id.safety_stock}}
 						td {{pointer.pd_id.pd_status}}
