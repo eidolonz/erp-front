@@ -55,31 +55,61 @@ block content
 				}	
 
 			table.product-table.table.table-striped(style="padding: 50;")
-				tr
-					th Product Code
-					th Product Type
-					th Product Name
-					th Zone
-					th Qty on-Hand
-					th Safety Stock
-					th Status
-					th Edit
-					th View
-				tr(ng-repeat="pointer in inventory", ng-class="{checkquant : pointer.quantity < pointer.pd_id.safety_stock}")
-						td {{pointer.pd_id.pd_id}}
-						td {{pointer.pd_id.pd_type}}
-						td {{pointer.pd_id.pd_name}}
-						td {{pointer.zone_id.zone_id}}
-						td {{pointer.quantity}}
-						td {{pointer.pd_id.safety_stock}}
-						td {{pointer.pd_id.pd_status}}
-						td 
-							a(href='SCN_AI020.html')
-								[Edit]
-						td 
-							a(href='SCN_AI030.html')
-								[View]
-				
+				thead
+					tr
+						th 
+							span(ng-click="orderByField='pd_id.pd_id'; reverseSort=!reverseSort") 
+								|	Product Code 
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+						th 
+							span(ng-click="orderByField='pd_id.pd_type'; reverseSort=!reverseSort") 
+								|	Product Type 
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+						th 
+							span(ng-click="orderByField='pd_id.pd_name'; reverseSort=!reverseSort") 
+								|	Product Name
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+						th Zone
+							span(ng-click="orderByField='zone_id.zone_id'; reverseSort=!reverseSort") 
+								|	Zone 
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+						th 
+							span(ng-click="orderByField='quantity'; reverseSort=!reverseSort") 
+								|	Qty on-Hand 
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+						th 
+							span(ng-click="orderByField='pd_id.safety_stock'; reverseSort=!reverseSort") 
+								|	Safety Stock
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+						th 
+							span(ng-click="orderByField='pd_id.pd_status'; reverseSort=!reverseSort") 
+								|	Status
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+						th Edit
+						th View
+				tbody
+					tr(ng-repeat="pointer in inventory|orderBy:orderByField:reverseSort", ng-class="{checkquant : pointer.quantity < pointer.pd_id.safety_stock}")
+							td {{pointer.pd_id.pd_id}}
+							td {{pointer.pd_id.pd_type}}
+							td {{pointer.pd_id.pd_name}}
+							td {{pointer.zone_id.zone_id}}
+							td {{pointer.quantity}}
+							td {{pointer.pd_id.safety_stock}}
+							td {{pointer.pd_id.pd_status}}
+							td 
+								a(href='SCN_AI020.html')
+									[Edit]
+							td 
+								a(href='SCN_AI030.html')
+									[View]
+					
 				
 		.col-sm-1.space
 		.col-sm-7.space

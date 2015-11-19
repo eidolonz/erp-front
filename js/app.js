@@ -331,6 +331,11 @@ function supplierController($scope, $http){
 
 // _________________AI______________________
  function controllerGetAI($scope, $http){
+
+
+  // setting Ordering
+  $scope.orderByField = 'pd_id.pd_id';
+  $scope.reverseSort = 'false';
   
   $scope.getai = function(){
     url = "http://54.179.174.140/api/inventory/search";
