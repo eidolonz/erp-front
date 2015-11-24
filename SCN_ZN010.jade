@@ -49,7 +49,7 @@ block content
 								th Zone Name
 								th Zone Desc
 								th Action
-							tr(ng-repeat="zone in zones")
+							tr(ng-repeat="zone in filteredZN")
 								th {{ $index }}
 								th {{ zone._id }}
 								td {{ zone.zone_type }}
@@ -58,6 +58,11 @@ block content
 								td {{ zone.zone_desc }}
 								td 	
 									a(href="#" ng-click="setCurrentZone(zone)") [Edit]
+					.col-sm-1.space
+
+				.row
+					.col-sm-11.space.text-right
+						div(data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true" style="margin-top:0;").pager
 					.col-sm-1.space
 
 				.row

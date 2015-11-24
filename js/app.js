@@ -392,6 +392,12 @@ function zoneController($scope, $http, CurrentItem){
     }
     ];
 
+  $scope.filteredZN = []
+  ,$scope.currentPage = 1
+  ,$scope.numPerPage = 10
+  ,$scope.maxSize = 5;
+
+
   $scope.getZones = function(zone_type, zone_name){
 
     if (angular.isUndefined(zone_type)) {
@@ -406,10 +412,11 @@ function zoneController($scope, $http, CurrentItem){
 
       url = "http://54.179.174.140/api/zone/search";
       url = url + "?zone_type=" + zone_type + "&zone_name=" + zone_name;
-
+      $scope.zones = [];
       $http.get(url)
           .success(function (response) {
           $scope.zones = response;
+          $scope.filteredZN = $scope.zones.slice(0, 10);
         });
   };
 
@@ -505,6 +512,21 @@ function zoneController($scope, $http, CurrentItem){
     }
   }
 
+  ////////////////////////////////////////////////////////////////
+  // setting number of Pagination
+ 
+  
+  $scope.numPages = function () {
+    console.log($scope.zones);
+    return Math.ceil($scope.zones.length / $scope.numPerPage);
+  };
+  $scope.$watch('currentPage + numPerPage', function() {
+    var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+    , end = begin + $scope.numPerPage;
+    
+  $scope.filteredZN = $scope.zones.slice(begin, end);
+  });
+  ///////////////////////////////////////////////////////////////
 
   $scope.getZones();
 }
