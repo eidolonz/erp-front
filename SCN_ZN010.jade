@@ -14,11 +14,6 @@ block content_title
 
 block content
 
-	script.
-		function clearFunc(){
-		document.getElementById("searchForm").reset();
-		}
-
 	div(ng-controller="ZoneController")
 		div(ng-show="!hasCurrentZone()")
 			form(id="searchForm")
@@ -26,32 +21,28 @@ block content
 					.col-sm-2.space Zone Type:
 					.col-md-3.space
 						//- select(ng-init="zone_type = options[0]" ng-model="zone_type" ng-options="option.name for option in options").form-control
-						select(ng-init="zone_type = zone_type || options[0].value", ng-model='zone_type', ng-options="option.value as option.name for option in options").form-control
+						select(ng-init="searchZoneType = options[0].value", ng-model='searchZoneType', ng-options="option.value as option.name for option in options").form-control
 					.col-sm-3.space Zone Name:
 					.col-sm-3.space
-						input.form-control(name='zone_name' type='text' ng-model='zone_name' placeholder='Find by zone name' value='')
+						input.form-control(ng-model='searchZoneName' type='text' placeholder='Find by zone name')
 					.col-sm-1.space
 
 					.col-sm-7
 					.col-sm-2.space
-						a.btn.btn-primary.btn-lg.btn-block(type='submit', name='search', ng-click="getZones(zone_type, zone_name)") Search
+						a.btn.btn-primary.btn-lg.btn-block(type='submit', ng-click="getZones()") Search
 					.col-sm-2.space
-						button.btn.btn-default.btn-lg.btn-block(type='button', onclick='clearFunc()', ng-click='resetForm()', name="clear") Clear
+						button.btn.btn-default.btn-lg.btn-block(type='button', ng-click='didClearButtonPress()') Clear
 					.col-sm-1.space
 
 					.col-sm-11.space
 						table.product-table.table.table-striped(style="padding: 50;")
 							tr
-								th index
-								th testID
 								th Zone Type
 								th Zone Code
 								th Zone Name
 								th Zone Desc
 								th Action
 							tr(ng-repeat="zone in filteredZN")
-								th {{ $index }}
-								th {{ zone._id }}
 								td {{ zone.zone_type }}
 								td {{ zone.zone_id }}
 								td {{ zone.zone_name }}
@@ -76,37 +67,36 @@ block content
 			.col-sm-6.space
 				//- 1st line
 				.col-sm-3.space
-				.col-sm-3.space {{current_zone_type + " " + edit_zone_name + " " + edit_zone_code + " " + edit_zone_desc}}:
+				.col-sm-3.space Zone Type;
 				.col-sm-6.space
-					select(ng-init="current_zone_type = current_zone_type", ng-model='current_zone_type', ng-options="option.value as option.name for option in options").form-control
+					select(ng-model='currentZone.zone_type', ng-options="option.value as option.name for option in options").form-control
 
 				//- 2nd line
 				.col-sm-3.space
 				.col-sm-3.space Zone Code:
 				.col-md-6.space
-					input#disabledInput.form-control(ng-model='current_zone_code' name='edit_zone_code' type='text', placeholder='Zone Code' disabled='')
+					input#disabledInput.form-control(ng-model='currentZone.zone_id'  type='text', placeholder='Zone Code' disabled='')
 
 				//- 3rd line
 				.col-sm-3.space
 				.col-sm-3.space Zone Name:
 				.col-md-6.space
-					input.form-control(name='edit_zone_name' type='text', placeholder='Zone Name', value='{{current_zone_name}}')
+					input.form-control(ng-model='currentZone.zone_name' type='text', placeholder='Zone Name')
 
 				//- 4th line
 				.col-sm-3.space
 				.col-sm-3.space Zone Desc:
 				.col-md-6.space
-					textarea.form-control(name='edit_zone_desc' rows='4') {{current_zone_desc}}
+					textarea.form-control(ng-model='currentZone.zone_desc' name='edit_zone_desc' rows='4')
 				//- 5th line
 				.col-sm-6.space
 				.col-sm-6.space
-					button.btn.btn-primary.btn-lg.btn-block(type='button', name='save', ng-click="updateZone(getCurrentZone()._id)") Save
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='save', ng-click="updateZone($event)") Save
 
 				//- 6th line
 				.col-sm-6.space
 				.col-sm-3.space
-					button.btn.btn-danger.btn-lg.btn-block(type='button', name='delete', ng-click="deleteZone(getCurrentZone()._id)") Delete
+					button.btn.btn-danger.btn-lg.btn-block(type='button', ng-click="deleteZone($event)") Delete
 				.col-sm-3.space
-					a(ng-href='SCN_ZN010.html')
-						button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
+					button.btn.btn-default.btn-lg.btn-block(type='button' ng-click="goToMainPage()") Cancel
 

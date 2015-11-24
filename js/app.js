@@ -340,8 +340,9 @@ app.directive('keyboardPoster', function($parse, $timeout){
 }
 
 // ZONE CONTROLLER
-function zoneController($scope, $http, CurrentItem){
+function zoneController($scope, $http){
 
+  $scope.currentZone = null;
   $scope.options = [
     {
       name: 'Zone type',
@@ -349,89 +350,74 @@ function zoneController($scope, $http, CurrentItem){
     },
     {
       name: 'Type 1',
-        value: 'type1'
+      value: 'type1'
     }, 
     {
-        name: 'Type 2',
-        value: 'type2'
+      name: 'Type 2',
+      value: 'type2'
     },
     {
-        name: 'Type 3',
-        value: 'type3'
+      name: 'Type 3',
+      value: 'type3'
     },
     {
-        name: 'Type 4',
-        value: 'type4'
+      name: 'Type 4',
+      value: 'type4'
     }
-    ];
+  ];
 
   $scope.filteredZN = []
   ,$scope.currentPage = 1
   ,$scope.numPerPage = 10
   ,$scope.maxSize = 5;
 
+  $scope.getZones = function(){
 
-  $scope.getZones = function(zone_type, zone_name){
+    zone_type = "?zone_type=" + $scope.searchZoneType;
+    zone_name = "&zone_name=" + $scope.searchZoneName;
 
-    if (angular.isUndefined(zone_type)) {
-      zone_type = ''
-    }
+    url = "http://54.179.174.140/api/zone/search" + zone_type + zone_name;
 
-    if (angular.isUndefined(zone_name)) {
-      zone_name = ''
-    }
-
-    console.log('getZones ' + zone_name + ' ' + zone_type)
-
-      url = "http://54.179.174.140/api/zone/search";
-      url = url + "?zone_type=" + zone_type + "&zone_name=" + zone_name;
-      $scope.zones = [];
-      $http.get(url)
-          .success(function (response) {
-          $scope.zones = response;
-          $scope.filteredZN = $scope.zones.slice(0, 10);
-        });
+    $scope.zones = [];
+    $http.get(url)
+        .success(function (response) {
+        $scope.zones = response;
+        $scope.filteredZN = $scope.zones.slice(0, 10);
+      });
   };
 
-  $scope.resetForm = function(){
-    $scope.zone_name = '';
-    $scope.zone_type = $scope.options[0].value;
-
-    $scope.getZones();
-  }
-
-  $scope.createZone = function(type, code, name, desc, $event){
+  $scope.createZone = function($event){
 
     $event.preventDefault()
 
     url = "http://54.179.174.140/api/zone";
     
     $http.post(url, {
-      zone_name: name,
-      zone_type: type,
-      zone_desc: desc,
-      zone_id:   code
+      zone_name: $scope.createZone.zone_name,
+      zone_type: $scope.createZone.zone_type,
+      zone_desc: $scope.createZone.zone_desc,
+      zone_id:   $scope.createZone.zone_id
     })
       .success(function (response) {
         console.log('succeed');
         console.log(response);
         
-        window.location.href = 'SCN_ZN010.html'
+        $scope.goToMainPage()
       });
   }
 
-  $scope.deleteZone = function(id, $event){
+  $scope.deleteZone = function($event){
 
     $event.preventDefault()
 
-    url = "http://54.179.174.140/api/zone/" + id;
+    url = "http://54.179.174.140/api/zone/" + $scope.currentZone._id;
 
     $http.delete(url)
       .success(function (response) {
         console.log('succeed');
         console.log(response);
 
-        $scope.resetCurrentZone();
+        $scope.goToMainPage();
       });
   }
 
@@ -439,42 +425,39 @@ function zoneController($scope, $http, CurrentItem){
 
     $event.preventDefault()
 
-    url = "http://54.179.174.140/api/zone/" + currentZone._id;
+    url = "http://54.179.174.140/api/zone/" + $scope.currentZone._id;
 
     $http.put(url, {
-      zone_name: currentZone.zone_name,
-      zone_type: currentZone.zone_type,
-      zone_desc: currentZone.zone_desc,
-      zone_id:   currentZone.zone_id
+      zone_name: $scope.currentZone.zone_name,
+      zone_type: $scope.currentZone.zone_type,
+      zone_desc: $scope.currentZone.zone_desc,
+      zone_id:   $scope.currentZone.zone_id
     })
       .success(function (response) {
         console.log('succeed');
         console.log(response);
 
-        $scope.resetCurrentZone();
+        $scope.goToMainPage();
       });
   }
 
-  $scope.resetCurrentZone = function() {
-    $scope.setCurrentZone(null);
+  $scope.didClearButtonPress = function () {
+    $scope.searchZoneType = $scope.options[0].value;
+    $scope.searchZoneName = '';
+
     $scope.getZones();
   }
 
-  $scope.setCurrentZone = function(zone){
-    $scope.currentZone = zone
-    CurrentItem.set(zone);
+  $scope.goToMainPage = function() {
+    window.location.href = 'SCN_ZN010.html'
   }
 
-  $scope.getCurrentZone = function(zone){
-    return CurrentItem.get()
+  $scope.setCurrentZone = function(zone) {
+    $scope.currentZone = zone
   }
 
   $scope.hasCurrentZone = function(){
-    
-    currentZone = $scope.getCurrentZone()
-    condition   = !(angular.isUndefined(currentZone) || currentZone === null)
-
-    return condition
+    return !(angular.isUndefined($scope.currentZone) || $scope.currentZone === null);
   }
 
   ////////////////////////////////////////////////////////////////
@@ -494,26 +477,9 @@ function zoneController($scope, $http, CurrentItem){
 
   ///////////////////////////////////////////////////////////////
 
-  $scope.getZones();
+  // Get zones when first visit
+  $scope.didClearButtonPress();
 }
-
-app.factory('CurrentItem', function() {
-  
-  var item;
-  
-  function set(data) {
-      item = data;
-  }
- 
-  function get() {
-      return item;
-  }
-
-  return {
-      set: set,
-      get: get
-  }
-});
 
 // SUPPLY PRODUCT 
 
@@ -574,7 +540,7 @@ function supplierController($scope, $http){
   };
 
   $scope.createSupplier = function () {
-
+    // TODO
   }
   
   $scope.didClearButtonPress = function () {
@@ -591,9 +557,6 @@ function supplierController($scope, $http){
   }
 
   $scope.hasCurrentSupplier = function () {
-    if (!(angular.isUndefined($scope.currentSupplier) || $scope.currentSupplier === null)) {
-      console.log($scope.currentSupplier);
-    }
     return !(angular.isUndefined($scope.currentSupplier) || $scope.currentSupplier === null);
   }
 

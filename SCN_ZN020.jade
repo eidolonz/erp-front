@@ -18,28 +18,27 @@ block content
 			.col-md-3.space
 			.col-md-3.space Zone Type:
 			.col-md-6.space
-				select(ng-init="zone_type = zone_type || options[0].value", ng-model='zone_type', ng-options="option.value as option.name for option in options").form-control
+				select(ng-init="createZone.zone_type = createZone.zone_type || options[0].value", ng-model='createZone.zone_type', ng-options="option.value as option.name for option in options").form-control
 			
 			.col-md-3.space
 			.col-md-3.space Zone Code:
 			.col-md-6.space
-				input.form-control(name='zone_code' type='text' placeholder='Zone Code' value='' ng-model='zone_code')
+				input.form-control(ng-init="createZone.zone_id = null" ng-model='createZone.zone_id' type='text' placeholder='Zone Code')
 
 			.col-sm-3.space
 			.col-sm-3.space Zone Name:
 			.col-md-6.space
-				input.form-control(name='zone_name' type='text' placeholder='Zone Name' value='' ng-model='zone_name')
+				input.form-control(ng-init="createZone.zone_name = null" ng-model='createZone.zone_name' type='text' placeholder='Zone Name')
 
 			.col-sm-3.space
 			.col-sm-3.space Zone Desc:
 			.col-md-6.space
-				textarea.form-control(rows="3" name='zone_desc' placeholder='Zone Desc' value='' ng-model='zone_desc')
+				textarea.form-control(ng-model='createZone.zone_desc' rows="3" placeholder='Zone Desc')
 
 			//- 5th line
 			.col-sm-6.space
 			.col-sm-3.space
-				button.btn.btn-primary.btn-lg.btn-block(href='SCN_ZN010.html' type='button', name='save', ng-click='createZone(zone_type, zone_code, zone_name, zone_desc)') Create
+				button.btn.btn-primary.btn-lg.btn-block(href='SCN_ZN010.html' type='button', ng-click='createZone($event)') Create
 			.col-sm-3.space
-				a(ng-href='SCN_ZN010.html')
-					button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
+				button.btn.btn-default.btn-lg.btn-block(type='button' ng-click="goToMainPage()") Cancel
 
