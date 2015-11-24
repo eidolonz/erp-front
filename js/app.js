@@ -310,33 +310,6 @@ app.directive('keyboardPoster', function($parse, $timeout){
     }
   }
 });
- // _________________SP______________________
-
-function supplierController($scope, $http){
-  
-  $scope.getSuppliers = function(){
-    url         = "http://54.179.174.140/api/supplier/search";
-    sp_code     = $('input[name="supplier_code"]').val();
-    sp_name     = $('input[name="supplier_name"]').val();
-    sp_status   = $('select[name="supplier_status"]').val();
-    url         = url + "?code=" + sp_code + "&name=" + sp_name + "&status=" + sp_status;
-    console.log(url);
-
-    // get เรียก data // post สร้างดาต้า // put อัพเดด // delete ลบ
-    
-    $http.get(url)
-      .success(function (response) {
-        $scope.suppliers = response;
-      });
-
-    // $http.put(url+'/562e5cfbd6450f2120ed2a73', {
-    //   name: 'Test',
-    //   logo: 'path image'
-    // });
-  };
-
-  $scope.getSuppliers();
- }
 
 
 // _________________AI______________________
@@ -375,7 +348,7 @@ function zoneController($scope, $http, CurrentItem){
       value: ''
     },
     {
-      name: 'Type 1 ',
+      name: 'Type 1',
         value: 'type1'
     }, 
     {
@@ -427,65 +400,68 @@ function zoneController($scope, $http, CurrentItem){
     $scope.getZones();
   }
 
-  $scope.createZone = function(type, code, name, desc){
+  $scope.createZone = function(type, code, name, desc, $event){
+
+    $event.preventDefault()
 
     url = "http://54.179.174.140/api/zone";
-    console.log('create zone');
     
     $http.post(url, {
       zone_name: name,
-        zone_type: type,
-        zone_desc: desc,
-        zone_id:   code
+      zone_type: type,
+      zone_desc: desc,
+      zone_id:   code
     })
       .success(function (response) {
         console.log('succeed');
-          console.log(response);
+        console.log(response);
+        
+        window.location.href = 'SCN_ZN010.html'
       });
   }
 
-  $scope.deleteZone = function(id){
+  $scope.deleteZone = function(id, $event){
+
+    $event.preventDefault()
 
     url = "http://54.179.174.140/api/zone/" + id;
-
-    console.log('delete zone');
 
     $http.delete(url)
       .success(function (response) {
         console.log('succeed');
-          console.log(response);
+        console.log(response);
+
+        $scope.resetCurrentZone();
       });
   }
 
-  $scope.updateZone = function(id){
-    url = "http://54.179.174.140/api/zone/" + id;
+  $scope.updateZone = function($event){
 
-    console.log('update zone : ')
-    console.log(url);
-    
-    type = $scope.current_zone_type
-    code = $('input[name="edit_zone_code"]').val();
-      name = $('input[name="edit_zone_name"]').val();
-    desc = $('textarea[name="edit_zone_desc"]').val();
+    $event.preventDefault()
 
-    console.log(type)
-    console.log(code)
-    console.log(name)
-    console.log(desc)
+    url = "http://54.179.174.140/api/zone/" + currentZone._id;
 
     $http.put(url, {
-      zone_name: name,
-        zone_type: type,
-        zone_desc: desc,
-        zone_id:   code
+      zone_name: currentZone.zone_name,
+      zone_type: currentZone.zone_type,
+      zone_desc: currentZone.zone_desc,
+      zone_id:   currentZone.zone_id
     })
       .success(function (response) {
         console.log('succeed');
-          console.log(response);
+        console.log(response);
+
+        $scope.resetCurrentZone();
       });
   }
 
+  $scope.resetCurrentZone = function() {
+    $scope.setCurrentZone(null);
+    $scope.getZones();
+  }
+
   $scope.setCurrentZone = function(zone){
+    $scope.currentZone = zone
     CurrentItem.set(zone);
   }
 
@@ -498,34 +474,24 @@ function zoneController($scope, $http, CurrentItem){
     currentZone = $scope.getCurrentZone()
     condition   = !(angular.isUndefined(currentZone) || currentZone === null)
 
-    if (condition) {
-
-      $scope.current_zone_type = currentZone.zone_type;
-      $scope.current_zone_name = currentZone.zone_name;
-      $scope.current_zone_code = currentZone.zone_id;
-      $scope.current_zone_desc = currentZone.zone_desc;
-
-      return condition
-    } 
-    else {
-      return condition
-    }
+    return condition
   }
 
   ////////////////////////////////////////////////////////////////
   // setting number of Pagination
- 
-  
+
   $scope.numPages = function () {
     console.log($scope.zones);
     return Math.ceil($scope.zones.length / $scope.numPerPage);
   };
+
   $scope.$watch('currentPage + numPerPage', function() {
     var begin = (($scope.currentPage - 1) * $scope.numPerPage)
     , end = begin + $scope.numPerPage;
     
   $scope.filteredZN = $scope.zones.slice(begin, end);
   });
+
   ///////////////////////////////////////////////////////////////
 
   $scope.getZones();
@@ -548,3 +514,89 @@ app.factory('CurrentItem', function() {
       get: get
   }
 });
+
+// SUPPLY PRODUCT 
+
+function supplyProduct($scope, $http){
+
+  $scope.searchProducts = function(productCode) {
+    
+    $scope.currentProduct = null;
+
+    angular.forEach($scope.products, function(value, key){
+      console.log(value.pd_id.pd_id)
+         if(value.pd_id.pd_id == productCode) {
+           $scope.currentProduct = value;
+           console.log('Found -> ' + $scope.currentProduct.pd_id.pd_id);
+         }   
+      });
+  }
+
+  $scope.supplyProduct = function ($event) {
+    $event.preventDefault()
+    window.location.href = window.history.back(1);
+  }
+
+  $scope.getProducts = function(){
+    url = "http://54.179.174.140/api/inventory";
+    console.log(url);
+    $http.get(url)
+      .success(function (response) {
+        $scope.products = response;
+      });
+  };
+
+  $scope.getProducts();
+ }
+
+
+// SUPPLIERS CONTORLLER
+
+function supplierController($scope, $http){
+
+  $scope.currentSupplier = null;
+
+  $scope.getSuppliers = function () {
+
+    code = '?code='  + $scope.searchSupplierCode;
+    name = '&name='  + $scope.searchSupplierName;
+    stat = '&status=' + $scope.searchSupplierStatus;
+
+    url = "http://54.179.174.140/api/supplier/search";
+    url = url + code + name + stat;
+
+    console.log(url);
+
+    $http.get(url)
+      .success(function (response) {
+        $scope.suppliers = response;
+      });
+  };
+
+  $scope.createSupplier = function () {
+
+  }
+  
+  $scope.didClearButtonPress = function () {
+
+    $scope.searchSupplierCode = '';
+    $scope.searchSupplierName = '';
+    $scope.searchSupplierStatus = '';
+
+    $scope.getSuppliers();
+  }  
+
+  $scope.setCurrentSupplier = function (index) {
+    $scope.currentSupplier = $scope.suppliers[index];
+  }
+
+  $scope.hasCurrentSupplier = function () {
+    if (!(angular.isUndefined($scope.currentSupplier) || $scope.currentSupplier === null)) {
+      console.log($scope.currentSupplier);
+    }
+    return !(angular.isUndefined($scope.currentSupplier) || $scope.currentSupplier === null);
+  }
+
+  $scope.didClearButtonPress();
+
+ }

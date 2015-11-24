@@ -15,65 +15,143 @@ block content_title
 
 block content
 
-	script.
-		function clearFunc(){
-		document.getElementById("searchForm").reset();
-		}
-
 	div(ng-controller="SupplierController")
-		form(id="searchForm" action="http://54.179.174.140/api/supplier/search")
+		dic(ng-show="!hasCurrentSupplier()")
+			form(id="searchForm")
+				.row
+				.col-sm-3.space Supplier code {{searchSupplierCode}}:
+				.col-sm-3.space
+					input.form-control(ng-model='searchSupplierCode' name='supplier_code' type='text', placeholder='Supplier code' value='' list='suplier_code')
+					datalist#suplier_code
+						option(value='{{supplier.code}}', ng-repeat='supplier in suppliers')
+
+				.col-sm-2.space Supplier Name:
+				.col-sm-3.space
+					input.form-control(ng-model='searchSupplierName' name='supplier_name' type='text', placeholder='Supplier name' value='' list='suplier_name')
+					datalist#suplier_name
+						option(value='{{supplier.name}}', ng-repeat='supplier in suppliers')
+							
+				.col-sm-1.space
+				.col-sm-3.space Supplier Status:
+				.col-md-3.space
+					select(ng-model='searchSupplierStatus' name='supplier_status', value='', placeholder='Product Status').form-control
+						option(value='') Find by Product Status
+						option(value='Status2') Status 2
+						option(value='Status3') Status 3
+						option(value='Status4') Status 4
+				.col-sm-1.space
+				.col-sm-7.space
+				.col-sm-2.space
+					a.btn.btn-primary.btn-lg.btn-block(type='submit', name='search', ng-click="getSuppliers()") Search
+				.col-sm-2.space
+					button.btn.btn-default.btn-lg.btn-block(type='button', ng-click='didClearButtonPress()', name="clear") Clear
+				.col-sm-1.space
+				.col-sm-11.space
+
+					//- Product template
+
+					a(ng-click="setCurrentSupplier($index)").col-sm-3.space(style="height:120px; border: 1px solid #C5C5C5; border-radius: 5px 5px;margin:10px;width:30%" 
+					ng-repeat="supplier in suppliers")
+						.col-sm-6.space(style="margin:-10px")
+							img.productPic(ng-src="http://54.179.174.140/uploads/{{supplier.image}}",alt="Smiley face", height="100%", width="100%")
+						.col-sm-6.space(style="height:100%; margin-top:-20px")
+							.row
+								.col-sm-12.space
+									//- from angular
+									div Code : {{supplier.code}}
+								.col-sm-12.space
+									//- from angular
+									div Name : {{supplier.name}}
+								.col-sm-12.space
+									//- from angular
+									div Status : {{supplier.status}}
+					
+				.col-sm-1.space
+			.row		
+				.col-sm-7.space
+				.col-sm-4.space
+					a(href="SCN_SP020.html")
+						button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Create New Supplier
+				.col-sm-1.space
+
+		div(ng-show="hasCurrentSupplier()")
 			.row
-			.col-sm-3.space Supplier code:
-			.col-sm-3.space
-				input.form-control(name='supplier_code' type='text', placeholder='Supplier code' value='' list='suplier_code')
-				datalist#suplier_code
-					option(value='{{supplier.code}}', ng-repeat='supplier in suppliers')
+				//- Left side
+				.col-sm-6.space
+						.col-sm-1.space
+						.col-sm-5.space Code :*
+						.col-sm-6.space 
+							input#disabledInput(ng-model='currentSupplier.code' type="text" name='supplier_code' placeholder='Supplier Code',disabled='').form-control
 
-			.col-sm-2.space Supplier Name:
-			.col-sm-3.space
-				input.form-control(name='supplier_name' type='text', placeholder='Supplier name' value='' list='suplier_name')
-				datalist#suplier_name
-					option(value='{{supplier.name}}', ng-repeat='supplier in suppliers')
-						
-			.col-sm-1.space
-			.col-sm-3.space Supplier Status:
-			.col-md-3.space
-				select(name='supplier_status', value='', placeholder='Product Status').form-control
-					option(value='') Find by Product Status
-					option(value='Status2') Status 2
-					option(value='Status3') Status 3
-					option(value='Status4') Status 4
-			.col-sm-1.space
-			.col-sm-7.space
-			.col-sm-2.space
-				a.btn.btn-primary.btn-lg.btn-block(type='submit', name='search', ng-click="getSuppliers()") Search
-			.col-sm-2.space
-				button.btn.btn-default.btn-lg.btn-block(type='button', onclick='clearFunc()', ng-click='getSuppliers()', name="clear") Clear
-			.col-sm-1.space
-			.col-sm-11.space
+						.col-sm-1.space
+						.col-sm-5.space Name :*
+						.col-sm-6.space 
+							input(ng-model='currentSupplier.name' type="text" name='supplier_name' placeholder='Supplier Name').form-control
 
-				//Product template
+						.col-sm-1.space
+						.col-sm-5.space Delivery Lead Time :*
+						.col-sm-6.space 
+							input(ng-model='currentSupplier.delivery_day' type="text" name='delivery' placeholder='Delivery Lead Time').form-control
 
-				a(href="http://54.179.174.140/api/supplier/{{supplier._id}}").col-sm-3.space(style="height:120px; border: 1px solid #C5C5C5; border-radius: 5px 5px;margin:10px;width:30%" 
-				ng-repeat="supplier in suppliers")
-					.col-sm-6.space(style="margin:-10px")
-						img.productPic(ng-src="http://54.179.174.140/uploads/{{supplier.image}}",alt="Smiley face", height="100%", width="100%")
-					.col-sm-6.space(style="height:100%; margin-top:-20px")
-						.row
-							.col-sm-12.space
-								//- from angular
-								div Code : {{supplier.code}}
-							.col-sm-12.space
-								//- from angular
-								div Name : {{supplier.name}}
-							.col-sm-12.space
-								//- from angular
-								div Status : {{supplier.status}}
+						.col-sm-1.space
+						.col-sm-5.space Address :*
+						.col-sm-6.space 
+							textarea.input(ng-model='currentSupplier.address' type="texta" name='address' placeholder='Delivery Lead Time').form-control
+
+						.col-sm-1.space
+						.col-sm-5.space	Logo :
+						.col-sm-6.space 
+							img.productPic(ng-src="http://54.179.174.140/uploads/{{currentSupplier.image}}",alt="Smiley face", height="250px", width="250px")
+
+						.col-sm-6.space
+						.col-sm-6.space
+							input(type="file" name='browse').form-control
+					
+				//- Right side
+				.col-sm-6.space
+					.row
+						.col-sm-1.space
+						.col-sm-4.space Website :
+						.col-sm-6.space 
+							input(ng-model='currentSupplier.website' type="text" name='website' placeholder='Supplier Website').form-control
+					.row
+						.col-sm-1.space
+						.col-sm-4.space Phone :*
+						.col-sm-6.space 
+							input(ng-model='currentSupplier.phone' type="text" name='phone' placeholder='Supplier Phone').form-control
+					.row
+						.col-sm-1.space
+						.col-sm-4.space Fax :
+						.col-sm-6.space 
+							input(ng-model='currentSupplier.fax' type="text" name='fax' placeholder='Supplier Fax').form-control
+					.row
+						.col-sm-1.space
+						.col-sm-4.space Sale Person :
+						.col-sm-6.space 
+							input(ng-model='currentSupplier.sale_person_name' type="text" name='salesperson' placeholder='Supplier Sale Person').form-control
+					.row
+						.col-sm-1.space
+						.col-sm-4.space Mobile :
+						.col-sm-6.space 
+							input(ng-model='currentSupplier.sale_person_mobile' type="text" name='mobile' placeholder='Supplier Mobile').form-control
+					.row
+						.col-sm-1.space
+						.col-sm-4.space Status :*
+						.col-sm-6.space 
+							select(name='product_status', value='status', placeholder='Product Status').form-control
+								option(value='Status1') Status 1
+								option(value='Status2') Status 2
+								option(value='Status3') Status 3
+								option(value='Status4') Status 4
 				
-			.col-sm-1.space
-		.row		
-			.col-sm-7.space
-			.col-sm-4.space
-				a(href="SCN_SP020.html")
-					button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Create New Supplier
-			.col-sm-1.space
+			.row
+					.col-sm-7.space
+					.col-sm-2.space
+						button.btn.btn-primary.btn-lg.btn-block(type='button',name='save') Save
+					.col-sm-2.space
+						a(href="SCN_SP010.html")
+							button.btn.btn-default.btn-lg.btn-block(type='button',name='cancel') Cancel
+					.col-sm-1.space
+
+			
+
