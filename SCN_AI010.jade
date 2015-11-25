@@ -10,110 +10,144 @@ block style
 		.label { text-align: left; }
 
 block content_title
-	p Current Inventory
+	div(ng-controller="InventoryController")
+		div(ng-show="!hasCurrentAI()") Current Inventory
+		div(ng-show="hasCurrentAI()") Edit Inventory
 
 block content
 	div(ng-controller="InventoryController")
-		.row
-			form(id="searchForm" action="http://54.179.174.140/api/inventory/search")
-				.col-sm-3.space Zone:
+		div(ng-show="!hasCurrentAI()")
+			.row
+				form(id="searchForm" action="http://54.179.174.140/api/inventory/search")
+					.col-sm-3.space Zone:
+					.col-sm-3.space
+						select(name='zone').form-control
+							option(value='') Choose Zone
+							//- option(ng-repeat="pointer in inventory", value='{{pointer.zone_id.zone_id}}') {{pointer.zone_id.zone_id}}
+							option(value='zn1001') zn1001
+							option(value='zn1002') zn1002
+					.col-sm-2.space Product Type:
+					.col-sm-3.space
+						select(name='product_type').form-control
+							option(value='') Choose Product Type
+							option(ng-repeat="pointer in inventory", value='{{pointer.pd_id.pd_type}}') {{pointer.pd_id.pd_type}}
+					.col-sm-1.space
+					.col-sm-3.space Product Name:
+					.col-md-3.space
+						input.form-control(type='text', name="product_name", placeholder='Product')
+					.col-sm-2.space
+						p Product Status:
+					.col-md-3.space
+						select(name='product_status').form-control
+							option(value='') Choose Status
+							//- option(ng-repeat="pointer in inventory", value='{{pointer.pd_id.pd_status}}') {{pointer.pd_id.pd_status}}
+							option(value='Active') Active
+							option(value='Inactive') Inactive
+					.col-sm-1.space
+					.col-sm-7.space
+					.col-sm-2.space
+						button.btn.btn-primary.btn-lg.btn-block(type='button', ng-click='getai()', name="search") Search
+					.col-sm-2.space
+						button.btn.btn-default.btn-lg.btn-block(type='button', onclick='clearFunc()', ng-click='getai()', name="clear") Clear
+					.col-sm-1.space
+					.col-sm-11.space
+
+				script.
+					function clearFunc(){
+					document.getElementById("searchForm").reset();
+					}	
+
+				table.product-table.table.table-striped(style="padding: 50;")
+					thead
+						tr
+							th 
+								span(ng-click="orderByField='pd_id.pd_id'; reverseSort=!reverseSort") 
+									|	Product Code 
+									span(ng-show="!reverseSort")
+									span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='pd_id.pd_type'; reverseSort=!reverseSort") 
+									|	Product Type 
+									span(ng-show="!reverseSort")
+									span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='pd_id.pd_name'; reverseSort=!reverseSort") 
+									|	Product Name
+									span(ng-show="!reverseSort")
+									span(ng-show="reverseSort")
+							th Zone
+								span(ng-click="orderByField='zone_id.zone_id'; reverseSort=!reverseSort") 
+									|	Zone 
+									span(ng-show="!reverseSort")
+									span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='quantity'; reverseSort=!reverseSort") 
+									|	Qty on-Hand 
+									span(ng-show="!reverseSort")
+									span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='pd_id.safety_stock'; reverseSort=!reverseSort") 
+									|	Safety Stock
+									span(ng-show="!reverseSort")
+									span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='pd_id.pd_status'; reverseSort=!reverseSort") 
+									|	Status
+									span(ng-show="!reverseSort")
+									span(ng-show="reverseSort")
+							th Edit
+							th View
+					tbody
+						tr(ng-repeat="pointer in inventory|orderBy:orderByField:reverseSort", ng-class="{checkquant : pointer.quantity < pointer.pd_id.safety_stock}")
+								td {{pointer.pd_id.pd_id}}
+								td {{pointer.pd_id.pd_type}}
+								td {{pointer.pd_id.pd_name}}
+								td {{pointer.zone_id.zone_id}}
+								td {{pointer.quantity}}
+								td {{pointer.pd_id.safety_stock}}
+								td {{pointer.pd_id.pd_status}}
+								td 
+									a(href="#" ng-click="setCurrentInventory(pointer)")
+										[Edit]
+								td 
+									a(href='SCN_AI030.html')
+										[View]
+					
+			.col-sm-1.space
+			.col-sm-7.space
+			.col-sm-4.space
+				a(href='SCN_AI040.html')
+					button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Supply
+			.col-sm-1.space
+
+		div(ng-show="hasCurrentAI()")
+			.row
+				.col-sm-3.space Product Type:
 				.col-sm-3.space
-					select(name='zone').form-control
-						option(value='') Choose Zone
-						//- option(ng-repeat="pointer in inventory", value='{{pointer.zone_id.zone_id}}') {{pointer.zone_id.zone_id}}
-						option(value='zn1001') zn1001
-						option(value='zn1002') zn1002
-				.col-sm-2.space Product Type:
+					select#disabledInput.form-control(ng-model='currentAI.pd_id.pd_type',ng-options="zone.zone_id as zone.zone_id for zone in zones", disabled='')
+				.col-sm-2.space Zone:
 				.col-sm-3.space
-					select(name='product_type').form-control
-						option(value='') Choose Product Type
-						option(ng-repeat="pointer in inventory", value='{{pointer.pd_id.pd_type}}') {{pointer.pd_id.pd_type}}
+					select(ng-model='currentAI.zone_id.zone_id', ng-options="zone.zone_id as zone.zone_id for zone in zones").form-control
+						
+				.col-sm-1.space
+				.col-sm-3.space Product Code:
+				.col-md-3.space
+					input#disabledInput.form-control(ng-model="currentAI.pd_id.pd_id",type='text', placeholder='Product Code', disabled='')
+				.col-sm-2.space Safety Stock:
+				.col-md-3.space
+					input.form-control(ng-model="currentAI.pd_id.safety_stock",type='text', placeholder='Product Code', value='100')
 				.col-sm-1.space
 				.col-sm-3.space Product Name:
 				.col-md-3.space
-					input.form-control(type='text', name="product_name", placeholder='Product')
-				.col-sm-2.space
-					p Product Status:
+					input#disabledInput.form-control(ng-model="currentAI.pd_id.pd_name",type='text', placeholder='Product Name', disabled='')
+				.col-sm-2.space Qty On-Hands:
 				.col-md-3.space
-					select(name='product_status').form-control
-						option(value='') Choose Status
-						//- option(ng-repeat="pointer in inventory", value='{{pointer.pd_id.pd_status}}') {{pointer.pd_id.pd_status}}
-						option(value='Active') Active
-						option(value='Inactive') Inactive
+					input.form-control(ng-model="currentAI.quantity", type='text', placeholder='Product Code' value='1000')
 				.col-sm-1.space
 				.col-sm-7.space
 				.col-sm-2.space
-					button.btn.btn-primary.btn-lg.btn-block(type='button', ng-click='getai()', name="search") Search
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='save') Save
 				.col-sm-2.space
-					button.btn.btn-default.btn-lg.btn-block(type='button', onclick='clearFunc()', ng-click='getai()', name="clear") Clear
+					a(href="SCN_AI010.html")
+						button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
 				.col-sm-1.space
-				.col-sm-11.space
-
-			script.
-				function clearFunc(){
-				document.getElementById("searchForm").reset();
-				}	
-
-			table.product-table.table.table-striped(style="padding: 50;")
-				thead
-					tr
-						th 
-							span(ng-click="orderByField='pd_id.pd_id'; reverseSort=!reverseSort") 
-								|	Product Code 
-								span(ng-show="!reverseSort")
-								span(ng-show="reverseSort")
-						th 
-							span(ng-click="orderByField='pd_id.pd_type'; reverseSort=!reverseSort") 
-								|	Product Type 
-								span(ng-show="!reverseSort")
-								span(ng-show="reverseSort")
-						th 
-							span(ng-click="orderByField='pd_id.pd_name'; reverseSort=!reverseSort") 
-								|	Product Name
-								span(ng-show="!reverseSort")
-								span(ng-show="reverseSort")
-						th Zone
-							span(ng-click="orderByField='zone_id.zone_id'; reverseSort=!reverseSort") 
-								|	Zone 
-								span(ng-show="!reverseSort")
-								span(ng-show="reverseSort")
-						th 
-							span(ng-click="orderByField='quantity'; reverseSort=!reverseSort") 
-								|	Qty on-Hand 
-								span(ng-show="!reverseSort")
-								span(ng-show="reverseSort")
-						th 
-							span(ng-click="orderByField='pd_id.safety_stock'; reverseSort=!reverseSort") 
-								|	Safety Stock
-								span(ng-show="!reverseSort")
-								span(ng-show="reverseSort")
-						th 
-							span(ng-click="orderByField='pd_id.pd_status'; reverseSort=!reverseSort") 
-								|	Status
-								span(ng-show="!reverseSort")
-								span(ng-show="reverseSort")
-						th Edit
-						th View
-				tbody
-					tr(ng-repeat="pointer in inventory|orderBy:orderByField:reverseSort", ng-class="{checkquant : pointer.quantity < pointer.pd_id.safety_stock}")
-							td {{pointer.pd_id.pd_id}}
-							td {{pointer.pd_id.pd_type}}
-							td {{pointer.pd_id.pd_name}}
-							td {{pointer.zone_id.zone_id}}
-							td {{pointer.quantity}}
-							td {{pointer.pd_id.safety_stock}}
-							td {{pointer.pd_id.pd_status}}
-							td 
-								a(href='SCN_AI020.html')
-									[Edit]
-							td 
-								a(href='SCN_AI030.html')
-									[View]
-					
-				
-		.col-sm-1.space
-		.col-sm-7.space
-		.col-sm-4.space
-			a(href='SCN_AI040.html')
-				button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Supply
-		.col-sm-1.space

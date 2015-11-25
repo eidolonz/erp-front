@@ -10,7 +10,9 @@ block style
 		.label { text-align: left; }
 
 block content_title
-	p Zone
+	div(ng-controller="ZoneController")
+		p(ng-show="!hasCurrentZone()") Zone
+		p(ng-show="hasCurrentZone()") Edit Zone
 
 block content
 
@@ -35,20 +37,55 @@ block content
 					.col-sm-1.space
 
 					.col-sm-11.space
+						script.
+							function clearFunc(){
+							document.getElementById("searchForm").reset();
+							}
 						table.product-table.table.table-striped(style="padding: 50;")
-							tr
-								th Zone Type
-								th Zone Code
-								th Zone Name
-								th Zone Desc
-								th Action
-							tr(ng-repeat="zone in filteredZN")
-								td {{ zone.zone_type }}
-								td {{ zone.zone_id }}
-								td {{ zone.zone_name }}
-								td {{ zone.zone_desc }}
-								td 	
-									a(href="#" ng-click="setCurrentZone(zone)") [Edit]
+							thead
+								tr
+									th
+										span(ng-click="orderByField='index'; reverseSort=!reverseSort") 
+											|	index 
+											span(ng-show="!reverseSort")
+											span(ng-show="reverseSort")
+									th
+										span(ng-click="orderByField='_id'; reverseSort=!reverseSort") 
+											|	testID
+											span(ng-show="!reverseSort")
+											span(ng-show="reverseSort")
+									th
+										span(ng-click="orderByField='zone_type'; reverseSort=!reverseSort") 
+											|	Zone Type 
+											span(ng-show="!reverseSort")
+											span(ng-show="reverseSort")
+									th
+										span(ng-click="orderByField='zone_id'; reverseSort=!reverseSort") 
+											|	Zone Code 
+											span(ng-show="!reverseSort")
+											span(ng-show="reverseSort")
+									th
+										span(ng-click="orderByField='zone_name'; reverseSort=!reverseSort") 
+											|	Zone Name 
+											span(ng-show="!reverseSort")
+											span(ng-show="reverseSort")
+									th
+										span(ng-click="orderByField='zone_desc'; reverseSort=!reverseSort") 
+											|	Zone Desc 
+											span(ng-show="!reverseSort")
+											span(ng-show="reverseSort")
+									th Action
+
+							tbody
+								tr(ng-repeat="zone in filteredZN|orderBy:orderByField:reverseSort")
+									th {{ $index }}
+									th {{ zone._id }}
+									td {{ zone.zone_type }}
+									td {{ zone.zone_id }}
+									td {{ zone.zone_name }}
+									td {{ zone.zone_desc }}
+									td
+										a(href="#" ng-click="setCurrentZone(zone)") [Edit]
 					.col-sm-1.space
 
 				.row

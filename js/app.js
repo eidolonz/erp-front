@@ -314,7 +314,14 @@ app.directive('keyboardPoster', function($parse, $timeout){
 
 // _________________AI______________________
  function controllerGetAI($scope, $http){
+    $scope.filteredAI = []
+  ,$scope.currentPage = 1
+  ,$scope.numPerPage = 10
+  ,$scope.maxSize = 5;
 
+  $scope.currentAI = null;
+
+ 
 
   // setting Ordering
   $scope.orderByField = 'pd_id.pd_id';
@@ -328,15 +335,97 @@ app.directive('keyboardPoster', function($parse, $timeout){
     product_status = $('select[name="product_status"]').val();
     url = url + "?zone_id=" + zone_id + "&product_type=" + product_type + "&product_name=" + product_name + "&product_status=" + product_status;
     console.log(url)
+    $scope.inventory = [];
     $http.get(url)
       .success(function (response) {
         $scope.inventory = response;
+        $scope.filteredAI = $scope.inventory.slice(0, 10);
         console.log(response);
-      });
+      });  
   };
 
-  $scope.getai();
+  $scope.getZones = function() {
 
+      url = "http://54.179.174.140/api/zone/search";
+
+      $http.get(url)
+          .success(function (response) {
+          $scope.zones = response;
+          console.log('zone:'+$scope.zones[0].zone_id);
+        });
+  };
+
+  $scope.updateAI = function(id){
+    url = "http://54.179.174.140/api/inventory/" + id;
+
+    console.log('update inventory : ')
+    console.log(url);
+    
+    pd_type = $scope.currentAI.pd_id.pd_type
+    pd_code = $scope.currentAI.pd_id.pd_id
+    pd_name = $scope.currentAI.pd_id.pd_name
+    zn_id = $scope.currentAI.zone_id.zone_id
+    safety = $scope.currentAI.pd_id.safety_stock
+    qtyOnHand = $scope.currentAI.quantity
+
+    $http.put(url, {
+      zone_name: name,
+      zone_type: type,
+      zone_desc: desc,
+      zone_id:   code
+    })
+      .success(function (response) {
+        console.log('succeed');
+          console.log(response);
+      });
+  }
+
+  $scope.setCurrentInventory = function(AI){
+    $scope.currentAI = AI
+    console.log(AI.zone_id);
+  }
+
+
+  $scope.hasCurrentAI = function(){
+    
+    currentAI = $scope.currentAI;
+    condition   = !(angular.isUndefined(currentAI) || currentAI === null)
+    console.log(condition)
+    if (condition) {
+
+      $scope.current_pd_type = currentAI.pd_id.pd_type;
+      $scope.current_pd_id = currentAI.pd_id.pd_id;
+      $scope.current_pd_name = currentAI.pd_id.pd_name;
+      $scope.current_zn_id = currentAI.zone_id.zone_id;
+      $scope.current_ai_quantity = currentAI.quantity;
+      $scope.current_ai_safety = currentAI.pd_id.safety_stock;
+
+      return condition
+    } 
+    else {
+      return condition
+    }
+  }
+
+
+   ////////////////////////////////////////////////////////////////
+  // setting number of Pagination
+ 
+  
+  $scope.numPages = function () {
+    console.log($scope.inventory);
+    return Math.ceil($scope.inventory.length / $scope.numPerPage);
+  };
+  $scope.$watch('currentPage + numPerPage', function() {
+    var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+    , end = begin + $scope.numPerPage;
+    
+  $scope.filteredAI = $scope.inventory.slice(begin, end);
+  });
+  ///////////////////////////////////////////////////////////////
+
+  $scope.getai();
+  $scope.getZones();  
 }
 
 // ZONE CONTROLLER
