@@ -343,7 +343,7 @@ app.directive('keyboardPoster', function($parse, $timeout){
         console.log(response);
       });  
   };
-
+  $scope.optionsvalue = "";
   $scope.getZones = function() {
 
       url = "http://54.179.174.140/api/zone/search";
@@ -351,33 +351,34 @@ app.directive('keyboardPoster', function($parse, $timeout){
       $http.get(url)
           .success(function (response) {
           $scope.zones = response;
-          console.log('zone:'+$scope.zones[0].zone_id);
+          $scope.optionsvalue = response[0];
         });
   };
 
-  $scope.updateAI = function(id){
-    url = "http://54.179.174.140/api/inventory/" + id;
+  $scope.updateAI = function($event){   
+    $event.preventDefault()
 
-    console.log('update inventory : ')
-    console.log(url);
-    
-    pd_type = $scope.currentAI.pd_id.pd_type
-    pd_code = $scope.currentAI.pd_id.pd_id
-    pd_name = $scope.currentAI.pd_id.pd_name
-    zn_id = $scope.currentAI.zone_id.zone_id
-    safety = $scope.currentAI.pd_id.safety_stock
-    qtyOnHand = $scope.currentAI.quantity
+    url = "http://54.179.174.140/api/inventory/" + $scope.currentAI._id;
 
     $http.put(url, {
-      zone_name: name,
-      zone_type: type,
-      zone_desc: desc,
-      zone_id:   code
+      pd_id: $scope.currentAI.pd_id._id,
+      quantity: $scope.currentAI.quantity,
+      safety_stock: $scope.currentAI.pd_id.safety_stock,
+      zone_id: $scope.currentAI.zone_id._id
+
     })
       .success(function (response) {
-        console.log('succeed');
-          console.log(response);
+        console.log('succeed AI AIAIAIAIAIAIAIAIAIAIAIAIAIAIIAIIAIAIAIAIA');
+        console.log(response+'test');
+
+        $scope.goToMainPage();
       });
+
+      // Still error !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  }
+
+  $scope.goToMainPage = function() {
+    window.location.href = 'SCN_AI010.html'
   }
 
   $scope.setCurrentInventory = function(AI){
@@ -385,12 +386,17 @@ app.directive('keyboardPoster', function($parse, $timeout){
     console.log(AI.zone_id);
   }
 
+  $scope.change = function(zone_id){
+    console.log(zone_id);
+    $scope.currentAI.zone_id._id = zone_id;
+  }
+  $scope.ton_err = "test";
 
   $scope.hasCurrentAI = function(){
     
     currentAI = $scope.currentAI;
     condition   = !(angular.isUndefined(currentAI) || currentAI === null)
-    console.log(condition)
+    //console.log(condition)
     if (condition) {
 
       $scope.current_pd_type = currentAI.pd_id.pd_type;
@@ -630,6 +636,8 @@ function supplierController($scope, $http){
 
   $scope.createSupplier = function () {
     // TODO
+
+
   }
   
   $scope.didClearButtonPress = function () {
@@ -649,6 +657,38 @@ function supplierController($scope, $http){
     return !(angular.isUndefined($scope.currentSupplier) || $scope.currentSupplier === null);
   }
 
+  $scope.updateSP = function($event){   
+    $event.preventDefault()
+
+    url = "http://54.179.174.140/api/supplier/" + $scope.currentSupplier.pd_id;
+
+    $http.put(url, {
+      sp_id: $scope.currentSupplier.sp_id,
+      code: $scope.currentSupplier.code,
+      name: $scope.currentSupplier.name,
+      delivery_day: $scope.currentSupplier.delivery_day,
+      address: $scope.currentSupplier.address,
+      website: $scope.currentSupplier.website,
+      phone: $scope.currentSupplier.phone,
+      fax: $scope.currentSupplier.fax,
+      sale_person_name: $scope.currentSupplier.sale_person_name,
+      sale_person_mobile: $scope.currentSupplier.sale_person_mobile,
+      sale_person_email: $scope.currentSupplier.sale_person_email,
+      status: $scope.currentSupplier.status,
+      logo: $scope.currentSupplier.image
+
+    })
+      .success(function (response) {
+        console.log('succeed');
+        console.log(response);
+
+        $scope.goToMainPage();
+      });
+
+  }
+
+
+
   $scope.didClearButtonPress();
 
- }
+}

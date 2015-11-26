@@ -124,10 +124,10 @@ block content
 			.row
 				.col-sm-3.space Product Type:
 				.col-sm-3.space
-					select#disabledInput.form-control(ng-model='currentAI.pd_id.pd_type',ng-options="zone.zone_id as zone.zone_id for zone in zones", disabled='')
+					input#disabledInput.form-control(ng-model='currentAI.pd_id.pd_type', disabled='')
 				.col-sm-2.space Zone:
-				.col-sm-3.space
-					select(ng-model='currentAI.zone_id.zone_id', ng-options="zone.zone_id as zone.zone_id for zone in zones").form-control
+				.col-sm-3.space 
+					select(ng-model="currentAI.zone_id._id", ng-options="zone._id as zone.zone_id for zone in zones").form-control
 						
 				.col-sm-1.space
 				.col-sm-3.space Product Code:
@@ -146,7 +146,7 @@ block content
 				.col-sm-1.space
 				.col-sm-7.space
 				.col-sm-2.space
-					button.btn.btn-primary.btn-lg.btn-block(type='button', name='save') Save
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='save', ng-click="updateAI($event)") Save
 				.col-sm-2.space
 					a(href="SCN_AI010.html")
 						button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
