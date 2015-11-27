@@ -19,7 +19,7 @@ block content
 		div(ng-show="!hasCurrentAI()")
 			.row
 				form(id="searchForm" action="http://54.179.174.140/api/inventory/search")
-					.col-sm-3.space Zone:
+					.col-sm-3.space Zone: 
 					.col-sm-3.space
 						select(name='zone').form-control
 							option(value='') Choose Zone
@@ -107,10 +107,10 @@ block content
 								td {{pointer.pd_id.safety_stock}}
 								td {{pointer.pd_id.pd_status}}
 								td 
-									a(href="#" ng-click="setCurrentInventory(pointer)")
+									a(href="#" ng-click="setCurrentInventory(pointer); notClickView()")
 										[Edit]
 								td 
-									a(href='SCN_AI030.html')
+									a(href='#' ng-click="setCurrentInventory(pointer); clickView()")
 										[View]
 					
 			.col-sm-1.space
@@ -120,7 +120,7 @@ block content
 					button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Supply
 			.col-sm-1.space
 
-		div(ng-show="hasCurrentAI()")
+		div(ng-show="hasCurrentAI() && !checkView()")
 			.row
 				.col-sm-3.space Product Type:
 				.col-sm-3.space
@@ -150,4 +150,87 @@ block content
 				.col-sm-2.space
 					a(href="SCN_AI010.html")
 						button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
+				.col-sm-1.space
+
+		div(ng-show="checkView()")
+			.row 
+				// Begining of 1st row
+				.col-sm-3.space Search by Period:
+				.col-sm-3.space 
+					select.form-control(name='search_by_period')
+						option(value='Zone1') Month
+						option(value='Zone2') Month
+						option(value='Zone3') Month
+						option(value='Zone4') Month
+				.col-sm-2.space Transaction Type:
+				.col-sm-3.space
+					select(name='zone').form-control
+						option(value='type1') Receive
+						option(value='type2') Receive
+						option(value='type3') Receive
+						option(value='type4') Receive
+				.col-sm-1.space
+
+				// Begining of 2nd row	
+				.col-sm-3.space Date From:
+				.col-md-3.space
+					input.form-control(name='date_from', type='date')
+				.col-sm-2.space Date To:
+				.col-md-3.space
+					input.form-control(name='date_to', type='date')
+				.col-sm-1.space
+
+				// Begining of 3rd row	
+				.col-sm-7.space
+				.col-sm-2.space
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='view_detail') View Detail
+				.col-sm-2.space
+					button.btn.btn-default.btn-lg.btn-block(type='button', name='clear') Clear
+				.col-sm-1.space
+
+				// Another content block
+				// Begining of 1st row
+				.col-md-12
+					h2.page-header Transaction Detail
+				.col-sm-3.space Product Type:
+				.col-sm-3.space
+					input#disabledInput.form-control(ng-model='currentAI.pd_id.pd_type' name='product_type', disabled='', value="{{pointer.pd_id.pd_type}}")
+				.col-sm-2.space Safety Stock:
+				.col-sm-3.space
+					input#disabledInput.form-control(ng-model="currentAI.pd_id.safety_stock", type='text', value='100',  disabled='')
+				.col-sm-1.space
+
+				// Begining of 2nd row	
+				.col-sm-3.space Product Code:
+				.col-md-3.space
+					input#disabledInput.form-control(ng-model="currentAI.pd_id.pd_id", type='text', value='Product Code' disabled='')
+				.col-sm-2.space Qty On-Hands:
+				.col-md-3.space
+					input#disabledInput.form-control(ng-model="currentAI.quantity", type='text', value='10000', disabled='')
+				.col-sm-1.space
+
+				// Begining of 3rd row	
+				.col-sm-3.space Product Name:
+				.col-md-3.space
+					input#disabledInput.form-control(ng-model="currentAI.pd_id.pd_name", type='text', value='Product Name', disabled='')
+				.col-sm-6.space
+
+				// Begining of 4th row (table)
+				.col-sm-11.space
+					table.product-table.table.table-striped(style="padding: 50;")
+						tr
+							th Trans Date
+							th Trans Type
+							th Qty
+							th Reference
+						tr
+							td 29 Sep 2015
+							td Receive
+							td 1000
+							td xxxxxxxx
+						tr
+							td 30 Sep 2015
+							td Supply
+							td 100
+							td aaaaaaa
 				.col-sm-1.space

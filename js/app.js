@@ -320,7 +320,7 @@ app.directive('keyboardPoster', function($parse, $timeout){
   ,$scope.maxSize = 5;
 
   $scope.currentAI = null;
-
+  $scope.hasClickView = false;
  
 
   // setting Ordering
@@ -341,7 +341,7 @@ app.directive('keyboardPoster', function($parse, $timeout){
         $scope.inventory = response;
         $scope.filteredAI = $scope.inventory.slice(0, 10);
         console.log(response);
-      });  
+      });
   };
   $scope.optionsvalue = "";
   $scope.getZones = function() {
@@ -374,7 +374,6 @@ app.directive('keyboardPoster', function($parse, $timeout){
         $scope.goToMainPage();
       });
 
-      // Still error !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   }
 
   $scope.goToMainPage = function() {
@@ -386,17 +385,24 @@ app.directive('keyboardPoster', function($parse, $timeout){
     console.log(AI.zone_id);
   }
 
+  $scope.getCurrentInventory = function(){
+    $scope.currentAI = response;
+  }
+
   $scope.change = function(zone_id){
     console.log(zone_id);
     $scope.currentAI.zone_id._id = zone_id;
   }
-  $scope.ton_err = "test";
+
+  $scope.check = function(ai){
+    alert(ai);
+  }
 
   $scope.hasCurrentAI = function(){
     
     currentAI = $scope.currentAI;
     condition   = !(angular.isUndefined(currentAI) || currentAI === null)
-    //console.log(condition)
+    // console.log("condition "+condition)
     if (condition) {
 
       $scope.current_pd_type = currentAI.pd_id.pd_type;
@@ -411,6 +417,18 @@ app.directive('keyboardPoster', function($parse, $timeout){
     else {
       return condition
     }
+  }
+
+  $scope.clickView = function(){
+    $scope.hasClickView = true;
+  }
+
+  $scope.notClickView = function(){
+    $scope.hasClickView = false;
+  }
+
+  $scope.checkView = function(){
+    return $scope.hasClickView;
   }
 
 
