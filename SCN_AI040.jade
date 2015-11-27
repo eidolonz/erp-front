@@ -19,42 +19,44 @@ block content
 			.row
 				.col-sm-3.space Product Code:
 				.col-sm-3.space
-					input(keyboard-poster post-function='searchProducts(productSelectedCode)' name='supplier_code' list='supplier_codes' ng-model='productSelectedCode' id='supplier_code').form-control
+					input(keyboard-poster post-function='searchProductCode()' placeholder='Product Code' list='supplier_codes' ng-model='productSelectedCode').form-control
 					datalist#supplier_codes
 						datalist#sp_code
 							option(ng-repeat='product in products' value='{{product.pd_id.pd_id}}')
 
 				.col-sm-2.space Product Type:
 				.col-sm-3.space
-					input#disabledInput.form-control(name='product_type', type='text', placeholder='Product Type', disabled='', value='{{currentProduct.pd_id.pd_type}}')
+					input#disabledInput.form-control(ng-model='currentProduct.pd_id.pd_type', type='text', placeholder='Product Type', disabled='', value='{{currentProduct.pd_id.pd_type}}')
 				.col-sm-1.space
 				.col-sm-3.space Product Name:
 				.col-md-3.space
-					input.form-control(name='product_name', type='text', placeholder='Product Name' ,value='{{currentProduct.pd_id.pd_name}}')
+					input(keyboard-poster post-function='searchProductName()' placeholder='Product Name' list='supplier_names' ng-model='productSelectedName').form-control
+					datalist#supplier_names
+						datalist#sp_names
+							option(ng-repeat='product in products' value='{{product.pd_id.pd_name}}')
+					//- input.form-control(ng-model='currentProduct.pd_id.pd_name', type='text', placeholder='Product Name')
 				.col-sm-2.space Qty On-Hands:
 				.col-md-3.space
-					input#disabledInput.form-control(name='qty_on-hands', type='text', placeholder='Qty On-Hands', disabled='', value='{{currentProduct.quantity}}')
+					input#disabledInput.form-control(ng-model='currentProduct.quantity', type='text', placeholder='Qty On-Hands', disabled='')
 				.col-sm-1.space
 				.col-sm-3.space Zone:
 				.col-md-3.space
-					input#disabledInput.form-control(name='zone', type='text', placeholder='Zone', disabled='', value='{{currentProduct.zone_id.zone_name}}')
+					input#disabledInput.form-control(ng-model='currentProduct.zone_id.zone_name', type='text', placeholder='Zone', disabled='')
 				.col-sm-2.space Qty Supply:
 				.col-md-3.space
-					input.form-control(name='qty_supply', type='text', ng-model='supplyValue' placeholder='Qty Suppl', value='100')
+					input.form-control(keyboard-poster post-function='validateSupplyField()' ng-model='qty_supply', type='text', placeholder='Qty Suppl')
 				.col-sm-1.space
 				.col-sm-3.space Safety Stock:
 				.col-md-3.space
-					input#disabledInput.form-control(name='safety_stock', type='text', placeholder='Safety Stock', disabled='', value='{{currentProduct.pd_id.safety_stock}}')
+					input#disabledInput.form-control(ng-model='currentProduct.pd_id.safety_stock', type='text', placeholder='Safety Stock', disabled='')
 				.col-sm-2.space Qty remaining:
 				.col-md-3.space
-					input#disabledInput.form-control(name='qty_remaining', type='text', placeholder='Qty remaining', disabled='', value='{{currentProduct.quantity - supplyValue}}')
+					input#disabledInput.form-control(type='text', placeholder='Qty remaining', disabled='' value='{{currentProduct.quantity - qty_supply}}')
 				.col-sm-1.space
 				.col-sm-7.space
 				.col-sm-2.space
-					a(href="SCN_AI010.html")
-						button.btn.btn-primary.btn-lg.btn-block(type='button', name='supply', ng-click='supplyProduct($event)') supply
+					button.btn.btn-primary.btn-lg.btn-block(type='button', ng-click='supplyProduct($event)') supply
 				.col-sm-2.space
-					a(href="SCN_AI010.html")
-						button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
+					button.btn.btn-default.btn-lg.btn-block(type='button', ng-click='goToMainPage()') Cancel
 				.col-sm-1.space
 

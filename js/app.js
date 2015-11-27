@@ -4,7 +4,7 @@ app.controller('PoController', controllerGetPO);
 app.controller('SupplierController', supplierController);
 app.controller('InventoryController', controllerGetAI);
 app.controller('ZoneController', zoneController);
-
+app.controller('CreateSupplierController', createSupplierController);
 
 //_______________________ PO ____________________________________
 function controllerGetPO($scope, $http){
@@ -598,22 +598,68 @@ function zoneController($scope, $http){
 
 function supplyProduct($scope, $http){
 
-  $scope.searchProducts = function(productCode) {
+  $scope.searchProductCode = function() {
     
     $scope.currentProduct = null;
 
     angular.forEach($scope.products, function(value, key){
+
+      var matchedProductCode = value.pd_id.pd_id == $scope.productSelectedCode
+
       console.log(value.pd_id.pd_id)
-         if(value.pd_id.pd_id == productCode) {
-           $scope.currentProduct = value;
-           console.log('Found -> ' + $scope.currentProduct.pd_id.pd_id);
-         }   
+
+         if(matchedProductCode) {
+
+            $scope.currentProduct = value;
+            console.log('Found -> ' + $scope.currentProduct.pd_id.pd_id);
+
+            if (angular.isUndefined($scope.productSelectedName) || $scope.productSelectedName != $scope.currentProduct.pd_id.pd_name) {
+              $scope.productSelectedName = value.pd_id.pd_name;
+            }
+         }
+      });
+  }
+
+  $scope.searchProductName = function() {
+    
+    $scope.currentProduct = null;
+
+    angular.forEach($scope.products, function(value, key){
+
+      var matchedProductName = value.pd_id.pd_name == $scope.productSelectedName
+
+      console.log(value.pd_id.pd_name)
+
+         if(matchedProductName) {
+
+            $scope.currentProduct = value;
+            console.log('Found -> ' + $scope.currentProduct.pd_id.pd_name);
+
+            if (angular.isUndefined($scope.productSelectedCode) || $scope.productSelectedCode != $scope.currentProduct.pd_id.pd_name) {
+              $scope.productSelectedCode = value.pd_id.pd_id;
+            }
+         }
       });
   }
 
   $scope.supplyProduct = function ($event) {
+    
     $event.preventDefault()
-    window.location.href = window.history.back(1);
+
+    url = "http://54.179.174.140/api/inventory/" + $scope.currentProduct._id;
+
+    $http.put(url, {
+      pd_id       : $scope.currentProduct.pd_id._id,
+      quantity    : $scope.currentProduct.quantity - $scope.qty_supply,
+      zone_id     : $scope.currentProduct.zone_id._id,
+      movement_id : "ms0002"
+    })
+      .success(function (response) {
+        console.log('succeed');
+        console.log(response);
+
+        window.location.href = 'SCN_AI010.html'
+      });
   }
 
   $scope.getProducts = function(){
@@ -624,6 +670,32 @@ function supplyProduct($scope, $http){
         $scope.products = response;
       });
   };
+
+  $scope.validateSupplyField = function(){
+
+    var number = +$scope.qty_supply; // made cast obvious for demonstration
+
+    var notEmptyString = $scope.qty_supply != ''
+    var positiveNumber = number > 0
+    var isNumber       = number.toString() !== $scope.qty_supply
+
+    if (notEmptyString && (!positiveNumber || isNumber)) {
+
+      alert('Please input positive number');
+      $scope.qty_supply = ''
+
+      return 
+    }
+
+    var remainingNumber = +($scope.currentProduct.quantity - $scope.qty_supply);
+    if (remainingNumber < 0) {
+      alert('Quantity is not enought');
+    }
+  }
+
+  $scope.goToMainPage = function() {
+    window.location.href = 'SCN_AI010.html';
+  }
 
   $scope.getProducts();
  }
@@ -651,12 +723,6 @@ function supplierController($scope, $http){
         $scope.suppliers = response;
       });
   };
-
-  $scope.createSupplier = function () {
-    // TODO
-
-
-  }
   
   $scope.didClearButtonPress = function () {
 
@@ -705,8 +771,73 @@ function supplierController($scope, $http){
 
   }
 
-
-
   $scope.didClearButtonPress();
-
 }
+
+// CREATE SUPPLIER CONTROLLER
+
+function createSupplierController($scope, $http, fileUpload){ 
+
+  $scope.uploadFile = function () {
+
+    console.log('Uploading');
+
+    var uploadUrl = "http://54.179.174.140/api/supplier";
+    var file = $scope.myFile;
+    var data = $scope.createSupplier;
+
+    console.log('file is ' );
+    console.dir(file);
+    
+    fileUpload.uploadFileToUrl(file, data, uploadUrl);
+  };
+}
+
+app.service('fileUpload', ['$http', function ($http) {
+    this.uploadFileToUrl = function(file, data, uploadUrl){
+      
+      console.log(file.name);
+
+        var fd = new FormData();
+        fd.append('sp_id', 'SP' + data.sp_code);
+        fd.append('code', data.sp_code);
+        fd.append('name', data.sp_name);
+        fd.append('address', data.address);
+        fd.append('website', data.website);
+        fd.append('phone', data.phone);
+        fd.append('fax', data.fax);
+        fd.append("delivery_day", data.delivery_day);
+        fd.append('sale_person_name', data.sale_person_name);
+        fd.append('sale_person_mobile', data.sale_person_mobile);
+        fd.append('sale_person_email',  data.sale_person_email);
+        fd.append('status', data.status);
+        fd.append('logo', file);
+
+        $http.post(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(response) {
+            console.log('Success with response: ' + response);
+        })
+        .error(function(response) {
+          console.log(response);
+        });
+    }
+}]);
+
+app.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+            
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
