@@ -613,6 +613,36 @@ app.directive('keyboardPoster', function($parse, $timeout){
     return $scope.hasClickView;
   }
 
+  // _________________________TRANSACTION______________________________
+  $scope.transaction = [];
+  $scope.currentTran = [];
+  $scope.getTransaction = function () {    
+    url = "http://54.179.174.140/api/movement/"+$scope.currentAI.pd_id._id;
+    $http.get(url)
+      .success(function (response) {
+        $scope.transaction = response;
+      });
+  };
+
+  $scope.searchByPeriod = function(){
+    // alert("Test");
+    url = "http://54.179.174.140/api/movement/search/period?transaction_type=";
+    typeTran =  $('select[name="search_by_type"]').val();
+    products_id = currentAI.pd_id._id;
+    period = $('select[name="search_by_period"]').val();
+    url = url + typeTran +"&pd_id="+ products_id +"&period="+ period;
+    console.log(url);
+    $http.get(url)
+      .success(function (response) {
+        $scope.transaction = response;
+        // $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
+        console.log(response);
+      });
+  }
+
+  // $scope.getTransaction();
+
+  // _________________________TRANSACTION______________________________
 
    ////////////////////////////////////////////////////////////////
   // setting number of Pagination

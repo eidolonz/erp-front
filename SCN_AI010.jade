@@ -11,8 +11,9 @@ block style
 
 block content_title
 	div(ng-controller="InventoryController")
+
 		div(ng-show="!hasCurrentAI()") Current Inventory
-		div(ng-show="hasCurrentAI()") Edit Inventory
+		div(ng-show="hasCurrentAI() && !checkView()") Edit Inventory
 
 block content
 	div(ng-controller="InventoryController")
