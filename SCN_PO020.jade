@@ -60,7 +60,7 @@ block content
 						th Action
 					tr(ng-repeat="item in items")
 						td {{$index+1}}
-						td {{item.ProductName}}
+						td {{item.ProductName}} 
 						td {{item.Cost}}
 						td {{item.Qty}}
 						td {{item.Total}}
@@ -89,27 +89,27 @@ block content
 									.col-md-3.space Product code :*
 									.col-md-9.space
 										//- input(name='product_code').form-control
-										input(keyboard-poster post-function='searchProductPriceCode' name='product_code' list='product_codes' ng-model='product.pdCode' id='product_code').form-control
+										input(required keyboard-poster post-function='searchProductPriceCode' name='product_code' list='product_codes' ng-model='product.pdCode' id='product_code').form-control
 										datalist#product_codes
 											select#selectCode(name='_selectCode' ng-model='selectedPdCode' ng-options='k as v for (k,v) in PdCodes')
 								.row
 									.col-md-3.space Product name :*
 									.col-md-9.space
 										//- input(name='product_name').form-control
-										input(keyboard-poster post-function='searchProductPriceName' name='product_name' list='product_names' ng-model='product.pdName' id='product_name').form-control
+										input(required keyboard-poster post-function='searchProductPriceName' name='product_name' list='product_names' ng-model='product.pdName' id='product_name').form-control
 										datalist#product_names
 											select#selectName(name='_selectName' ng-model='selectedPdName' ng-options='k as v for (k,v) in PdNames')
 								.row
 									.col-md-3.space Qty :*
 									.col-md-9.space
-										input(keyboard-poster post-function='addProductPrice' name='product_qty' id='product_qty' value="1").form-control
+										input(required keyboard-poster post-function='addProductPrice' name='product_qty' id='product_qty' value="1").form-control
 								.row
 									.col-md-3.space Cost :
 									.col-md-9.space
 										//- input(name='product_price', readonly='true', value='0.00').form-control
-										input(name='product_price' list='product_prices' ng-model='product.pdPrice' id='product_price' readonly='true').form-control									
+										input(name='product_price' list='product_prices' ng-model='product.pdPrice' id='product_price' readonly='true').form-control
 								.row.text-right(style="margin:0;")
-									input.btn.btn-primary(type="submit",value='submit', ng-click='addRow()' data-dismiss='modal')
+									button.btn.btn-primary(type="submit" value='submit' ng-disabled='!(product.pdCode != null || product.pdName != null)' ng-click='addRow()' data-dismiss='modal') Submit
 									button.btn.btn-default(type='button', onclick="clearFunc()" data-dismiss='modal') Close
 								script.
 									function clearFunc(){
@@ -122,14 +122,14 @@ block content
 			.col-md-5.space
 			.col-md-2.space Total: 
 			.col-md-4.space
-				input(name='total' readonly='true' placeholder='0.00' value="{{getTotal()}}").form-control.text-right
+				input(name='total' readonly='true' id="totalInput" placeholder='0.00' value="{{getTotal()}}").form-control.text-right
 			.col-md-1.space
 
 
 		.row
 			.col-sm-7.space
 			.col-sm-2.space
-				button.btn.btn-primary.btn-lg.btn-block(type='button',name='save') Save
+				button.btn.btn-primary.btn-lg.btn-block(type='button',name='save' ng-click="createPO()") Save
 			.col-sm-2.space
 				a(href="SCN_PO010.html")
 					button.btn.btn-default.btn-lg.btn-block(type='button',name='cancel') Cancel

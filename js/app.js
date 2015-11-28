@@ -1,146 +1,218 @@
-
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('PoController', controllerGetPO);
 app.controller('SupplierController', supplierController);
 app.controller('InventoryController', controllerGetAI);
 app.controller('ZoneController', zoneController);
-app.controller('CreateSupplierController', createSupplierController);
+
 
 //_______________________ PO ____________________________________
 function controllerGetPO($scope, $http){
-	// setting Pagination properties
-	$scope.filteredPO = []
-	,$scope.currentPage = 1
-	,$scope.numPerPage = 10
-	,$scope.maxSize = 5;
+  // setting Pagination properties
+  $scope.filteredPO = []
+  ,$scope.currentPage = 1
+  ,$scope.numPerPage = 10
+  ,$scope.maxSize = 5;
 
-	// setting Ordering
-	$scope.orderByField = 'po_id';
-	$scope.reverseSort = 'false';
+  // setting Ordering
+  $scope.orderByField = 'po_id';
+  $scope.reverseSort = 'false';
 
-	// get PO from DB
-	$scope.getpo = function(){
-		url = "http://54.179.174.140/api/po_header/search";
-		po_id = $('input[name="po_id"]').val();
-		order_date = $('input[name="order_date"]').val();
-		sp_name = $('input[name="sp_name"]').val();
-		po_status = $('select[name="po_status"]').val();
-		url = url + "?po_id=" + po_id + "&order_date=" + order_date + "&sp_name=" + sp_name + "&po_status=" + po_status;
-		$scope.purchaseOrder = [];
-		$http.get(url)
-	  	.success(function (response) {
-	      $scope.purchaseOrder = response;
-	      $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
-	      console.log(response);
-	    });
-	};
-	$scope.getpo();
+  // get PO from DB
+  $scope.getpo = function(){
+    url = "http://54.179.174.140/api/po_header/search";
+    po_id = $('input[name="po_id"]').val();
+    order_date = $('input[name="order_date"]').val();
+    sp_name = $('input[name="sp_name"]').val();
+    po_status = $('select[name="po_status"]').val();
+    url = url + "?po_id=" + po_id + "&order_date=" + order_date + "&sp_name=" + sp_name + "&po_status=" + po_status;
+    $scope.purchaseOrder = [];
+    $http.get(url)
+      .success(function (response) {
+        $scope.purchaseOrder = response;
+        $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
+        console.log(response);
+      });
+  };
+  $scope.getpo();
 
-	// setting number of Pagination
-	$scope.numPages = function () {
-		return Math.ceil($scope.purchaseOrder.length / $scope.numPerPage);
-	};
-	$scope.$watch('currentPage + numPerPage', function() {
-		var begin = (($scope.currentPage - 1) * $scope.numPerPage)
-		, end = begin + $scope.numPerPage;
+  // setting number of Pagination
+  $scope.numPages = function () {
+    return Math.ceil($scope.purchaseOrder.length / $scope.numPerPage);
+  };
+  $scope.$watch('currentPage + numPerPage', function() {
+    var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+    , end = begin + $scope.numPerPage;
     
-	$scope.filteredPO = $scope.purchaseOrder.slice(begin, end);
+  $scope.filteredPO = $scope.purchaseOrder.slice(begin, end);
   });
 
 
 
 }
 
-app.service('SupplierSearch', function($q, $http){
-	var API_URL = 'http://54.179.174.140/api/supplier/search?code=';
-	this.searchSupplierCode = function(code, name) {	
-		var deferred = $q.defer();
-		$http.get(API_URL+code+'&name='+name).then(function(codes){
-			var _codes = {};
-			var _names = {};
-			var codes = codes.data;
-			//alert(codes);
-			for(var i = 0, len = codes.length; i < len; i++) {
-				// _codes[codes[i].code] = codes[i].code +' ['+codes[i].name+']';
-				_codes[codes[i].code] = codes[i].code;
-				
-			}
-			deferred.resolve(_codes);
-		}, function() {
-			deferred.reject(arguments);
-			});
-		return deferred.promise;
-	}
-	this.searchSupplierName = function( code, name) {	
-		var deferred = $q.defer();
-		$http.get(API_URL+code+'&name='+name).then(function(names){
-			var _names = {};
-			var names = names.data;
-			console.log(names);
-			for(var i = 0, len = names.length; i < len; i++) {
-				// _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
-				_names[names[i].name] = names[i].name;
-			}
-			deferred.resolve(_names);
-		}, function() {
-			deferred.reject(arguments);
-			});
-		return deferred.promise;
-	} 
-	//search ProductPrice
-	var API_URL2 = 'http://54.179.174.140/api/price/search?sp_code=';
-	this.searchProductPriceCode = function(sp_code, code, name) {	
-		var deferred = $q.defer();
-		$http.get(API_URL2+sp_code+'&pd_code='+code+'&pd_name='+name).then(function(codes){
-			var _codes = {};
-			var _names = {};
-			var codes = codes.data;
-			//alert(codes);
-			for(var i = 0, len = codes.length; i < len; i++) {
-				// _codes[codes[i].code] = codes[i].code +' ['+codes[i].name+']';
-				_codes[codes[i].code] = codes[i].pd_id.pd_id;
-				
-			}
-			deferred.resolve(_codes);
-		}, function() {
-			deferred.reject(arguments);
-			});
-		return deferred.promise;
-	}
-	this.searchProductPriceName = function(sp_code, code, name) {	
-		var deferred = $q.defer();
-		$http.get(API_URL2+sp_code+'&pd_code='+code+'&pd_name='+name).then(function(names){
-			var _names = {};
-			var names = names.data;
-			console.log(names);
-			for(var i = 0, len = names.length; i < len; i++) {
-				// _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
-				_names[names[i].name] = names[i].pd_id.pd_name;
-			}
-			deferred.resolve(_names);
-		}, function() {
-			deferred.reject(arguments);
-			});
-		return deferred.promise;
-	}
-	this.searchProductPrice = function(sp_code, code, name) {	
-		var deferred = $q.defer();
-		$http.get(API_URL2+sp_code+'&pd_code='+code+'&pd_name='+name).then(function(prices){
-			var _prices = {};
-			var prices = prices.data;
-			console.log(prices);
-			for(var i = 0, len = prices.length; i < len; i++) {
-				// _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
-				_prices[prices[i].code] = prices[i].pd_price;
-			}
-			deferred.resolve(_prices);
-		}, function() {
-			deferred.reject(arguments);
-			});
-		return deferred.promise;
-	} 
+app.service('SupplierSearch', function($q, $http, $window){
+ 
+
+  var API_URL = 'http://54.179.174.140/api/supplier/search?code=';
+  this.searchSupplierCode = function(code, name) {  
+    var deferred = $q.defer();
+    $http.get(API_URL+code+'&name='+name).then(function(codes){
+      var _codes = {};
+      var _names = {};
+      var codes = codes.data;
+      //alert(codes);
+      for(var i = 0, len = codes.length; i < len; i++) {
+        // _codes[codes[i].code] = codes[i].code +' ['+codes[i].name+']';
+        _codes[codes[i].code] = codes[i].code;
+        
+      }
+      deferred.resolve(_codes);
+    }, function() {
+      deferred.reject(arguments);
+      });
+    return deferred.promise;
+  }
+  this.searchSupplierName = function( code, name) { 
+    var deferred = $q.defer();
+    $http.get(API_URL+code+'&name='+name).then(function(names){
+      var _names = {};
+      var names = names.data;
+      console.log(names);
+      for(var i = 0, len = names.length; i < len; i++) {
+        // _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
+        _names[names[i].name] = names[i].name;
+      }
+      deferred.resolve(_names);
+    }, function() {
+      deferred.reject(arguments);
+      });
+    return deferred.promise;
+  } 
+  this.searchSupplierId = function( code, name) { 
+    var deferred = $q.defer();
+    $http.get(API_URL+code+'&name='+name).then(function(ids){
+      var _ids = {};
+      var ids = ids.data;
+      console.log(ids);
+      for(var i = 0, len = ids.length; i < len; i++) {
+        // _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
+        _ids[ids[i]._id] = ids[i]._id;
+      }
+      deferred.resolve(_ids);
+    }, function() {
+      deferred.reject(arguments);
+      });
+    return deferred.promise;
+  } 
+  //search ProductPrice
+  var API_URL2 = 'http://54.179.174.140/api/price/search?sp_code=';
+  this.searchProductPriceCode = function(sp_code, code, name) { 
+    var deferred = $q.defer();
+    $http.get(API_URL2+sp_code+'&pd_code='+code+'&pd_name='+name).then(function(codes){
+      var _codes = {};
+      var _names = {};
+      var codes = codes.data;
+      //alert(codes);
+      for(var i = 0, len = codes.length; i < len; i++) {
+        // _codes[codes[i].code] = codes[i].code +' ['+codes[i].name+']';
+        _codes[codes[i].code] = codes[i].pd_id.pd_id;
+        
+      }
+      deferred.resolve(_codes);
+    }, function() {
+      deferred.reject(arguments);
+      });
+    return deferred.promise;
+  }
+  this.searchProductPriceName = function(sp_code, code, name) { 
+    var deferred = $q.defer();
+    $http.get(API_URL2+sp_code+'&pd_code='+code+'&pd_name='+name).then(function(names){
+      var _names = {};
+      var names = names.data;
+      console.log(names);
+      for(var i = 0, len = names.length; i < len; i++) {
+        // _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
+        _names[names[i].name] = names[i].pd_id.pd_name;
+      }
+      deferred.resolve(_names);
+    }, function() {
+      deferred.reject(arguments);
+      });
+    return deferred.promise;
+  }
+  this.searchProductPrice = function(sp_code, code, name) { 
+    var deferred = $q.defer();
+    $http.get(API_URL2+sp_code+'&pd_code='+code+'&pd_name='+name).then(function(prices){
+      var _prices = {};
+      var prices = prices.data;
+      console.log(prices);
+      for(var i = 0, len = prices.length; i < len; i++) {
+        // _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
+        _prices[prices[i].code] = prices[i].pd_price;
+      }
+      deferred.resolve(_prices);
+    }, function() {
+      deferred.reject(arguments);
+      });
+    return deferred.promise;
+  } 
+  this.searchProductId = function(sp_code, code, name){
+    var deferred = $q.defer();
+    $http.get(API_URL2+sp_code+'&pd_code='+code+'&pd_name='+name).then(function(pdIds){
+      var _pdIds = {};
+      var pdIds = pdIds.data;
+      console.log(pdIds);
+      for(var i = 0, len = pdIds.length; i < len; i++) {
+        // _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
+        _pdIds[pdIds[i].pd_id._id] = pdIds[i].pd_id._id;
+      }
+      deferred.resolve(_pdIds);
+    }, function() {
+      deferred.reject(arguments);
+      });
+    return deferred.promise;
+  }
+  this.createPO = function(po_id, sp_id, order_date, expected_date,untaxed_total, total,po_status,transLists){
+
+    // $event.preventDefault()
+    console.log('create po_htransaction');
+    console.log('po_id: ' + po_id);
+    console.log('sp_id: ' + sp_id);
+    console.log('order: ' + order_date);
+    console.log('expected_date: ' + expected_date);
+    console.log('total: ' + total);
+    console.log('po_status: ' + po_status );
+    // console.log('invoice_no: ' + invoice_no);
+    console.log(transLists);
+    
+    url = "http://54.179.174.140/api/po_transaction";
+    $http.post(url, {
+        'po_id': po_id,
+        'sp_id': sp_id,
+        'order_date': order_date,
+        'expected_date': expected_date,
+        'untaxed_total': untaxed_total,
+        'total': total,
+        'po_status': po_status,
+        // 'invoice_no': invoice_no,
+        'transactions': transLists
+    })
+      .success(function (response){
+        console.log('succeed');
+        console.log(response);
+        if(response == 'Created'){
+          $window.location.href = '/Users/JUMRUS/Desktop/DSD/SCN_PO010.html';
+        }else{
+          alert(response);
+        }
+      })
+      .error(function (response){
+        console.log('error');
+        console.log(response);
+      });
+  } 
 });
-app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch){
+app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $window, $http, $dialog){
   $scope.selectedSpCode = null;
   $scope.selectedSpName = null;
   $scope.selectedPdCode = null;
@@ -151,111 +223,170 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch){
   $scope.PdCodes = {};
   $scope.PdPrice = 0;
   $scope.totalPrice = 0;
+  $scope.pd_id = null;
+  $scope.sp_id = null;
   $scope.items = [];
+  $scope.products = [];
+  $scope.poSize = 0;
+  $scope.poName = null;
+
+    
+    
+  
+  $scope.getpoSize = function(){
+    url = "http://54.179.174.140/api/po_header/search";
+    var poSizes = 1,key;
+    $http.get(url)
+      .success(function (response) {
+        for (key in response){
+          if(response.hasOwnProperty(key)) poSizes++;
+        }
+        
+        $scope.poSize = poSizes;
+        console.log("poSize: " + $scope.poSize);
+      });
+  }
   $scope.searchSupplierCode = function(code) {
-  	sp_name = $('input[name="supplier_name"]').val();
+    sp_name = $('input[name="supplier_name"]').val();
     SupplierSearch.searchSupplierCode(code, "").then(function(SpCodes){
       $scope.SpCodes = SpCodes;
       document.getElementById('supplier_name').value = "";
       SupplierSearch.searchSupplierName(code, "").then(function(SpNames){
-      	for (key in SpNames){
-      		if(SpNames.hasOwnProperty(key)){
-      			var value = SpNames[key];
-      			document.getElementById('supplier_name').value = value;
-      		}else{      			
-      			document.getElementById('supplier_name').value = "";
-      		}
-      	}
+        for (key in SpNames){
+          if(SpNames.hasOwnProperty(key)){
+            var value = SpNames[key];
+            document.getElementById('supplier_name').value = value;
+          }else{            
+            document.getElementById('supplier_name').value = "";
+          }
+        }
+      });
+      SupplierSearch.searchSupplierId(code, "").then(function(SpIds){
+        for (key in SpIds){
+          if(SpIds.hasOwnProperty(key)){
+            $scope.sp_id = SpIds[key];
+            console.log("sp_id"+$scope.sp_id);
+          }else{                        
+            $scope.sp_id = null;
+          }
+        }
       });
     });
   }
 
   $scope.searchSupplierName = function(name) {
-  	sp_code = $('input[name="supplier_code"]').val();
-	SupplierSearch.searchSupplierName("", name).then(function(SpNames){
+    sp_code = $('input[name="supplier_code"]').val();
+  SupplierSearch.searchSupplierName("", name).then(function(SpNames){
       $scope.SpNames = SpNames;
       document.getElementById('supplier_code').value = "";
       SupplierSearch.searchSupplierCode("", name).then(function(SpCodes){
-      	for (key in SpCodes){
-      		if(SpCodes.hasOwnProperty(key)){
-      			var value = SpCodes[key];
-      			document.getElementById('supplier_code').value = value;
-      		}else{      			
-      			document.getElementById('supplier_code').value = "";
-      		}
-      	}
+        for (key in SpCodes){
+          if(SpCodes.hasOwnProperty(key)){
+            var value = SpCodes[key];
+            document.getElementById('supplier_code').value = value;
+          }else{            
+            document.getElementById('supplier_code').value = "";
+          }
+        }
+      });
+      SupplierSearch.searchSupplierId("", name).then(function(SpIds){
+        for (key in SpIds){
+          if(SpIds.hasOwnProperty(key)){
+            $scope.sp_id = SpIds[key];
+          }else{                        
+            $scope.sp_id = null;
+          }
+        }
       });
       //console.log(SpNames);
     });
   }
   $scope.searchProductPriceCode = function(code) {
-  	pd_name = $('input[name="product_name"]').val();
+    name = $('input[name="product_name"]').val();
     SupplierSearch.searchProductPriceCode(document.getElementById('supplier_code').value, code, "").then(function(PdCodes){
       $scope.PdCodes = PdCodes;
       document.getElementById('product_name').value = "";
       SupplierSearch.searchProductPriceName(document.getElementById('supplier_code').value, code, "").then(function(PdNames){
-      	for (key in PdNames){
-      		if(PdNames.hasOwnProperty(key)){
-      			var value = PdNames[key];
-      			document.getElementById('product_name').value = value;
-      		}else{      			
-      			document.getElementById('product_name').value = "";
-      		}
-      	}
+        for (key in PdNames){
+          if(PdNames.hasOwnProperty(key)){
+            var value = PdNames[key];
+            document.getElementById('product_name').value = value;
+          }else{            
+            document.getElementById('product_name').value = "";
+          }
+        }
       });
       document.getElementById('product_price').value = "";
       SupplierSearch.searchProductPrice(document.getElementById('supplier_code').value, code, "").then(function(PdPrices){
-      	for (key in PdPrices){
-      		if(PdPrices.hasOwnProperty(key)){
-      			var value = PdPrices[key];
-  				$scope.PdPrice = value;
-      			document.getElementById('product_price').value = value;
-      		}else{      			
-      			document.getElementById('product_price').value = "";
-      		}
-      	}
+        for (key in PdPrices){
+          if(PdPrices.hasOwnProperty(key)){
+            var value = PdPrices[key];
+          $scope.PdPrice = value;
+            document.getElementById('product_price').value = value;
+          }else{            
+            document.getElementById('product_price').value = "";
+          }
+        }
+      });
+      SupplierSearch.searchProductId(document.getElementById('supplier_code').value, code, "").then(function(pdId){
+        for (key in pdId){
+          if(pdId.hasOwnProperty(key)){
+            var value = pdId[key];
+          $scope.pd_id = value;
+          console.log($scope.pd_id);
+          }
+        }
       });
     });
   }
 
   $scope.searchProductPriceName = function(name) {
-  	pd_code = $('input[name="product_code"]').val();
-	SupplierSearch.searchProductPriceName(document.getElementById('supplier_code').value,"", name).then(function(PdNames){
+    code = $('input[name="product_code"]').val();
+  SupplierSearch.searchProductPriceName(document.getElementById('supplier_code').value,"", name).then(function(PdNames){
       $scope.PdNames = PdNames;
       document.getElementById('product_code').value = "";
       SupplierSearch.searchProductPriceCode(document.getElementById('supplier_code').value,"", name).then(function(PdCodes){
-      	for (key in PdCodes){
-      		if(PdCodes.hasOwnProperty(key)){
-      			var value = PdCodes[key];
-      			document.getElementById('product_code').value = value;
-      		}else{      			
-      			document.getElementById('product_code').value = "";
-      		}
-      	}
+        for (key in PdCodes){
+          if(PdCodes.hasOwnProperty(key)){
+            var value = PdCodes[key];
+            document.getElementById('product_code').value = value;
+          }else{            
+            document.getElementById('product_code').value = "";
+          }
+        }
       });
       document.getElementById('product_price').value = "";
-      SupplierSearch.searchProductPrice(document.getElementById('supplier_code').value, code, "").then(function(PdPrices){
-      	for (key in PdPrices){
-      		if(PdPrices.hasOwnProperty(key)){
-      			var value = PdPrices[key];
-  				$scope.PdPrice = value;
-      			document.getElementById('product_price').value = value;
-      		}else{      			
-      			document.getElementById('product_price').value = "";
-      		}
-      	}
+      SupplierSearch.searchProductPrice(document.getElementById('supplier_code').value, "", name).then(function(PdPrices){
+        for (key in PdPrices){
+          if(PdPrices.hasOwnProperty(key)){
+            var value = PdPrices[key];
+          $scope.PdPrice = value;
+            document.getElementById('product_price').value = value;
+          }else{            
+            document.getElementById('product_price').value = "";
+          }
+        }
+      });
+      SupplierSearch.searchProductId(document.getElementById('supplier_code').value, "", name).then(function(pdId){
+        for (key in pdId){
+          if(pdId.hasOwnProperty(key)){
+            var value = pdId[key];
+          $scope.pd_id = value;
+          console.log($scope.pd_id);
+          }
+        }
       });
       //console.log(SpNames);
     });
   }
   $scope.addProductPrice = function(){
-  	var qty = document.getElementById('product_qty').value;
-  	document.getElementById('product_price').value = $scope.PdPrice * qty;
+    var qty = document.getElementById('product_qty').value;
+    document.getElementById('product_price').value = $scope.PdPrice * qty;
   }
 
   $scope.getTotal = function(){
-  	var total = 0;
-  	for(var i = 0; i < $scope.items.length; i++){
+    var total = 0;
+    for(var i = 0; i < $scope.items.length; i++){
         var product = $scope.items[i];
         total += product.Total;
     }
@@ -263,30 +394,79 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch){
   }
 
   $scope.addRow = function(){
-  	var name = document.getElementById('product_name').value;
-  	var qty = document.getElementById('product_qty').value;
-  	var total = Number(document.getElementById('product_price').value);
-  	$scope.items.push({'ProductName': name, 'Cost': $scope.PdPrice, 'Qty': qty, 'Total':total});
-  	$scope.product_name = '';
-  	$scope.PdPrice = 0;
-  	$scope.product_qty = 1;
-  	$scope.product_price = 0;
-	document.getElementById("productPriceSearchForm").reset();
+    var name = document.getElementById('product_name').value;
+    var qty = document.getElementById('product_qty').value;
+    var total = Number(document.getElementById('product_price').value);
+    // $scope.items.push({'ProductName': name, 'Cost': $scope.PdPrice, 'Qty': qty, 'Total':total});    
+    $scope.items.push({'ProductName': name,'Cost': $scope.PdPrice, 'Qty': qty, 'Total':total});
+    $scope.products.push({'pd_id':$scope.pd_id, 'quantity':qty, 'price':$scope.PdPrice});
+    $scope.product_name = '';
+    $scope.PdPrice = 0;
+    $scope.product_qty = 1;
+    $scope.product_price = 0;
+  document.getElementById("productPriceSearchForm").reset();
 
   }
 
   $scope.addPdAlert = function(){
-  	code = $('input[name="supplier_code"]').val();
-  	name = $('input[name="supplier_name"]').val();
-  	if(code.length < 1 || name.length < 1){
-		alert('Please enter Supplier Code and Supplier Name.');
-		}
-	}
-	// date = $('input[name="datePicker"').val();
-	// if(date.slice(0,3) >= Date().getFullYear()){
+    code = $('input[name="supplier_code"]').val();
+    name = $('input[name="supplier_name"]').val();
+    if(code.length < 1 || name.length < 1){
+    alert('Please enter Supplier Code and Supplier Name.');
+    }
+  }
+  $scope.getpoSize();
+  $scope.getPo = function (){
+    
 
-	// }
+    var poNum = $scope.poSize;
+    if(poNum < 10){
+      $scope.poName = 'PO0000' + poNum;
+    }else if(poNum < 100){
+      $scope.poName = 'PO000'+ poNum;
+    }else if(poNum < 1000){
+      $scope.poName = 'PO00' + poNum;
+    }else if(poNum < 10000){
+      $scope.poName = 'PO0'+ poNum;
+    }else{
+      $scope.poName = 'PO' + poNum;
+    }
+    console.log("poName"+$scope.poName);
+  }
+  
+  // date = $('input[name="datePicker"').val();
+  // if(date.slice(0,3) >= Date().getFullYear()){
 
+  $scope.confirmPo = function(){
+        // var msgbox = $dialog.messageBox('Are you sure?', 'System will automatically generate PO Report', [{label:'Confirm', result: 'yes'},{label:'Cancel', result: 'no'}]);
+        // msgbox.open().then(function(result){
+        //     if(result === 'yes') {
+              
+        //     }
+        // }
+        $scope.getPo();
+        if (confirm("Are you sure?\n System will automatically generate PO Report") == true){
+          var orderDate = document.getElementById("datePicker").value;
+          var expectedDate = document.getElementById("datePicker").value;
+          var total = Number(document.getElementById("totalInput").value);
+          console.log($scope.poName);
+          SupplierSearch.createPO($scope.poName,$scope.sp_id,orderDate,orderDate,total, total, 'Open',  $scope.products);
+          //
+        };
+    };
+$scope.printIt = function(){
+   var table = document.getElementById('printArea').innerHTML;
+   var myWindow = $window.open('', '', 'width=800, height=600');
+   myWindow.document.write(table);
+   myWindow.print();
+};
+
+  $scope.createPO = function(){
+      // var poNum = SupplierSearch.getpoSize();
+      $scope.confirmPo();
+  }
+  
+ 
 
 });
 
@@ -304,12 +484,14 @@ app.directive('keyboardPoster', function($parse, $timeout){
       if(currentTimeout) {
         $timeout.cancel(currentTimeout)
       }
+
       currentTimeout = $timeout(function($modal){
         poster(angular.element(element).val());
       }, DELAY_TIME_BEFORE_POSTING)
     }
   }
 });
+
 
 
 // _________________AI______________________
