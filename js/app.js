@@ -882,12 +882,21 @@ function supplyProduct($scope, $http){
   $scope.getProducts();
  }
 
-
 // SUPPLIERS CONTORLLER
 
-function supplierController($scope, $http){
+function supplierController($scope, $http, updateSupplierWithFile, createNewSupplier){
 
   $scope.currentSupplier = null;
+  $scope.options = [
+    {
+      name: 'Active',
+      value: 'Active'
+    }, 
+    {
+      name: 'Inactive',
+      value: 'Inactive'
+    }
+  ];
 
   $scope.getSuppliers = function () {
 
@@ -898,21 +907,34 @@ function supplierController($scope, $http){
     url = "http://54.179.174.140/api/supplier/search";
     url = url + code + name + stat;
 
-    console.log(url);
+    console.log('Getting suppliers from URL: ' + url);
 
     $http.get(url)
       .success(function (response) {
         $scope.suppliers = response;
+        $scope.setCurrentNumberSupplier($scope.suppliers.length)
       });
   };
   
+
+  $scope.setCurrentNumberSupplier = function (length) {
+    // If the create supplier page does not appear yet
+    // or createSupplier is undefined. Then, do not have to do that
+    if (!angular.isUndefined($scope.createSupplier)) {
+      $scope.createSupplier.code = 'SP000' + (length + 1);
+    }
+  }
+
+
   $scope.didClearButtonPress = function () {
 
-    $scope.searchSupplierCode = '';
-    $scope.searchSupplierName = '';
+    $scope.searchSupplierCode   = '';
+    $scope.searchSupplierName   = '';
     $scope.searchSupplierStatus = '';
 
     $scope.getSuppliers();
+
+    $scope.searchSupplierStatus = 'Active';
   }  
 
   $scope.setCurrentSupplier = function (index) {
@@ -923,46 +945,29 @@ function supplierController($scope, $http){
     return !(angular.isUndefined($scope.currentSupplier) || $scope.currentSupplier === null);
   }
 
-  $scope.updateSP = function($event){   
+  $scope.updateSupplier = function($event){   
     $event.preventDefault()
 
-    url = "http://54.179.174.140/api/supplier/" + $scope.currentSupplier.pd_id;
+    var updateUrl = "http://54.179.174.140/api/supplier/" + $scope.currentSupplier._id;
+    var file = $scope.myFile;
+    var data = $scope.currentSupplier;
 
-    $http.put(url, {
-      sp_id: $scope.currentSupplier.sp_id,
-      code: $scope.currentSupplier.code,
-      name: $scope.currentSupplier.name,
-      delivery_day: $scope.currentSupplier.delivery_day,
-      address: $scope.currentSupplier.address,
-      website: $scope.currentSupplier.website,
-      phone: $scope.currentSupplier.phone,
-      fax: $scope.currentSupplier.fax,
-      sale_person_name: $scope.currentSupplier.sale_person_name,
-      sale_person_mobile: $scope.currentSupplier.sale_person_mobile,
-      sale_person_email: $scope.currentSupplier.sale_person_email,
-      status: $scope.currentSupplier.status,
-      logo: $scope.currentSupplier.image
+    console.log('Updating: ' + updateUrl);
 
-    })
-      .success(function (response) {
-        console.log('succeed');
-        console.log(response);
-
-        $scope.goToMainPage();
-      });
-
+    console.log('file is ' );
+    console.dir(file);
+  
+    updateSupplierWithFile.uploadFileToUrl(file, data, updateUrl, $scope.goToMainPage);  
   }
 
-  $scope.didClearButtonPress();
-}
+  $scope.createNewSupplier = function () {
 
-// CREATE SUPPLIER CONTROLLER
+    if(!$scope.validateSupplierField()) {
+      alert("Please input required input field")
+      return
+    }
 
-function createSupplierController($scope, $http, fileUpload){ 
-
-  $scope.uploadFile = function () {
-
-    console.log('Uploading');
+    $scope.removeNull();
 
     var uploadUrl = "http://54.179.174.140/api/supplier";
     var file = $scope.myFile;
@@ -971,19 +976,146 @@ function createSupplierController($scope, $http, fileUpload){
     console.log('file is ' );
     console.dir(file);
     
-    fileUpload.uploadFileToUrl(file, data, uploadUrl);
-  };
+    createNewSupplier.uploadFileToUrl(file, data, uploadUrl, $scope.goToMainPage());
+  }
+
+  $scope.goToMainPage = function() {
+    window.location.href = 'SCN_SP010.html';
+  }
+
+  $scope.validateSupplierField = function () {
+
+    var required = $scope.createSupplier.code != null && 
+                   $scope.createSupplier.name != null && 
+                   $scope.createSupplier.delivery_day != null && 
+                   $scope.createSupplier.phone != null
+
+    return required
+  }
+
+  $scope.removeNull = function (data) {
+
+    // createSupplier.code
+    if (angular.isUndefined($scope.createSupplier.code) || $scope.createSupplier.code == null) {
+      $scope.createSupplier.code = ' '
+      console.log('code:' + $scope.createSupplier.code);
+    }
+
+    // createSupplier.name
+    if (angular.isUndefined($scope.createSupplier.name) || $scope.createSupplier.name == null) {
+      $scope.createSupplier.name = ' '
+      console.log('name:' + $scope.createSupplier.name);
+    }
+
+    // createSupplier.delivery_day
+    if (angular.isUndefined($scope.createSupplier.delivery_day) || $scope.createSupplier.delivery_day == null) {
+      $scope.createSupplier.delivery_day = ' '
+      console.log('delivery_day:' + $scope.createSupplier.delivery_day);
+    }
+
+    // createSupplier.address
+    if (angular.isUndefined($scope.createSupplier.address) || $scope.createSupplier.address == null) {
+      $scope.createSupplier.address = ' '
+      console.log('address:' + $scope.createSupplier.address);
+    }
+
+    // createSupplier.website
+    if (angular.isUndefined($scope.createSupplier.website) || $scope.createSupplier.website == null) {
+      $scope.createSupplier.website = ' '
+      console.log('website:' + $scope.createSupplier.website);
+    }
+
+    // createSupplier.sale_person_name
+    if (angular.isUndefined($scope.createSupplier.sale_person_name) || $scope.createSupplier.sale_person_name == null) {
+      $scope.createSupplier.sale_person_name = ' '
+      console.log('sale_person_name:' + $scope.createSupplier.sale_person_name);
+    }
+
+    // createSupplier.sale_person_email
+    if (angular.isUndefined($scope.createSupplier.sale_person_email) || $scope.createSupplier.sale_person_email == null) {
+      $scope.createSupplier.sale_person_email = ' '
+      console.log('sale_person_email:' + $scope.createSupplier.sale_person_email);
+    }
+
+    // createSupplier.status
+    if (angular.isUndefined($scope.createSupplier.status) || $scope.createSupplier.status == null) {
+      $scope.createSupplier.status = ' '
+      console.log('status:' + $scope.createSupplier.status);
+    }
+  }
+
+
+
+  // Check changing on input field
+  $("#imgInput").change(function(){
+    readURL(this);
+  });
+
+  // Get all suppliers at first visit
+  $scope.didClearButtonPress();
 }
 
-app.service('fileUpload', ['$http', function ($http) {
-    this.uploadFileToUrl = function(file, data, uploadUrl){
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        $('#blah').attr('src', e.target.result);
+    }
+    
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+app.service('updateSupplierWithFile', ['$http', function ($http) {
+    this.uploadFileToUrl = function(file, data, uploadUrl, callBack){
+
+        var fd = new FormData();
+        fd.append('sp_id', 'SP' + data.name);
+        fd.append('code', data.code);
+        fd.append('name', data.name);
+        fd.append('address', data.address);
+        fd.append('website', data.website);
+        fd.append('phone', data.phone);
+        fd.append('fax', data.fax);
+        fd.append("delivery_day", data.delivery_day);
+        fd.append('sale_person_name', data.sale_person_name);
+        fd.append('sale_person_mobile', data.sale_person_mobile);
+        fd.append('sale_person_email',  data.sale_person_email);
+        fd.append('status', data.status);
+
+        if (!angular.isUndefined(file)) {
+          fd.append('logo', file);  
+        }
+        
+        $http.put(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(response) {
+            
+            var delay=1000; // 1 seconds
+            setTimeout(function(){
+              //your code to be executed after 1 seconds
+              console.log('Success with response: ' + response);
+              callBack();
+            }, delay); 
+
+        })
+        .error(function(response) {
+          console.log(response);
+        });
+    }
+}]);
+
+app.service('createNewSupplier', ['$http', function ($http) {
+    this.uploadFileToUrl = function(file, data, uploadUrl, callBack){
       
       console.log(file.name);
 
         var fd = new FormData();
-        fd.append('sp_id', 'SP' + data.sp_code);
-        fd.append('code', data.sp_code);
-        fd.append('name', data.sp_name);
+        fd.append('sp_id', data.code);
+        fd.append('code', data.code);
+        fd.append('name', data.name);
         fd.append('address', data.address);
         fd.append('website', data.website);
         fd.append('phone', data.phone);
@@ -1000,7 +1132,14 @@ app.service('fileUpload', ['$http', function ($http) {
             headers: {'Content-Type': undefined}
         })
         .success(function(response) {
-            console.log('Success with response: ' + response);
+            
+            var delay=1000; // 1 seconds
+            setTimeout(function(){
+              //your code to be executed after 1 seconds
+              console.log('Success with response: ' + response);
+              callBack();
+            }, delay); 
+            
         })
         .error(function(response) {
           console.log(response);

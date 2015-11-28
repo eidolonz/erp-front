@@ -11,7 +11,7 @@ block style
 		.label { text-align: left; }
 
 block content_title
-	p Suppliers
+	p Suppliers {{currentSupplier.name}}
 
 block content
 
@@ -19,7 +19,7 @@ block content
 		dic(ng-show="!hasCurrentSupplier()")
 			form(id="searchForm")
 				.row
-				.col-sm-3.space Supplier code {{searchSupplierCode}}:
+				.col-sm-3.space Supplier code :
 				.col-sm-3.space
 					input.form-control(ng-model='searchSupplierCode' name='supplier_code' type='text', placeholder='Supplier code' value='' list='suplier_code')
 					datalist#suplier_code
@@ -34,11 +34,10 @@ block content
 				.col-sm-1.space
 				.col-sm-3.space Supplier Status:
 				.col-md-3.space
-					select(ng-model='searchSupplierStatus' name='supplier_status', value='', placeholder='Product Status').form-control
-						option(value='') Find by Product Status
-						option(value='Status2') Status 2
-						option(value='Status3') Status 3
-						option(value='Status4') Status 4
+					select(ng-init="searchSupplierStatus = 'Active'" ng-model='searchSupplierStatus' name='supplier_status', value='', placeholder='Product Status').form-control
+						option(value='Active') Active
+						option(value='Inactive') Inactive
+
 				.col-sm-1.space
 				.col-sm-7.space
 				.col-sm-2.space
@@ -76,36 +75,37 @@ block content
 
 		div(ng-show="hasCurrentSupplier()")
 			.row
+
 				//- Left side
 				.col-sm-6.space
+					.row
 						.col-sm-1.space
 						.col-sm-5.space Code :*
 						.col-sm-6.space 
-							input#disabledInput(ng-model='currentSupplier.code' type="text" name='supplier_code' placeholder='Supplier Code',disabled='').form-control
-
+							input#disabledInput(ng-model='currentSupplier.code' type="text" placeholder='Supplier Code').form-control
+					.row
 						.col-sm-1.space
 						.col-sm-5.space Name :*
 						.col-sm-6.space 
-							input(ng-model='currentSupplier.name' type="text" name='supplier_name' placeholder='Supplier Name').form-control
-
+							input(ng-model='currentSupplier.name' type="text" placeholder='Supplier Name').form-control
+					.row
 						.col-sm-1.space
 						.col-sm-5.space Delivery Lead Time :*
 						.col-sm-6.space 
-							input(ng-model='currentSupplier.delivery_day' type="text" name='delivery' placeholder='Delivery Lead Time').form-control
-
+							input(ng-model='currentSupplier.delivery_day' type="text" placeholder='Delivery Lead Time').form-control
+					.row
 						.col-sm-1.space
 						.col-sm-5.space Address :*
 						.col-sm-6.space 
-							textarea.input(ng-model='currentSupplier.address' type="texta" name='address' placeholder='Delivery Lead Time').form-control
-
+							textarea.input(ng-model='currentSupplier.address' type="texta" placeholder='Delivery Lead Time').form-control
+					.row
 						.col-sm-1.space
 						.col-sm-5.space	Logo :
 						.col-sm-6.space 
-							img.productPic(ng-src="http://54.179.174.140/uploads/{{currentSupplier.image}}",alt="Smiley face", height="250px", width="250px")
-
-						.col-sm-6.space
-						.col-sm-6.space
-							input(type="file" name='browse').form-control
+							//-input(type="file" file-model="myFile").form-control
+							input(type='file' id="imgInput" file-model="myFile").form-control
+							br
+							img(ng-show="hasCurrentSupplier()" id="blah" src="http://54.179.174.140/uploads/{{currentSupplier.image}}" alt="logo" height="300" width="100%")
 					
 				//- Right side
 				.col-sm-6.space
@@ -113,45 +113,44 @@ block content
 						.col-sm-1.space
 						.col-sm-4.space Website :
 						.col-sm-6.space 
-							input(ng-model='currentSupplier.website' type="text" name='website' placeholder='Supplier Website').form-control
+							input(ng-model='currentSupplier.website' type="text" placeholder='Supplier Website').form-control
 					.row
 						.col-sm-1.space
 						.col-sm-4.space Phone :*
 						.col-sm-6.space 
-							input(ng-model='currentSupplier.phone' type="text" name='phone' placeholder='Supplier Phone').form-control
+							input(ng-model='currentSupplier.phone' type="text" placeholder='Supplier Phone').form-control
 					.row
 						.col-sm-1.space
 						.col-sm-4.space Fax :
 						.col-sm-6.space 
-							input(ng-model='currentSupplier.fax' type="text" name='fax' placeholder='Supplier Fax').form-control
+							input(ng-model='currentSupplier.fax' type="text" placeholder='Supplier Fax').form-control
 					.row
 						.col-sm-1.space
-						.col-sm-4.space Sale Person :
+						.col-sm-4.space Sales Person Name :
 						.col-sm-6.space 
-							input(ng-model='currentSupplier.sale_person_name' type="text" name='salesperson' placeholder='Supplier Sale Person').form-control
+							input(ng-model='currentSupplier.sale_person_name' type="text" placeholder='Supplier Sale Person Name').form-control
 					.row
 						.col-sm-1.space
-						.col-sm-4.space Mobile :
+						.col-sm-4.space Sales Person Mobile :
 						.col-sm-6.space 
-							input(ng-model='currentSupplier.sale_person_mobile' type="text" name='mobile' placeholder='Supplier Mobile').form-control
+							input(ng-model='currentSupplier.sale_person_mobile' type="text" placeholder='Supplier Mobile').form-control
+					.row
+						.col-sm-1.space
+						.col-sm-4.space Sales Person Email :
+						.col-sm-6.space 
+							input(ng-model='currentSupplier.sale_person_email' type="text" placeholder='Supplier Email').form-control
 					.row
 						.col-sm-1.space
 						.col-sm-4.space Status :*
 						.col-sm-6.space 
-							select(name='product_status', value='status', placeholder='Product Status').form-control
-								option(value='Status1') Status 1
-								option(value='Status2') Status 2
-								option(value='Status3') Status 3
-								option(value='Status4') Status 4
-				
+							select(ng-model='currentSupplier.status', ng-options="option.value as option.name for option in options").form-control
+			
 			.row
-					.col-sm-7.space
-					.col-sm-2.space
-						button.btn.btn-primary.btn-lg.btn-block(type='button',name='save') Save
-					.col-sm-2.space
-						a(href="SCN_SP010.html")
-							button.btn.btn-default.btn-lg.btn-block(type='button',name='cancel') Cancel
-					.col-sm-1.space
+				.col-sm-7.space
+				.col-sm-2.space
+					button.btn.btn-primary.btn-lg.btn-block(ng-click="updateSupplier($event)") Save
+				.col-sm-2.space
+					button.btn.btn-default.btn-lg.btn-block(ng-click="goToMainPage()" type='button',name='cancel') Cancel
+				.col-sm-1.space
 
 			
-
