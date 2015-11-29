@@ -1,0 +1,118 @@
+html
+	head
+		link(rel="stylesheet", href="css/bootstrap.min.css")
+		link(rel="stylesheet", href="css/bootstrap-theme.min.css")
+		link(rel='stylesheet', href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css")
+		link(rel="stylesheet" , href="css/datepicker.css")
+		link(rel="stylesheet" , href="css/style.css")
+
+
+		script(data-require='angular.js@1.1.5', data-semver='1.1.5', src='http://code.angularjs.org/1.1.5/angular.min.js')
+		script(data-require='angular-ui-bootstrap@0.3.0', data-semver='0.3.0', src='http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.3.0.min.js')
+		script(src='js/jquery-1.11.3.min.js')
+		script(src='js/bootstrap-datepicker.js')
+		script(src='js/bootstrap.min.js')
+		script(src="bower_components/angular/angular.min.js")
+		script(src="js/app.js")
+	body(ng-app='myApp')
+		div(ng-controller='SearchSupplier')
+			.col-md-2.space
+			.col-md-8.space
+				div(style="border:#000 solid 1px; padding:20px; margin-top:20px")
+					div(style='margin-top:50px')
+						.row
+							.col-md-6.space 
+								h4 
+									b DSD TECHNOLOGY COOPERATE
+							.col-md-3.space
+							.col-md-3.space 
+								h4 
+									b PURCHASE ORDER
+						.row
+							.col-md-5.space
+								p 111/111 Bang Mod Road
+							.col-md-3.space
+							.col-md-2.space
+					div(style='margin-top:20px')
+						.row
+							.col-md-2.space
+								b PO Number: 
+							.col-md-1.space PO00001
+						.row
+							.col-md-2.space
+								b PO DATE: 
+							.col-md-1.space DD/MM/YY
+						.row(style='margin-top:20px')
+							.col-md-5.space
+								p
+									b TO:
+							.col-md-1.space
+							.col-md-5.space
+								p
+									b SHIP TO:
+						.row
+							.col-md-5.space IRPC Public Company Limited
+							.col-md-1.space
+							.col-md-5.space DSD TECHNOLOGY COOPERATE
+						.row
+							.col-md-5.space 222/222 Test Rd.  Radburana 55555
+							.col-md-1.space
+							.col-md-5.space 38 Soi Puttabucha41 Phuttabucha Rd. 55255
+					div(style='margin-top:50px; margin-bottom:50px')
+						.row
+							.col-sm-12.space.table-responsive
+								table.product-table.table.table-striped.text-center.table-bordered.table-hover
+									thead
+										tr
+											th.text-center
+												b Units
+											th.text-center
+												b Description
+											th.text-center
+												b Unit Price
+											th.text-center
+												b Total
+												
+									tbody
+										tr
+											td 100
+											td AAA
+											td 1
+											td 200
+										tr
+											td 200
+											td BBB
+											td 2
+											td 400
+										tr
+											td 300
+											td CCC
+											td 1
+											td 400						
+						.row
+							.col-sm-8.space
+							.col-sm-2.space
+								p
+									b Sub Total
+							.col-sm-2.space 1000
+						.row
+							.col-sm-8.space
+							.col-sm-2.space
+								p
+									b Sales Tax
+							.col-sm-2.space 7%
+						.row
+							.col-sm-8.space
+							.col-sm-2.space
+								p 
+									b Total
+							.col-sm-2.space 1070
+				
+				div.text-center(style='margin:30px')
+					.row
+						.col-sm-4.space
+						.col-sm-2.space
+							button.btn.btn-primary.btn-lg.btn-block(type="submit" value='submit' ) Print
+						.col-sm-2.space
+							button.btn.btn-default.btn-lg.btn-block(type='button') Close
+			.col-sm-2.space

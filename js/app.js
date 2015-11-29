@@ -201,7 +201,8 @@ app.service('SupplierSearch', function($q, $http, $window){
         console.log('succeed');
         console.log(response);
         if(response == 'Created'){
-          $window.location.href = '/Users/JUMRUS/Desktop/DSD/SCN_PO010.html';
+          // $window.location.href = '/Users/JUMRUS/Desktop/DSD/SCN_PO010.html';
+          $window.location.href = '/Users/JUMRUS/Desktop/DSD/PO_Report.html';
         }else{
           alert(response);
         }
@@ -433,27 +434,21 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
     }
     console.log("poName"+$scope.poName);
   }
-  
-  // date = $('input[name="datePicker"').val();
-  // if(date.slice(0,3) >= Date().getFullYear()){
 
   $scope.confirmPo = function(){
-        // var msgbox = $dialog.messageBox('Are you sure?', 'System will automatically generate PO Report', [{label:'Confirm', result: 'yes'},{label:'Cancel', result: 'no'}]);
-        // msgbox.open().then(function(result){
-        //     if(result === 'yes') {
-              
-        //     }
-        // }
         $scope.getPo();
         if (confirm("Are you sure?\n System will automatically generate PO Report") == true){
           var orderDate = document.getElementById("datePicker").value;
           var expectedDate = document.getElementById("datePicker").value;
           var total = Number(document.getElementById("totalInput").value);
           console.log($scope.poName);
-          SupplierSearch.createPO($scope.poName,$scope.sp_id,orderDate,orderDate,total, total, 'Open',  $scope.products);
-          //
+          SupplierSearch.createPO($scope.poName,$scope.sp_id,orderDate,orderDate,total, total*1.07, 'Open',  $scope.products);
+          $scope.openPoReport;
         };
     };
+  $scope.openPoReport = function(){
+    $window.open('PO_Report.html')
+  }
 $scope.printIt = function(){
    var table = document.getElementById('printArea').innerHTML;
    var myWindow = $window.open('', '', 'width=800, height=600');
@@ -462,12 +457,8 @@ $scope.printIt = function(){
 };
 
   $scope.createPO = function(){
-      // var poNum = SupplierSearch.getpoSize();
       $scope.confirmPo();
   }
-  
- 
-
 });
 
 app.directive('keyboardPoster', function($parse, $timeout){
@@ -491,8 +482,6 @@ app.directive('keyboardPoster', function($parse, $timeout){
     }
   }
 });
-
-
 
 // _________________AI______________________
  function controllerGetAI($scope, $http){
