@@ -1,9 +1,12 @@
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap']
+//   , function($locationProvider){
+//     $locationProvider.html5Mode(true);
+// }
+);
 app.controller('PoController', controllerGetPO);
 app.controller('SupplierController', supplierController);
 app.controller('InventoryController', controllerGetAI);
 app.controller('ZoneController', zoneController);
-
 
 //_______________________ PO ____________________________________
 function controllerGetPO($scope, $http){
@@ -172,7 +175,7 @@ app.service('SupplierSearch', function($q, $http, $window){
       });
     return deferred.promise;
   }
-  this.createPO = function(po_id, sp_id, order_date, expected_date,untaxed_total, total,po_status,transLists){
+  this.createPO = function(po_id, sp_id, order_date, expected_date,untaxed_total, total,po_status, invoice_no,transLists){
 
     // $event.preventDefault()
     console.log('create po_htransaction');
@@ -180,9 +183,10 @@ app.service('SupplierSearch', function($q, $http, $window){
     console.log('sp_id: ' + sp_id);
     console.log('order: ' + order_date);
     console.log('expected_date: ' + expected_date);
+    console.log('untaxed_total: ' + untaxed_total);
     console.log('total: ' + total);
     console.log('po_status: ' + po_status );
-    // console.log('invoice_no: ' + invoice_no);
+    console.log('invoice_no: ' + invoice_no);
     console.log(transLists);
     
     url = "http://54.179.174.140/api/po_transaction";
@@ -194,7 +198,7 @@ app.service('SupplierSearch', function($q, $http, $window){
         'untaxed_total': untaxed_total,
         'total': total,
         'po_status': po_status,
-        // 'invoice_no': invoice_no,
+        'invoice_no': invoice_no,
         'transactions': transLists
     })
       .success(function (response){
@@ -202,7 +206,7 @@ app.service('SupplierSearch', function($q, $http, $window){
         console.log(response);
         if(response == 'Created'){
           // $window.location.href = '/Users/JUMRUS/Desktop/DSD/SCN_PO010.html';
-          $window.location.href = '/Users/JUMRUS/Desktop/DSD/PO_Report.html';
+          $window.location.href = '/Users/JUMRUS/Desktop/DSD/PO_Report.html#/?po_num='+po_id.toUpperCase();
         }else{
           alert(response);
         }
@@ -213,7 +217,7 @@ app.service('SupplierSearch', function($q, $http, $window){
       });
   } 
 });
-app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $window, $http, $dialog){
+app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $window, $http, $location){
   $scope.selectedSpCode = null;
   $scope.selectedSpName = null;
   $scope.selectedPdCode = null;
@@ -230,12 +234,46 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
   $scope.products = [];
   $scope.poSize = 0;
   $scope.poName = null;
+  $scope.isSpDisable = false;
+  //for PO Report
+  $scope.currentPoNumber = 'PO00003';
+  $scope.currentPoDate = '29/11/2015';
+  $scope.poItem = [];
+  $scope.poheader = null;
 
-    
-    
+
+  $scope.getPoNumber = function(){
+    $scope.currentPoNumber = $location.search().po_num;
+    $scope.getPoheader();
+  }
+  
+  $scope.getPoheader = function(){    
+    url = "http://54.179.174.140/api/po_header/search?po_id=" + $scope.currentPoNumber;
+    $http.get(url)
+      .success(function (response){
+        $scope.poheader = response[0];
+        console.log(response[0]);
+        $scope.getPoItem();
+      });
+  } 
+  $scope.getPoItem = function(){
+    url = "http://54.179.174.140/api/po_transaction";
+    var count;
+    $http.get(url)
+      .success(function (response){
+        for (count in response){
+          if(response[count].po_id.po_id == $scope.currentPoNumber){
+            console.log(response[count].po_id.po_id);
+            $scope.poItem.push(response[count]);
+          }
+        }
+        console.log($scope.poItem);
+      });
+  }  
+  $scope.getPoNumber();
   
   $scope.getpoSize = function(){
-    url = "http://54.179.174.140/api/po_header/search";
+    url = "http://54.179.174.140/api/po_header";
     var poSizes = 1,key;
     $http.get(url)
       .success(function (response) {
@@ -248,7 +286,7 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
       });
   }
   $scope.searchSupplierCode = function(code) {
-    sp_name = $('input[name="supplier_name"]').val();
+    var sp_name = $('input[name="supplier_name"]').val();
     SupplierSearch.searchSupplierCode(code, "").then(function(SpCodes){
       $scope.SpCodes = SpCodes;
       document.getElementById('supplier_name').value = "";
@@ -276,7 +314,7 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
   }
 
   $scope.searchSupplierName = function(name) {
-    sp_code = $('input[name="supplier_code"]').val();
+    var sp_code = $('input[name="supplier_code"]').val();
   SupplierSearch.searchSupplierName("", name).then(function(SpNames){
       $scope.SpNames = SpNames;
       document.getElementById('supplier_code').value = "";
@@ -303,7 +341,7 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
     });
   }
   $scope.searchProductPriceCode = function(code) {
-    name = $('input[name="product_name"]').val();
+    $scope.PdNames = $('input[name="product_name"]').val();
     SupplierSearch.searchProductPriceCode(document.getElementById('supplier_code').value, code, "").then(function(PdCodes){
       $scope.PdCodes = PdCodes;
       document.getElementById('product_name').value = "";
@@ -342,7 +380,7 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
   }
 
   $scope.searchProductPriceName = function(name) {
-    code = $('input[name="product_code"]').val();
+    $scope.PdCodes = $('input[name="product_code"]').val();
   SupplierSearch.searchProductPriceName(document.getElementById('supplier_code').value,"", name).then(function(PdNames){
       $scope.PdNames = PdNames;
       document.getElementById('product_code').value = "";
@@ -405,6 +443,7 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
     $scope.PdPrice = 0;
     $scope.product_qty = 1;
     $scope.product_price = 0;
+    $scope.isSpDisable = true;
   document.getElementById("productPriceSearchForm").reset();
 
   }
@@ -417,9 +456,8 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
     }
   }
   $scope.getpoSize();
-  $scope.getPo = function (){
-    
 
+  $scope.getPo = function (){
     var poNum = $scope.poSize;
     if(poNum < 10){
       $scope.poName = 'PO0000' + poNum;
@@ -442,19 +480,28 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
           var expectedDate = document.getElementById("datePicker").value;
           var total = Number(document.getElementById("totalInput").value);
           console.log($scope.poName);
-          SupplierSearch.createPO($scope.poName,$scope.sp_id,orderDate,orderDate,total, total*1.07, 'Open',  $scope.products);
+          SupplierSearch.createPO($scope.poName,$scope.sp_id,orderDate,orderDate,total, total*1.07, 'Open', 0,  $scope.products);
           $scope.openPoReport;
         };
     };
   $scope.openPoReport = function(){
     $window.open('PO_Report.html')
   }
-$scope.printIt = function(){
-   var table = document.getElementById('printArea').innerHTML;
-   var myWindow = $window.open('', '', 'width=800, height=600');
-   myWindow.document.write(table);
-   myWindow.print();
-};
+  $scope.printDiv = function() {
+    var printContents = document.getElementById('report').innerHTML;
+    console.log(printContents);
+    var popupWin = window.open('', '_blank', 'width=1300,height=700');
+    popupWin.document.open()
+    popupWin.document.write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()">' + printContents + '</html>');
+    // popupWin.document.write('<html><head><link rel="stylesheet" href="css/bootstrap.min.css"/><link rel="stylesheet" href="css/bootstrap-theme.min.css"/><link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/><link rel="stylesheet" href="css/datepicker.css"/><link rel="stylesheet" href="css/style.css"/><script data-require="angular.js@1.4.8" data-semver="1.4.8" src="http://code.angularjs.org/1.4.8/angular.min.js"></script><script data-require="angular-ui-bootstrap@0.3.0" data-semver="0.3.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.3.0.min.js"></script><script src="js/jquery-1.11.3.min.js"></script><script src="js/bootstrap-datepicker.js"></script><script src="js/bootstrap.min.js"></script><script src="bower_components/angular/angular.min.js"></script><script src="js/app.js"></script></head><body style="padding:50px;" onload="window.print()">' + printContents + '</html>');
+    popupWin.document.close();
+  } 
+  $scope.printIt = function(){
+     var table = document.getElementById('printArea').innerHTML;
+     var myWindow = $window.open('', '', 'width=800, height=600');
+     myWindow.document.write(table);
+     myWindow.print();
+  };
 
   $scope.createPO = function(){
       $scope.confirmPo();

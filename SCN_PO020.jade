@@ -18,14 +18,14 @@ block content
 			.row
 				.col-sm-3.space Supplier Code:*
 				.col-sm-3.space
-					input(keyboard-poster post-function='searchSupplierCode' name='supplier_code' list='supplier_codes' ng-model='supplier.spCode' id='supplier_code').form-control
+					input(keyboard-poster post-function='searchSupplierCode' name='supplier_code' list='supplier_codes' ng-model='supplier.spCode' id='supplier_code' ng-disabled='isSpDisable').form-control
 					datalist#supplier_codes
 						select#selectCode(name='_selectCode' ng-model='selectedSpCode' ng-options='k as v for (k,v) in SpCodes')
 				.col-sm-6.space
 			.row
 				.col-sm-3.space Supplier Name:*
 				.col-sm-3.space
-					input(keyboard-poster post-function='searchSupplierName' name='supplier_name' list='supplier_names' ng-model='supplier.spName' id='supplier_name').form-control
+					input(keyboard-poster post-function='searchSupplierName' name='supplier_name' list='supplier_names' ng-model='supplier.spName' id='supplier_name' ng-disabled='isSpDisable').form-control
 					datalist#supplier_names
 						select#selectName(name='_selectName' ng-model='selectedSpName' ng-options='k as v for (k,v) in SpNames')
 				.col-sm-6.space
