@@ -23,7 +23,7 @@ block content
 			.col-md-3.space
 			.col-md-3.space Zone Code:
 			.col-md-6.space
-				input.form-control(ng-init="createZone.zone_id = null" ng-model='createZone.zone_id' type='text' placeholder='Zone Code')
+				input.form-control#disabledInput(ng-model='createZone.zone_id' type='text' placeholder='Zone Code' disabled='')
 
 			.col-sm-3.space
 			.col-sm-3.space Zone Name:

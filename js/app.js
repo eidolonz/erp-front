@@ -778,6 +778,7 @@ function zoneController($scope, $http){
     $http.get(url)
         .success(function (response) {
         $scope.zones = response;
+        $scope.createZone.zone_id = 'ZN' + ($scope.zones.length + 1)
         $scope.filteredZN = $scope.zones.slice(0, 10);
       });
   };
