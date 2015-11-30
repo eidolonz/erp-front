@@ -45,16 +45,6 @@ block content
 							thead
 								tr
 									th
-										span(ng-click="orderByField='index'; reverseSort=!reverseSort") 
-											|	index 
-											span(ng-show="!reverseSort")
-											span(ng-show="reverseSort")
-									th
-										span(ng-click="orderByField='_id'; reverseSort=!reverseSort") 
-											|	testID
-											span(ng-show="!reverseSort")
-											span(ng-show="reverseSort")
-									th
 										span(ng-click="orderByField='zone_type'; reverseSort=!reverseSort") 
 											|	Zone Type 
 											span(ng-show="!reverseSort")
@@ -78,8 +68,6 @@ block content
 
 							tbody
 								tr(ng-repeat="zone in filteredZN|orderBy:orderByField:reverseSort")
-									th {{ $index }}
-									th {{ zone._id }}
 									td {{ zone.zone_type }}
 									td {{ zone.zone_id }}
 									td {{ zone.zone_name }}
