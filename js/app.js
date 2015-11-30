@@ -7,6 +7,8 @@ app.controller('PoController', controllerGetPO);
 app.controller('SupplierController', supplierController);
 app.controller('InventoryController', controllerGetAI);
 app.controller('ZoneController', zoneController);
+app.controller('priceController',controllerPrice);
+
 
 //_______________________ PO ____________________________________
 function controllerGetPO($scope, $http){
@@ -660,19 +662,52 @@ app.directive('keyboardPoster', function($parse, $timeout){
       });
   };
 
+
+  $scope.searchTran = function(){
+    period = $('select[name="search_by_period"]').val();
+    date_from = $('input[name="date_from"]').val();
+    date_to = $('input[name="date_to"]').val();
+    console.log("period : "+period+"date_from : "+date_from+"date_to : "+date_to);
+    if(period != ""){
+      $scope.searchByPeriod();
+    }else if(date_from != "" && date_to != ""){
+      // alert("date "+date_from+"|date_to "+date_to);
+      $scope.searchByDate();
+    }else{
+      alert("Null");
+    }
+  }
+
+
   $scope.searchByPeriod = function(){
-    // alert("Test");
     url = "http://54.179.174.140/api/movement/search/period?transaction_type=";
     typeTran =  $('select[name="search_by_type"]').val();
     products_id = currentAI.pd_id._id;
     period = $('select[name="search_by_period"]').val();
     url = url + typeTran +"&pd_id="+ products_id +"&period="+ period;
+    // console.log("period value : "+period);
     console.log(url);
     $http.get(url)
       .success(function (response) {
         $scope.transaction = response;
         // $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
         console.log(response);
+      });
+  }
+
+  $scope.searchByDate = function(){
+    url = "http://54.179.174.140/api/movement/search/date?transaction_type=";
+    typeTran =  $('select[name="search_by_type"]').val();
+    products_id = currentAI.pd_id._id;
+    date_from = $('input[name="date_from"]').val();
+    date_to = $('input[name="date_to"]').val();
+    url = url + typeTran +"&pd_id="+ products_id +"&date_from="+ date_from+"&date_to="+date_to;
+    console.log("searchByDate : "+url);
+    $http.get(url)
+      .success(function (response) {
+        $scope.transaction = response;
+        // $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
+        // console.log("searchByDate : "+response);
       });
   }
 
@@ -1228,3 +1263,24 @@ app.directive('fileModel', ['$parse', function ($parse) {
         }
     };
 }]);
+
+// _____________________________PRICE__________________________
+
+function controllerPrice($scope, $http){
+  $scope.price_list = [];
+
+  $scope.getPriceList = function(){
+    url = "http://54.179.174.140/api/price";
+    $http.get(url)
+      .success(function (response) {
+        $scope.price_list = response;
+        // $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
+        console.log(response);
+      });
+  };
+
+  $scope.getPriceList();
+
+}
+
+// _____________________________PRICE__________________________END

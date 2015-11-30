@@ -24,9 +24,9 @@ block content
 					.col-sm-3.space
 						select(name='zone').form-control
 							option(value='') Choose Zone
-							//- option(ng-repeat="pointer in inventory", value='{{pointer.zone_id.zone_id}}') {{pointer.zone_id.zone_id}}
-							option(value='zn1001') zn1001
-							option(value='zn1002') zn1002
+							option(ng-repeat="item in zones",value="{{item.zone_id}}") {{item.zone_id}}
+							//- option(value='zn1001') zn1001
+							//- option(value='zn1002') zn1002
 					.col-sm-2.space Product Type:
 					.col-sm-3.space
 						select(name='product_type').form-control
@@ -111,7 +111,7 @@ block content
 									a(href="#" ng-click="setCurrentInventory(pointer); notClickView()")
 										[Edit]
 								td 
-									a(href='#' ng-click="setCurrentInventory(pointer); clickView()")
+									a(href='#' ng-click="setCurrentInventory(pointer); clickView(); getTransaction()")
 										[View]
 					
 			.col-sm-1.space
@@ -153,23 +153,26 @@ block content
 						button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
 				.col-sm-1.space
 
-		div(ng-show="checkView()")
+		div(ng-show="hasCurrentAI() && checkView()")
+			
 			.row 
 				// Begining of 1st row
 				.col-sm-3.space Search by Period:
 				.col-sm-3.space 
 					select.form-control(name='search_by_period')
-						option(value='Zone1') Month
-						option(value='Zone2') Month
-						option(value='Zone3') Month
-						option(value='Zone4') Month
+						option(value='') Choose Period
+						option(value='today') today
+						option(value='7days') 7days
+						option(value='1month') 1month
+						option(value='3months') 3months
+						option(value='6months') 6months
+						option(value='1year') 1year
 				.col-sm-2.space Transaction Type:
 				.col-sm-3.space
-					select(name='zone').form-control
-						option(value='type1') Receive
-						option(value='type2') Receive
-						option(value='type3') Receive
-						option(value='type4') Receive
+					select(name='search_by_type' value="test").form-control
+						option(value="") Choose Type
+						option(value='Receive') Receive
+						option(value='Supply') Supply
 				.col-sm-1.space
 
 				// Begining of 2nd row	
@@ -184,9 +187,9 @@ block content
 				// Begining of 3rd row	
 				.col-sm-7.space
 				.col-sm-2.space
-					button.btn.btn-primary.btn-lg.btn-block(type='button', name='view_detail') View Detail
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='view_detail', ng-click="searchTran()") View Detail
 				.col-sm-2.space
-					button.btn.btn-default.btn-lg.btn-block(type='button', name='clear') Clear
+					button.btn.btn-default.btn-lg.btn-block(type='button', name='clear', ng-click="getTransaction()") Clear
 				.col-sm-1.space
 
 				// Another content block
@@ -224,14 +227,15 @@ block content
 							th Trans Type
 							th Qty
 							th Reference
-						tr
-							td 29 Sep 2015
-							td Receive
-							td 1000
-							td xxxxxxxx
-						tr
-							td 30 Sep 2015
-							td Supply
-							td 100
-							td aaaaaaa
+						tr(ng-repeat="pointer in transaction")
+							td {{pointer.update_date}}
+							td {{pointer.movement_type}}
+							td {{pointer.quantity}}
+							td {{pointer.ref_po_id}}
+
 				.col-sm-1.space
+			.row
+				.col-sm-9.space
+				.col-sm-2.space
+					a(href="SCN_AI010.html")
+						button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
