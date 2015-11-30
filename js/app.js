@@ -8,7 +8,7 @@ app.controller('SupplierController', supplierController);
 app.controller('InventoryController', controllerGetAI);
 app.controller('ZoneController', zoneController);
 app.controller('priceController',controllerPrice);
-
+app.controller('supplyProduct', supplyProduct);
 
 //_______________________ PO ____________________________________
 function controllerGetPO($scope, $http){
@@ -971,8 +971,10 @@ function supplyProduct($scope, $http){
     }
 
     var remainingNumber = +($scope.currentProduct.quantity - $scope.qty_supply);
+
     if (remainingNumber < 0) {
       alert('Quantity is not enought');
+      $scope.qty_supply = ''
     }
   }
 
