@@ -1270,7 +1270,15 @@ app.directive('fileModel', ['$parse', function ($parse) {
 // _____________________________PRICE__________________________
 
 function controllerPrice($scope, $http){
-  $scope.price_list = [];
+  // $scope.price_list = [];
+  $scope.currentPrice = null;
+  $scope.dateTemp = "";
+  $scope.date = {
+         value: new Date('2012-1-1')
+       };
+  $scope.year = "";
+  $scope.month = "";
+  $scope.day = "";
 
   $scope.getPriceList = function(){
     url = "http://54.179.174.140/api/price";
@@ -1282,8 +1290,151 @@ function controllerPrice($scope, $http){
       });
   };
 
+  $scope.hasCurrentPrice = function(){
+    
+    currentPrice = $scope.currentPrice;
+    condition   = !(angular.isUndefined(currentPrice) || currentPrice === null)
+    
+    if (condition) {
+
+      $scope.current_pd_type = currentPrice.pd_id.pd_type;
+      $scope.current_pd_id = currentPrice.pd_id.pd_id;
+
+
+      return condition
+    }
+    else {
+      return condition
+    }
+  }
+
+  $scope.setCurrentPrice = function(price){
+    $scope.list_price = [];
+    $scope.currentPrice = price;
+    $scope.dateTemp = $scope.currentPrice.effective_date;
+    console.log("dateTemp : "+$scope.dateTemp);
+    console.log($scope.currentPrice.effective_date);
+    $scope.dateDay = $scope.dateTemp.slice();
+
+    $scope.year = $scope.dateDay[0]+$scope.dateDay[1]+$scope.dateDay[2]+$scope.dateDay[3];
+    $scope.month = $scope.dateDay[5]+$scope.dateDay[6];
+    $scope.day = $scope.dateDay[8]+$scope.dateDay[9];
+
+    $scope.date = {
+         value: new Date($scope.year+"-"+$scope.month+"-"+$scope.day)
+       };
+    console.log("datetime : "+$scope.date.value);
+
+    
+  }
+
+  $scope.setCreate = function(){
+    $scope.date = {
+         value: new Date($scope.year+"-"+$scope.month+"-"+$scope.day)
+       };
+    console.log("datetime : "+$scope.date.value);
+
+  }
+
+
+  $scope.createPrice = function($event){
+
+    $event.preventDefault()
+
+    url = "http://54.179.174.140/api/price/";
+
+    $http.post(url, {
+      sp_id: $scope.currentPrice.sp_id._id,
+      pd_price: $scope.currentPrice.pd_price,
+      minimun_order: $scope.currentPrice.minimun_order,
+      effective_date: $scope.date.value,
+      pd_id: $scope.currentPrice.pd_id._id
+
+    })
+      .success(function (response) {
+        alert($scope.date.value);
+        $scope.goToMainPage();
+      });
+  }
+
+
+  $scope.updatePrice = function($event){
+
+    $event.preventDefault();
+
+    url = "http://54.179.174.140/api/price/" + $scope.currentPrice._id;
+
+    $http.put(url, {
+      sp_id: $scope.currentPrice.sp_id._id,
+      pd_price: $scope.currentPrice.pd_price,
+      minimun_order: $scope.currentPrice.minimun_order,
+      effective_date: $scope.date.value,
+      pd_id: $scope.currentPrice.pd_id._id
+
+    })
+      .success(function (response) {
+        $scope.goToMainPage();
+
+      });
+  }
+
+  $scope.getProducts = function(){
+    url = "http://54.179.174.140/api/product";
+
+    $http.get(url)
+        .success(function (response) {
+        $scope.product_list = response;
+
+      });
+  }
+
+  $scope.getSuppliers = function(){
+    url = "http://54.179.174.140/api/supplier";
+
+    $http.get(url)
+        .success(function (response) {
+        $scope.supplier_list = response;
+
+      });
+
+  }
+
+  $scope.goToMainPage = function() {
+    window.location.href = 'SCN_PR010.html'
+  }
+
+
+  $scope.searchPrice = function(){
+    sp_code = $('select[name="sp_code"]').val();
+    sp_name = $('select[name="sp_name"]').val();
+    pd_code = $('select[name="pd_code"]').val();
+    pd_name = $('select[name="pd_name"]').val();
+    gte = $('input[name="price_min"]').val();
+    lte = $('input[name="price_max"]').val();
+    date_start = $('input[name="date_from"]').val();
+    date_stop = $('input[name="date_to"]').val();
+    // console.log(sp_code+" "sp_name+" "+pd_code+" "+pd_name+" "+gte+" "+lte+" "+date_start+" "+date_stop);
+    url = "http://54.179.174.140/api/price/search?gte="+gte+"&lte="+lte+"&sp_code="+sp_code+"&sp_name="+sp_name+"&pd_code="+pd_code+"&pd_name="+pd_name+"&date_start="+date_start+"&date_stop="+date_stop;
+    console.log(url);
+
+    $http.get(url)
+      .success(function (response) {
+        $scope.price_list = response;
+        console.log(response);
+      });
+
+  }
+
+
+
+
+  $scope.getProducts();
+  $scope.getSuppliers();
   $scope.getPriceList();
 
 }
+
+
+
 
 // _____________________________PRICE__________________________END

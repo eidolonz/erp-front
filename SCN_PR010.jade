@@ -14,79 +14,135 @@ block content_title
 
 block content
 	div(ng-controller="priceController")
-		.row
-			.col-sm-2.space Supplier Code:
-			.col-sm-3.space
-				input.form-control(type='text', placeholder='Supplier Code')
-			.col-sm-1.space
-			.col-sm-2.space Supplier Name:
-			.col-sm-3.space
-				input.form-control(type='text', placeholder='Supplier Name')
-			.col-sm-1.space
-		.row
-			.col-sm-2.space Product Code:
-			.col-sm-3.space
-				input.form-control(type='text', placeholder='Product Code')
-			.col-sm-1.space
-			.col-sm-2.space Product Name:
-			.col-sm-3.space
-				input.form-control(type='text', placeholder='Product Name')
-			.col-sm-1.space
-		.row
-			.col-sm-2.space Price Range: 
-			.col-sm-3.space 
-				.row
-					.col-sm-5
-						input.form-control(type='text', placeholder='from')
-					.col-sm-2 -
-					.col-sm-5 
-						input.form-control(type='text', placeholder='to')
-			.col-sm-1.space
+		div(ng-show="!hasCurrentPrice()")
+			.row
+				.col-sm-2.space Supplier Code:
+				.col-sm-3.space
+					select(name='sp_code').form-control
+							option(value='') Choose Supplier Code
+							option(ng-repeat="item in supplier_list",value="{{item.code}}") {{item.code}}
+				.col-sm-1.space
+				.col-sm-2.space Supplier Name:
+				.col-sm-3.space
+					select(name='sp_name').form-control
+							option(value='') Choose Supplier Name
+							option(ng-repeat="item in supplier_list",value="{{item.name}}") {{item.name}}
+				.col-sm-1.space
+			.row
+				.col-sm-2.space Product Code:
+				.col-sm-3.space
+					select(name='pd_code').form-control
+							option(value='') Choose Product Code
+							option(ng-repeat="item in product_list",value="{{item.pd_id}}") {{item.pd_id}}
+				.col-sm-1.space
+				.col-sm-2.space Product Name:
+				.col-sm-3.space
+					select(name='pd_name').form-control
+							option(value='') Choose Product Name
+							option(ng-repeat="item in product_list",value="{{item.pd_name}}") {{item.pd_name}}
+				.col-sm-1.space
+			.row
+				.col-sm-2.space Price Range: 
+				.col-sm-3.space 
+					.row
+						.col-sm-5
+							input.form-control(name="price_min", type='text', placeholder='from')
+						.col-sm-2 -
+						.col-sm-5 
+							input.form-control(name="price_max", type='text', placeholder='to')
+				.col-sm-1.space
 
-			.col-sm-2.space Effective Date:
-			.col-sm-3.space
-				.row
-					.col-sm-5
-						input.form-control(type='date', placeholder='Date Picker')
-					.col-sm-2 -
-					.col-sm-5
-						input.form-control(type='date', placeholder='Date Picker')
-			.col-sm-1.space
+				.col-sm-2.space Effective Date:
+				.col-sm-3.space
+					.row
+						.col-sm-5
+							input.form-control(name="date_from", type='date', placeholder='Date Picker')
+						.col-sm-2 -
+						.col-sm-5
+							input.form-control(name="date_to", type='date', placeholder='Date Picker')
+				.col-sm-1.space
 
 
 
-		.row
-			.col-sm-7.space
-			.col-sm-2.space
-				button.btn.btn-primary.btn-lg.btn-block(type='button', name='search') Search
-			.col-sm-2.space
-				button.btn.btn-default.btn-lg.btn-block(type='button', name='clear') Clear
-			.col-sm-1.space
+			.row
+				.col-sm-7.space
+				.col-sm-2.space
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='search', ng-click="searchPrice()") Search
+				.col-sm-2.space
+					button.btn.btn-default.btn-lg.btn-block(type='button', name='clear', ng-click="goToMainPage()") Clear
+				.col-sm-1.space
 
-		.row
-			.col-sm-11.space
-				table.product-table.table.table-striped(style="padding: 50;")
-					tr
-						th Supplier
-						th Product
-						th Price
-						th Effective Date
-						th Min Order
-						th Action
-					tr(ng-repeat="pointer in price_list")
-						td {{pointer.sp_id.name}}
-						td {{pointer.pd_id.pd_name}}
-						td {{pointer.pd_price}}
-						td {{pointer.effective_date}}
-						td {{pointer.minimun_order}}
-						td 
-							a(href='#', target="_blank") [Edit]
-					
-			.col-sm-1.space
+			.row
+				.col-sm-11.space
+					table.product-table.table.table-striped(style="padding: 50;")
+						tr
+							th Supplier
+							th Product
+							th Price
+							th Effective Date
+							th Min Order
+							th Action
+						tr(ng-repeat="pointer in price_list")
+							td {{pointer.sp_id.name}}
+							td {{pointer.pd_id.pd_name}}
+							td {{pointer.pd_price}}
+							td {{pointer.effective_date}}
+							td {{pointer.minimun_order}}
+							td 
+								a(href='#', ng-click="setCurrentPrice(pointer)") [Edit]
+						
+				.col-sm-1.space
 
-		.row		
-			.col-sm-7.space
-			.col-sm-4.space
-				a(href="SCN_PR020.html")
-					button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Create Price PO
-			.col-sm-1.space
+			.row		
+				.col-sm-7.space
+				.col-sm-4.space
+					a(href="SCN_PR020.html" ng-click="setCreate()")
+						button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Create Price PO
+				.col-sm-1.space
+
+		div(ng-show="hasCurrentPrice()")
+			.row
+				.col-sm-2.space Supplier Code:*
+				.col-sm-3.space
+					select(ng-model="currentPrice.sp_id._id", ng-options="sp._id as sp.code for sp in supplier_list").form-control
+				.col-sm-1.space
+				.col-sm-2.space Supplier Name:*
+				.col-sm-3.space
+					select(ng-model="currentPrice.sp_id._id", ng-options="sp._id as sp.name for sp in supplier_list").form-control
+				.col-sm-1.space
+			.row
+				.col-sm-2.space Product Code:*
+				.col-sm-3.space
+					select(ng-model="currentPrice.pd_id._id", ng-options="pd._id as pd.pd_id for pd in product_list").form-control
+
+				.col-sm-1.space
+				.col-sm-2.space Product Name:*
+				.col-sm-3.space
+					select(ng-model="currentPrice.pd_id._id", ng-options="pd._id as pd.pd_name for pd in product_list").form-control
+				.col-sm-1.space
+			.row
+				.col-sm-2.space Minimum Order:*
+				.col-sm-3.space
+					input.form-control(ng-model='currentPrice.minimun_order' type='text', placeholder='Minimum Order')
+				.col-sm-1.space
+				.col-sm-2.space Price:* 
+				.col-sm-3.space 
+					input.form-control(ng-model='currentPrice.pd_price' type='text', placeholder='Price')
+				.col-sm-1.space
+			.row
+				.col-sm-2.space Effective Date:
+				.col-sm-3.space
+					input.form-control(ng-model="date.value" type='date', placeholder='Date Picker')
+				.col-sm-1.space
+
+
+
+			.row
+				.col-sm-7.space
+				.col-sm-2.space
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='save' ng-click="updatePrice($event)") Save
+
+				.col-sm-2.space
+					a(href="SCN_PR010.html")
+						button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
+				.col-sm-1.space
