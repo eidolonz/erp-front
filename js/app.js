@@ -116,7 +116,7 @@ function controllerGetPO($scope, $http){
   $scope.filteredPO = []
   ,$scope.currentPage = 1
   ,$scope.numPerPage = 10
-  ,$scope.maxSize = 5;0
+  ,$scope.maxSize = 5;
 
   // setting Ordering
   $scope.orderByField = 'po_id';
