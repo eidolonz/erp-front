@@ -20,14 +20,15 @@ block content
 				.col-sm-3.space
 					input(keyboard-poster post-function='searchSupplierCode' name='supplier_code' list='supplier_codes' ng-model='supplier.spCode' id='supplier_code' ng-disabled='isSpDisable').form-control
 					datalist#supplier_codes
-						select#selectCode(name='_selectCode' ng-model='selectedSpCode' ng-options='k as v for (k,v) in SpCodes')
+						select(name='_selectCode' ng-model='selectedSpCode' ng-options='v for (k,v) in SpCodes track by k')
 				.col-sm-6.space
 			.row
 				.col-sm-3.space Supplier Name:*
 				.col-sm-3.space
 					input(keyboard-poster post-function='searchSupplierName' name='supplier_name' list='supplier_names' ng-model='supplier.spName' id='supplier_name' ng-disabled='isSpDisable').form-control
 					datalist#supplier_names
-						select#selectName(name='_selectName' ng-model='selectedSpName' ng-options='k as v for (k,v) in SpNames')
+						select#selectName(name='_selectName' ng-model='selectedSpName' ng-options='v for (k,v) in SpNames track by k')
+							option(value="")
 				.col-sm-6.space
 			.row
 				.col-sm-3.space Order Date:*
@@ -91,14 +92,14 @@ block content
 										//- input(name='product_code').form-control
 										input(required keyboard-poster post-function='searchProductPriceCode' name='product_code' list='product_codes' ng-model='product.pdCode' id='product_code').form-control
 										datalist#product_codes
-											select#selectCode(name='_selectCode' ng-model='selectedPdCode' ng-options='k as v for (k,v) in PdCodes')
+											select#selectCode(name='_selectCode' ng-model='selectedPdCode' ng-options='v for (k,v) in PdCodes track by k')
 								.row
 									.col-md-3.space Product name :*
 									.col-md-9.space
 										//- input(name='product_name').form-control
 										input(required keyboard-poster post-function='searchProductPriceName' name='product_name' list='product_names' ng-model='product.pdName' id='product_name').form-control
 										datalist#product_names
-											select#selectName(name='_selectName' ng-model='selectedPdName' ng-options='k as v for (k,v) in PdNames')
+											select#selectName(name='_selectName' ng-model='selectedPdName' ng-options='v for (k,v) in PdNames track by k')
 								.row
 									.col-md-3.space Qty :*
 									.col-md-9.space

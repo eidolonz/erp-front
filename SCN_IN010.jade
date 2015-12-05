@@ -13,76 +13,61 @@ block content_title
 	p Incoming
 
 block content
-	.row
-		.col-sm-3.space PO Number:
-		.col-sm-3.space
-			input.form-control(type='text', placeholder='PO Number')
-		.col-sm-2.space Incoming Date:
-		.col-sm-3.space
-			input.form-control(type='date', placeholder='20 Sep 2015')
-		.col-sm-1.space
-	.row
-		.col-sm-3.space Supplier Name:
-		.col-md-3.space
-			input.form-control(type='text', placeholder='Supplier Name')
-		.col-sm-2.space PO Status:
-		.col-md-3.space
-			select(name='product_status', value='Find by supplier name').form-control
-				option(value='Status1') Status 1
-				option(value='Status2') Status 2
-
-				option(value='Status3') Status 3
-				option(value='Status4') Status 4
-		.col-sm-1.space
-		.col-sm-7.space
-		.col-sm-2.space
-			button.btn.btn-primary.btn-lg.btn-block(type='button', name='search') Search
-		.col-sm-2.space
-			button.btn.btn-default.btn-lg.btn-block(type='button', name='clear') Clear
-		.col-sm-1.space
-		.col-sm-11.space
-			table.product-table.table.table-striped(style="padding: 50;")
-				tr
-					th No.
-					th PO Number
-					th Supplier Name
-					th Deliverly Date
-					th Status
-					th Details
-				tr
-					td 1
-					td PO Number1
-					td Supplier Name1
-					td 29 Sep 2015
-					td 
-						a(href="#") [Status]
-					td 
-						a(href="SCN_IN020.html") [Details]
-				tr
-					td 2
-					td PO Number2
-					td Supplier Name2
-					td 29 Sep 2015
-					td 
-						a(href="#") [Status]
-					td 
-						a(href="SCN_IN020.html") [Details]
-				tr
-					td 3
-					td PO Number3
-					td Supplier Name3
-					td 29 Sep 2015
-					td 
-						a(href="#") [Status]
-					td 
-						a(href="SCN_IN020.html") [Details]
-				tr
-					td 4
-					td PO Number4
-					td Supplier Name4
-					td 29 Sep 2015
-					td 
-						a(href="#") [Status]
-					td 
-						a(href="SCN_IN020.html") [Details]
-		.col-sm-1.space
+	div(ng-controller="InController")
+		form(id="searchForm" action="http://54.179.174.140/api/po_header/search")
+			.row
+				.col-sm-3.space PO Number:
+				.col-sm-3.space
+					input.form-control(type='text', placeholder='PO Number', name="po_id")
+				.col-sm-2.space Incoming Date:
+				.col-sm-3.space
+					input.form-control(type='date', placeholder='Date Picker', name="deliver_date")
+				.col-sm-1.space
+			.row
+				.col-sm-3.space Supplier Name:
+				.col-md-3.space
+					input.form-control(type='text', placeholder='Supplier Name', name="sp_name")
+				.col-sm-2.space Status:
+				.col-md-3.space
+					select(name='po_status', value='Find by supplier name').form-control
+							option(value='') Choose Status
+							option(value='Open') Open
+							option(value='Close') Close
+				.col-sm-1.space
+			.row
+				.col-sm-7.space
+				.col-sm-2.space
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='search', ng-click="getpo()") Search
+				.col-sm-2.space
+					button.btn.btn-default.btn-lg.btn-block(type='button', name='clear', onclick='clearFunc()', ng-click='getpo()') Clear
+				.col-sm-1.space
+		script.
+			function clearFunc(){
+			document.getElementById("searchForm").reset();
+			}
+		.row
+			.col-sm-11.space
+				table.product-table.table.table-striped(style="padding: 50;")
+					thead
+						tr
+							th No.
+							th PO Number
+							th Supplier Name
+							th Deliverly Date
+							th Status
+							th Details
+					tbody
+						tr(ng-repeat="pointer in filteredPO|orderBy:orderByField:reverseSort")
+							td {{ $index+1 }}
+							td {{ pointer.po_id }}
+							td {{ pointer.sp_id.name }}
+							td {{ pointer.expected_date }}
+							td {{ pointer.po_status }}
+							td 
+								a(ng-href = "SCN_IN020.html#/?po_num={{pointer.po_id}}") [Details]
+					
+			.col-sm-1.space
+		.row
+			.col-sm-11.space.text-right
+				div(data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true" style="margin-top:0;").pager
+			.col-sm-1.space

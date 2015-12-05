@@ -91,7 +91,8 @@ block content
 							td {{ pointer.order_date }}
 							td {{ pointer.expected_date }}
 							td {{ pointer.po_status }}
-							td {{ pointer.action }}	
+							td
+								a(ng-href = "po_report.html#/?po_num={{pointer.po_id}}") [View]
 			.col-sm-1.space
 		.row
 			.col-sm-11.space.text-right

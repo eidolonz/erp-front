@@ -1,14 +1,114 @@
-var app = angular.module('myApp', ['ui.bootstrap']
-//   , function($locationProvider){
-//     $locationProvider.html5Mode(true);
-// }
-);
+var app = angular.module('myApp', ['ui.bootstrap']);
+
 app.controller('PoController', controllerGetPO);
+app.controller('InController', controllerIncoming);
 app.controller('SupplierController', supplierController);
 app.controller('InventoryController', controllerGetAI);
 app.controller('ZoneController', zoneController);
 app.controller('priceController',controllerPrice);
 app.controller('supplyProduct', supplyProduct);
+
+//________________________ IN __________________________________
+function controllerIncoming($scope, $http, $location, $window){
+  //setting Pagination Properties
+  $scope.filteredPO = [];
+  $scope.currentPage = 1;
+  $scope.numPerPage = 10;
+  $scope.maxSize = 5;
+  //setting Ordering
+  $scope.orderByField = 'po_id';
+  $scope.reverseSort = 'false';
+  //var in IN020
+  $scope.purchaseOrder = [];
+  $scope.poDetail;
+  $scope.sp_name;
+  $scope.po_id;
+  $scope.delivery_date;
+  $scope.currentPoNumber;
+  $scope.poItem=[];
+
+  // get PO from DB
+  $scope.getpo = function(){
+    url = "http://54.179.174.140/api/po_header/search";
+    po_id = $('input[name="po_id"]').val();
+    expected_date = $('input[name="expected_date"]').val();
+    sp_name = $('input[name="sp_name"]').val();
+    po_status = $('select[name="po_status"]').val();
+    url = url + "?po_id=" + po_id + "&expected_date=" + expected_date + "&sp_name=" + sp_name + "&po_status=" + po_status;
+    $http.get(url)
+      .success(function (response) {
+        $scope.purchaseOrder = response;
+        $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
+      });
+  };
+  $scope.getpo();
+  $scope.getPoId = function(){
+    url = "http://54.179.174.140/api/po_header/search?po_id=" + $scope.po_id;
+    $http.get(url)
+      .success(function (response) {
+        $scope.poDetail = response[0];
+        console.log(response);
+        $scope.getPoItem();
+      });
+  };
+  $scope.getPoNumber = function(){
+    $scope.po_id = $location.search().po_num;
+    $scope.getPoId();
+  }
+  $scope.getPoNumber();
+
+  $scope.getPoItem = function(){
+    url = "http://54.179.174.140/api/po_transaction";
+    var count;
+    $http.get(url)
+      .success(function (response){
+        for (count in response){
+          if(response[count].po_id.po_id == $scope.po_id){
+            console.log(response[count].po_id.po_id);
+            $scope.poItem.push(response[count]);
+          }
+        }
+        console.log($scope.poItem);
+      });
+  }  
+  $scope.updatePo = function(invoice_no){
+
+    // $event.preventDefault()
+    console.log('update po_header');
+    console.log('invoice_no: ' + invoice_no);
+    
+    url = "http://54.179.174.140/api/po_header/close/" + $scope.poDetail._id;
+    $http.put(url, {
+        'invoice_no': invoice_no
+    })
+      .success(function (response){
+        console.log('succeed');
+        console.log(response);
+        if(response == 'Success'){
+          alert(response);
+          $window.location.href = 'SCN_IN010.html#/';
+        }else{
+          alert(response);
+        }
+      })
+      .error(function (response){
+        console.log('error');
+        console.log(response);
+      });
+  }
+  // setting number of Pagination
+  $scope.numPages = function () {
+    return Math.ceil($scope.purchaseOrder.length / $scope.numPerPage);
+  };
+  $scope.$watch('currentPage + numPerPage', function() {
+    var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+    , end = begin + $scope.numPerPage;
+    
+  $scope.filteredPO = $scope.purchaseOrder.slice(begin, end);
+  });  
+}
+
+ 
 
 //_______________________ PO ____________________________________
 function controllerGetPO($scope, $http){
@@ -16,7 +116,7 @@ function controllerGetPO($scope, $http){
   $scope.filteredPO = []
   ,$scope.currentPage = 1
   ,$scope.numPerPage = 10
-  ,$scope.maxSize = 5;
+  ,$scope.maxSize = 5;0
 
   // setting Ordering
   $scope.orderByField = 'po_id';
@@ -49,10 +149,7 @@ function controllerGetPO($scope, $http){
     , end = begin + $scope.numPerPage;
     
   $scope.filteredPO = $scope.purchaseOrder.slice(begin, end);
-  });
-
-
-
+  });  
 }
 
 app.service('SupplierSearch', function($q, $http, $window){
@@ -68,7 +165,7 @@ app.service('SupplierSearch', function($q, $http, $window){
       //alert(codes);
       for(var i = 0, len = codes.length; i < len; i++) {
         // _codes[codes[i].code] = codes[i].code +' ['+codes[i].name+']';
-        _codes[codes[i].code] = codes[i].code;
+        _codes[codes[i].code] = codes[i].name;
         
       }
       deferred.resolve(_codes);
@@ -85,7 +182,7 @@ app.service('SupplierSearch', function($q, $http, $window){
       console.log(names);
       for(var i = 0, len = names.length; i < len; i++) {
         // _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
-        _names[names[i].name] = names[i].name;
+        _names[names[i].name] = names[i].code;
       }
       deferred.resolve(_names);
     }, function() {
@@ -109,6 +206,22 @@ app.service('SupplierSearch', function($q, $http, $window){
       });
     return deferred.promise;
   } 
+  this.searchSupplierDeliverDate = function(code, name){
+    var deferred = $q.defer();
+    $http.get(API_URL+code+'&name='+name).then(function(delivers){
+      var _delivers = {};
+      var delivers = delivers.data;
+      console.log(delivers);
+      for(var i = 0, len = delivers.length; i < len; i++) {
+        // _names[names[i].name] = '['+names[i].code+'] ' + names[i].name;
+        _delivers[delivers[i].delivery_day] = delivers[i].delivery_day;
+      }
+      deferred.resolve(_delivers);
+    }, function() {
+      deferred.reject(arguments);
+      });
+    return deferred.promise;
+  }
   //search ProductPrice
   var API_URL2 = 'http://54.179.174.140/api/price/search?sp_code=';
   this.searchProductPriceCode = function(sp_code, code, name) { 
@@ -120,7 +233,7 @@ app.service('SupplierSearch', function($q, $http, $window){
       //alert(codes);
       for(var i = 0, len = codes.length; i < len; i++) {
         // _codes[codes[i].code] = codes[i].code +' ['+codes[i].name+']';
-        _codes[codes[i].code] = codes[i].pd_id.pd_id;
+        _codes[code] = codes[i].pd_id.pd_id;
         
       }
       deferred.resolve(_codes);
@@ -178,7 +291,6 @@ app.service('SupplierSearch', function($q, $http, $window){
     return deferred.promise;
   }
   this.createPO = function(po_id, sp_id, order_date, expected_date,untaxed_total, total,po_status, invoice_no,transLists){
-
     // $event.preventDefault()
     console.log('create po_htransaction');
     console.log('po_id: ' + po_id);
@@ -207,8 +319,7 @@ app.service('SupplierSearch', function($q, $http, $window){
         console.log('succeed');
         console.log(response);
         if(response == 'Created'){
-          // $window.location.href = '/Users/JUMRUS/Desktop/DSD/SCN_PO010.html';
-          $window.location.href = '/Users/JUMRUS/Desktop/DSD/PO_Report.html#/?po_num='+po_id.toUpperCase();
+          $window.location.href = '../PO_Report.html#/?po_num='+po_id.toUpperCase();
         }else{
           alert(response);
         }
@@ -237,9 +348,13 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
   $scope.poSize = 0;
   $scope.poName = null;
   $scope.isSpDisable = false;
+  $scope.sp_deliverDate=0;
+
+  $scope.supplier;
+
   //for PO Report
-  $scope.currentPoNumber = 'PO00003';
-  $scope.currentPoDate = '29/11/2015';
+  $scope.currentPoNumber;
+  $scope.currentPoDate;
   $scope.poItem = [];
   $scope.poheader = null;
 
@@ -254,7 +369,6 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
     $http.get(url)
       .success(function (response){
         $scope.poheader = response[0];
-        console.log(response[0]);
         $scope.getPoItem();
       });
   } 
@@ -287,18 +401,30 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
         console.log("poSize: " + $scope.poSize);
       });
   }
+
+
   $scope.searchSupplierCode = function(code) {
-    var sp_name = $('input[name="supplier_name"]').val();
     SupplierSearch.searchSupplierCode(code, "").then(function(SpCodes){
       $scope.SpCodes = SpCodes;
+      console.log('SpCodes');
+      console.log(SpCodes);
       document.getElementById('supplier_name').value = "";
       SupplierSearch.searchSupplierName(code, "").then(function(SpNames){
         for (key in SpNames){
           if(SpNames.hasOwnProperty(key)){
-            var value = SpNames[key];
+            var value = key;
             document.getElementById('supplier_name').value = value;
           }else{            
             document.getElementById('supplier_name').value = "";
+          }
+        }
+      });
+      SupplierSearch.searchSupplierDeliverDate(code,"").then(function(SpDelivers){
+        for (key in SpDelivers){
+          if(SpDelivers.hasOwnProperty(key)){
+            $scope.sp_deliverDate = SpDelivers[key];
+          }else{
+            $scope.sp_deliverDate = null;
           }
         }
       });
@@ -316,17 +442,26 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
   }
 
   $scope.searchSupplierName = function(name) {
-    var sp_code = $('input[name="supplier_code"]').val();
+  sp_code = $('input[name="supplier_code"]').val();
   SupplierSearch.searchSupplierName("", name).then(function(SpNames){
       $scope.SpNames = SpNames;
       document.getElementById('supplier_code').value = "";
       SupplierSearch.searchSupplierCode("", name).then(function(SpCodes){
         for (key in SpCodes){
           if(SpCodes.hasOwnProperty(key)){
-            var value = SpCodes[key];
+            var value = key;
             document.getElementById('supplier_code').value = value;
           }else{            
             document.getElementById('supplier_code').value = "";
+          }
+        }
+      });
+      SupplierSearch.searchSupplierDeliverDate("",name).then(function(SpDelivers){
+        for (key in SpDelivers){
+          if(SpDelivers.hasOwnProperty(key)){
+            $scope.sp_deliverDate = SpDelivers[key];
+          }else{
+            $scope.sp_deliverDate = null;
           }
         }
       });
@@ -343,7 +478,7 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
     });
   }
   $scope.searchProductPriceCode = function(code) {
-    $scope.PdNames = $('input[name="product_name"]').val();
+    names = $('input[name="product_name"]').val();
     SupplierSearch.searchProductPriceCode(document.getElementById('supplier_code').value, code, "").then(function(PdCodes){
       $scope.PdCodes = PdCodes;
       document.getElementById('product_name').value = "";
@@ -382,7 +517,7 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
   }
 
   $scope.searchProductPriceName = function(name) {
-    $scope.PdCodes = $('input[name="product_code"]').val();
+  codes = $('input[name="product_code"]').val();
   SupplierSearch.searchProductPriceName(document.getElementById('supplier_code').value,"", name).then(function(PdNames){
       $scope.PdNames = PdNames;
       document.getElementById('product_code').value = "";
@@ -479,10 +614,15 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
         $scope.getPo();
         if (confirm("Are you sure?\n System will automatically generate PO Report") == true){
           var orderDate = document.getElementById("datePicker").value;
-          var expectedDate = document.getElementById("datePicker").value;
+          var orderedDate = new Date(orderDate);
+          var expectDate = orderedDate;
+          expectDate.setDate(expectDate.getDate()+$scope.sp_deliverDate);
+          var expectedDate = expectDate.getFullYear()+'-'+("0" + expectDate.getMonth()).slice(-2)+'-'+("0" + expectDate.getDate()).slice(-2);
+          console.log('expectDate: '+expectedDate);
+
           var total = Number(document.getElementById("totalInput").value);
           console.log($scope.poName);
-          SupplierSearch.createPO($scope.poName,$scope.sp_id,orderDate,orderDate,total, total*1.07, 'Open', 0,  $scope.products);
+          SupplierSearch.createPO($scope.poName,$scope.sp_id,orderDate,expectedDate,total, total*1.07, 'Open', 0,  $scope.products);
           $scope.openPoReport;
         };
     };

@@ -13,68 +13,65 @@ block content_title
 	p Incoming Detail
 
 block content
-	.row
-		.col-sm-2.space PO Number:
-		.col-sm-3.space
-			input.form-control(type='text', placeholder='PO Number', readonly='true')
-		.col-sm-1.space
-		.col-sm-2.space Deliverly Date:
-		.col-sm-3.space
-			input.form-control(type='text', placeholder='20 Sep 2015', readonly='true')
-		.col-sm-1.space
-	.row
-		.col-sm-2.space Supplier Name:
-		.col-md-3.space
-			input.form-control(type='text', placeholder='Supplier Name')
-		.col-sm-1.space
+	div(ng-controller="InController")
+		.row
+			.col-sm-2.space PO Number:
+			.col-sm-3.space {{po_id}}
+				//- input.form-control(type='text', placeholder='PO Number', readonly='true', name='po_id' id='po_id')				
+			.col-sm-1.space
+			.col-sm-2.space Deliverly Date:
+			.col-sm-3.space {{poDetail.expected_date}}
+				//- input.form-control(type='text', placeholder='20 Sep 2015', readonly='true', name='delivery_date')			
+			.col-sm-1.space
+		.row
+			.col-sm-2.space Supplier Name:
+			.col-md-3.space {{poDetail.sp_id.name}}
+				//- input.form-control(type='text', placeholder='Supplier Name', readonly='true', name="sp_name")				
+			.col-sm-1.space
 
-	.row
-		h3 Order list
-	.row
-		.col-sm-11.space
-			table.product-table.table.table-striped(style="padding: 50;")
-				tr
-					th No.
-					th Product Code
-					th Product Name
-					th Qty.
-				tr
-					td 1
-					td Product Code1
-					td Product 2
-					td 4
-				tr
-					td 2
-					td Product Code2
-					td Product 5
-					td 3
-		.col-sm-1.space
-	.row		
-		.col-sm-7.space
-		.col-sm-2.space
-			a(href="SCN_IN010.html" data-toggle='modal', data-target='#myModal')
-				button.btn.btn-primary.btn-lg.btn-block(type='button', name='receive') Receive
-			// Modal
-			#myModal.modal.fade(role='dialog')
-				.modal-dialog
-					// Modal content
-					.modal-content
-						.modal-header
-							button.close(type='button', data-dismiss='modal') x
-							h4.modal-title Please input invoice number
-						.modal-body
-							.row
-								.col-md-3.space PO No.:
-								.col-md-9.space
-									input(name='po_no', readonly='true', value='PO NUumber').form-control
-							.row
-								.col-md-3.space Invoice No.:*
-								.col-md-9.space
-									input(name='invoice_no', placeholder='Invoice Number').form-control
-						.modal-footer
-							a(href="SCN_IN010.html") 
-								button.btn.btn-primary(type="submit") Ok
-							button.btn.btn-default(type='button', data-dismiss='modal') Cancel
-		.col-sm-2.space
-			button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
-		.col-sm-1.space
+		.row
+			h3 Order list
+		.row
+			.col-sm-11.space
+				table.product-table.table.table-striped(style="padding: 50;")
+					thead
+						tr
+							th No.
+							th Product Code
+							th Product Name
+							th Qty.
+					tbody
+						tr(ng-repeat='item in poItem')
+							td {{$index+1}}
+							td {{item.pd_id.pd_id}}
+							td {{item.pd_id.pd_name}}
+							td {{item.quantity}}
+			.col-sm-1.space
+		.row
+			.col-sm-7.space
+			.col-sm-2.space
+				a(href="SCN_IN010.html" data-toggle='modal', data-target='#myModal')
+					button.btn.btn-primary.btn-lg.btn-block(type='button', name='receive') Receive
+				// Modal
+				#myModal.modal.fade(role='dialog')
+					.modal-dialog
+						// Modal content
+						.modal-content
+							.modal-header
+								button.close(type='button', data-dismiss='modal') x
+								h4.modal-title Please input invoice number
+							.modal-body
+								.row
+									.col-md-3.space PO No.:
+									.col-md-9.space {{po_id}}
+										//- input(name='po_no', readonly='true', value='PO NUumber').form-control
+								.row
+									.col-md-3.space Invoice No.:*
+									.col-md-9.space
+										input(name='invoice_no', placeholder='Invoice Number', ng-model='product.invoice').form-control
+							.modal-footer
+								button.btn.btn-primary(type="submit", ng-disabled='(product.invoice == null)', ng-click='updatePo(product.invoice)') Ok
+								button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+			.col-sm-2.space
+				button.btn.btn-default.btn-lg.btn-block(type='button', name='cancel') Cancel
+			.col-sm-1.space
