@@ -7,6 +7,7 @@ app.controller('InventoryController', controllerGetAI);
 app.controller('ZoneController', zoneController);
 app.controller('priceController',controllerPrice);
 app.controller('supplyProduct', supplyProduct);
+app.controller('ProductController', productController);
 
 //________________________ IN __________________________________
 function controllerIncoming($scope, $http, $location, $window){
@@ -904,10 +905,6 @@ function zoneController($scope, $http){
   $scope.currentZone = null;
   $scope.options = [
     {
-      name: 'Zone type',
-      value: ''
-    },
-    {
       name: 'Type 1',
       value: 'type1'
     }, 
@@ -1002,10 +999,12 @@ function zoneController($scope, $http){
   }
 
   $scope.didClearButtonPress = function () {
-    $scope.searchZoneType = $scope.options[0].value;
+    $scope.searchZoneType = '';
     $scope.searchZoneName = '';
 
     $scope.getZones();
+
+    $scope.searchZoneType = $scope.options[0].value;
   }
 
   $scope.goToMainPage = function() {
@@ -1156,12 +1155,12 @@ function supplierController($scope, $http, updateSupplierWithFile, createNewSupp
   $scope.currentSupplier = null;
   $scope.options = [
     {
-      name: 'Active',
-      value: 'Active'
+      name: 'Available',
+      value: 'Available'
     }, 
     {
-      name: 'Inactive',
-      value: 'Inactive'
+      name: 'Obsolete',
+      value: 'Obsolete'
     }
   ];
 
@@ -1201,7 +1200,7 @@ function supplierController($scope, $http, updateSupplierWithFile, createNewSupp
 
     $scope.getSuppliers();
 
-    $scope.searchSupplierStatus = 'Active';
+    $scope.searchSupplierStatus = 'Available';
   }  
 
   $scope.setCurrentSupplier = function (index) {
@@ -1224,6 +1223,11 @@ function supplierController($scope, $http, updateSupplierWithFile, createNewSupp
     console.log('file is ' );
     console.dir(file);
   
+    if (!angular.isUndefined(file) && file.size>100000) {
+      alert("Too large file size");
+      return
+    }
+  
     updateSupplierWithFile.uploadFileToUrl(file, data, updateUrl, $scope.goToMainPage);  
   }
 
@@ -1242,6 +1246,11 @@ function supplierController($scope, $http, updateSupplierWithFile, createNewSupp
 
     console.log('file is ' );
     console.dir(file);
+
+    if (!angular.isUndefined(file) && file.size>100000) {
+      alert("Too large file size");
+      return
+    }
     
     createNewSupplier.uploadFileToUrl(file, data, uploadUrl, $scope.goToMainPage());
   }
@@ -1337,14 +1346,14 @@ app.service('updateSupplierWithFile', ['$http', function ($http) {
     this.uploadFileToUrl = function(file, data, uploadUrl, callBack){
 
         var fd = new FormData();
-        fd.append('sp_id', 'SP' + data.name);
+        fd.append('sp_id', data.code);
         fd.append('code', data.code);
         fd.append('name', data.name);
         fd.append('address', data.address);
         fd.append('website', data.website);
         fd.append('phone', data.phone);
         fd.append('fax', data.fax);
-        fd.append("delivery_day", data.delivery_day);
+        fd.append('delivery_day', data.delivery_day);
         fd.append('sale_person_name', data.sale_person_name);
         fd.append('sale_person_mobile', data.sale_person_mobile);
         fd.append('sale_person_email',  data.sale_person_email);
@@ -1376,8 +1385,6 @@ app.service('updateSupplierWithFile', ['$http', function ($http) {
 
 app.service('createNewSupplier', ['$http', function ($http) {
     this.uploadFileToUrl = function(file, data, uploadUrl, callBack){
-      
-      console.log(file.name);
 
         var fd = new FormData();
         fd.append('sp_id', data.code);
@@ -1392,7 +1399,10 @@ app.service('createNewSupplier', ['$http', function ($http) {
         fd.append('sale_person_mobile', data.sale_person_mobile);
         fd.append('sale_person_email',  data.sale_person_email);
         fd.append('status', data.status);
-        fd.append('logo', file);
+
+        if (!angular.isUndefined(file)) {
+          fd.append('logo', file);  
+        }
 
         $http.post(uploadUrl, fd, {
             transformRequest: angular.identity,
@@ -1619,7 +1629,237 @@ function controllerPrice($scope, $http){
 
 }
 
+// PRODUCT CONTROLLER
+function productController($scope, $http, createNewProduct, updateProduct) {
 
+  $scope.createProduct = {};
+  $scope.searchProduct = {};
+
+  $scope.currentProduct = null;
+
+  $scope.options = [
+    {
+      name: 'Available',
+      value: 'Available'
+    }, 
+    {
+      name: 'Obsolete',
+      value: 'Obsolete'
+    }
+  ];
+  $scope.productTypes = [
+    {
+      name: 'Type1',
+      value: 'Type1'
+    }, 
+    {
+      name: 'Type2',
+      value: 'Type2'
+    }, 
+    {
+      name: 'Type3',
+      value: 'Type3'
+    }, 
+    {
+      name: 'Type4',
+      value: 'Type4'
+    }, 
+    {
+      name: 'Type5',
+      value: 'Type5'
+    }
+  ];
+
+  $scope.didClearButtonPress = function(){
+
+    $scope.searchProduct.pd_code   = '';
+    $scope.searchProduct.pd_name   = '';
+    $scope.searchProduct.pd_status = '';
+
+    $scope.getProducts();
+
+    $scope.searchProduct.pd_status = 'Available';
+  }
+
+  $scope.getProducts = function(){
+
+    pd_id     = "?pd_id="     + $scope.searchProduct.pd_code
+    pd_name   = "&pd_name="   + $scope.searchProduct.pd_name
+    pd_status = "&pd_status=" + $scope.searchProduct.pd_status
+
+    url = "http://54.179.174.140/api/product/search" + pd_id + pd_status + pd_name;
+
+    console.log(url);
+
+    $http.get(url)
+      .success(function (response) {
+        $scope.products = response;
+        $scope.createProduct.pd_code = 'PD000' + (response.length + 1);
+
+        if($scope.hasErrorMessage(response)) {
+          $scope.didClearButtonPress();
+          return
+        }
+
+        console.log(response);
+      });
+  }
+
+  $scope.hasErrorMessage = function(response){
+    if(response.length == 1){
+      if(!angular.isUndefined(response[0]).ErrorMessage){
+        alert(response[0].ErrorMessage);
+        return true
+      }
+    }
+
+    return false;
+  }
+  $scope.createNewProduct = function () {
+
+    var uploadUrl = "http://54.179.174.140/api/product";
+    var data = $scope.createProduct;
+
+    if(!$scope.validateProductField()) {
+      alert("Please input required input field");
+      return
+    }
+
+    if (!angular.isUndefined(data.pd_img) && data.pd_img.size>100000) {
+      alert("Too large file size");
+      return
+    }
+
+    console.log('file is ' );
+    console.dir(data.pd_img);
+    
+    createNewProduct.uploadFileToUrl(data, uploadUrl, $scope.goToMainPage());
+  }
+
+  $scope.updateProduct = function () {
+
+    var uploadUrl = "http://54.179.174.140/api/product/" + $scope.currentProduct._id;
+    var data = $scope.currentProduct;
+
+    var required = angular.isUndefined($scope.currentProduct.pd_name) || 
+                   $scope.currentProduct.pd_name == null || 
+                   $scope.currentProduct.pd_name == '';
+
+    if(required) {
+      alert("Please input required field");
+      return
+    }
+
+    if (!angular.isUndefined(data.pd_img) && data.pd_img.size>100000) {
+      alert("Too large file size");
+      return
+    }
+
+    console.log('update product with url : ' + uploadUrl);
+    console.log('file is ' );
+    console.dir(data.pd_img);
+    
+    updateProduct.uploadFileToUrl(data, uploadUrl);
+  }
+
+  $scope.setCurrentProduct = function (index) {
+    $scope.currentProduct = $scope.products[index];
+  }
+
+  $scope.hasCurrentProduct = function () {
+    condition = !(angular.isUndefined($scope.currentProduct) || $scope.currentProduct === null)
+    return condition;
+  }
+
+  $scope.validateProductField = function () {
+    var required = $scope.createProduct.pd_code   != null && 
+                   $scope.createProduct.pd_name   != null && 
+                   $scope.createProduct.pd_type   != null && 
+                   $scope.createProduct.pd_status != null
+
+    return required
+  }
+
+  $scope.goToMainPage = function() {
+    window.location.href = 'SCN_PD010.html';
+  }
+  
+  // Check changing on input field
+  $("#imgInput").change(function(){
+    readURL(this);
+  });
+
+  // Get all products at first visit
+  $scope.didClearButtonPress();
+}
+
+app.service('createNewProduct', ['$http', function ($http) {
+    this.uploadFileToUrl = function(data, uploadUrl, callBack){
+
+        var fd = new FormData();
+        fd.append('pd_id', data.pd_code);
+        fd.append('pd_name', data.pd_name);
+        fd.append('pd_type', data.pd_type);
+        fd.append('pd_status', data.pd_status);
+
+        if (!angular.isUndefined(data.pd_img)) {
+          fd.append('image', data.pd_img);  
+        }
+
+        console.log(fd);
+
+        $http.post(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(response) {
+            
+            var delay = 3000; // 1 seconds
+            setTimeout(function(){
+              //your code to be executed after 1 seconds
+              console.log('Success with response: ' + response);
+              window.location.href = 'SCN_PD010.html';
+            }, delay); 
+            
+        })
+        .error(function(response) {
+          console.log('Error with response ' + response);
+        });
+    }
+}]);
+
+app.service('updateProduct', ['$http', function ($http) {
+    this.uploadFileToUrl = function(data, uploadUrl){
+        
+        console.log(data);
+
+        var fd = new FormData();
+        fd.append('pd_id', data.pd_id);
+        fd.append('pd_name', data.pd_name);
+        fd.append('pd_type', data.pd_type);
+        fd.append('pd_status', data.pd_status);
+        fd.append('image', data.image);
+
+        if (!angular.isUndefined(data.pd_img)) {
+          fd.append('pd_img', data.pd_img);  
+        }
+
+        $http.put(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(response) {
+            
+              //your code to be executed after 1 seconds
+              console.log('Success with response: ' + response);
+              window.location.href = 'SCN_PD010.html';
+            
+        })
+        .error(function(response) {
+          console.log('Error with response ' + response);
+        });
+    }
+}]);
 
 
 // _____________________________PRICE__________________________END

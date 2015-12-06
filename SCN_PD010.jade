@@ -14,53 +14,95 @@ block content_title
 	p Product
 
 block content
-	div(ng-controller="MainController")
-		.row
-			.col-sm-3.space Product code:
-			.col-sm-3.space
-				input.form-control(type='text', placeholder='code')
-			.col-sm-2.space Product Name:
-			.col-sm-3.space
-				input.form-control(type='text', placeholder='')
-			.col-sm-1.space
-			.col-sm-3.space Product Status:
-			.col-md-3.space
-				select(name='product_status', value='Find by Product Status', placeholder='Product Status').form-control
-					option(value='Status1') Status 1
-					option(value='Status2') Status 2
-					option(value='Status3') Status 3
-					option(value='Status4') Status 4
-			.col-sm-1.space
-			.col-sm-7.space
-			.col-sm-2.space
-				button.btn.btn-primary.btn-lg.btn-block(type='button', name='search') Search
-			.col-sm-2.space
-				button.btn.btn-default.btn-lg.btn-block(type='button', name='clear') Clear
-			.col-sm-1.space
-			.col-sm-11.space
+	div(ng-controller="ProductController")
+		div(ng-show="!hasCurrentProduct()")
+			.row
+				.col-sm-3.space Product code :
+				.col-sm-3.space
+					input.form-control(ng-model='searchProduct.pd_code' type='text', placeholder='Product Code')
+				.col-sm-2.space Product Name:
+				.col-sm-3.space
+					input.form-control(ng-model='searchProduct.pd_name' type='text', placeholder='Product Name')
+				.col-sm-1.space
+				.col-sm-3.space Product Status:
+				.col-md-3.space
+					select(ng-model='searchProduct.pd_status', ng-options="option.value as option.name for option in options").form-control
+				.col-sm-1.space
+				.col-sm-7.space
+				.col-sm-2.space
+					button.btn.btn-primary.btn-lg.btn-block(ng-click='getProducts()' type='button', name='search') Search
+				.col-sm-2.space
+					button.btn.btn-default.btn-lg.btn-block(ng-click='didClearButtonPress()' type='button', name='clear') Clear
+				.col-sm-1.space
+				.col-sm-11.space
 
-				//Product template
-				a(href="http://54.179.174.140/api/supplier/{{supplier._id}}").col-sm-3.space(style="height:120px; border: 1px solid #C5C5C5; border-radius: 5px 5px;margin:10px;width:30%" 
-				ng-repeat="supplier in suppliers")
-					.col-sm-6.space(style="margin:-10px")
-						img.productPic(ng-src="http://54.179.174.140/uploads/{{supplier.image}}",alt="Smiley face", height="100%", width="100%")
-					.col-sm-6.space(style="height:100%; margin-top:-20px")
+					//- Product template
+					a(ng-click="setCurrentProduct($index)").col-sm-3.space(style="height:120px; border: 1px solid #C5C5C5; border-radius: 5px 5px;margin:10px;width:30%" 
+						ng-repeat="product in products")
+							.col-sm-6.space(style="margin:-10px")
+								img.productPic(ng-src="http://54.179.174.140/uploads/{{product.image}}",alt="Smiley face", height="100%", width="100%")
+							.col-sm-6.space(style="height:100%; margin-top:-20px")
+								.row
+									.col-sm-12.space
+										//- from angular
+										div Code : {{product.pd_id}}
+									.col-sm-12.space
+										//- from angular
+										div Name : {{product.pd_name}}
+									.col-sm-12.space
+										//- from angular
+										div Status : {{product.pd_status}}
+
+				.col-sm-1.space
+			.row		
+				.col-sm-7.space
+				.col-sm-4.space
+					a(href="SCN_PD020.html")
+						button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Create New Product
+				.col-sm-1.space
+
+		div(ng-show="hasCurrentProduct()")
+			form(name='myForm')
+				.row
+					//- Left side
+					.col-sm-6.space
 						.row
-							.col-sm-12.space
-								//- from angular
-								div Code : {{supplier.code}}
-							.col-sm-12.space
-								//- from angular
-								div Name : {{supplier.name}}
-							.col-sm-12.space
-								//- from angular
-								div Status : {{supplier.status}}
+							.col-sm-1.space
+							.col-sm-5.space Product Type :*
+							.col-sm-6.space 
+								select(ng-model='currentProduct.pd_type', ng-options="type.value as type.name for type in productTypes").form-control
+						.row
+							.col-sm-1.space
+							.col-sm-5.space Product Code :*
+							.col-sm-6.space
+								input#disabledInput(ng-model='currentProduct.pd_id' type="text" placeholder='Product Code' disabled='').form-control
+						.row
+							.col-sm-1.space
+							.col-sm-5.space Product Name :*
+							.col-sm-6.space 
+								input(ng-model='currentProduct.pd_name' type="text" placeholder='Product Name' required='').form-control
+						.row
+							.col-sm-1.space
+							.col-sm-5.space Product Status :*
+							.col-sm-6.space 
+								select(ng-model='currentProduct.pd_status', ng-options="option.value as option.name for option in options").form-control
+						.row
+							.col-sm-1.space
+							.col-sm-5.space Product Image (<100KB) :
+							.col-sm-6.space 
+								input(type='file' id="imgInput" file-model="currentProduct.pd_img").form-control
+						.row
+							.col-sm-6.space
+							.col-sm-6.space
+								img(id="blah" src="http://54.179.174.140/uploads/{{currentProduct.image}}" alt="logo" height="280" width="100%")
+					
+					
+				.row
+						.col-sm-7.space
+						.col-sm-2.space
+							button.btn.btn-primary.btn-lg.btn-block(ng-click="updateProduct()") Save
+						.col-sm-2.space
+							button.btn.btn-default.btn-lg.btn-block(ng-click="goToMainPage()" type='button',name='cancel') Cancel
+						.col-sm-1.space
 
-				
-			.col-sm-1.space
-		.row		
-			.col-sm-7.space
-			.col-sm-4.space
-				a(href="SCN_PD020.html")
-					button.btn.btn-primary.btn-lg.btn-block(type='button',name='supply') Create New Product
-			.col-sm-1.space
+

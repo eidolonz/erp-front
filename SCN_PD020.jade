@@ -14,58 +14,48 @@ block content_title
 	p Create Product
 
 block content
-	div(ng-controller="MainController")
-		.row
-
-			//- Left side
-			.col-sm-6.space
-				.row
-					.col-sm-1.space
-					.col-sm-5.space Product Type :*
-					.col-sm-6.space 
-						select(name='product_type', value='product_type', placeholder='Product Type').form-control
-							option(value='Status1') Status 1
-							option(value='Status2') Status 2
-							option(value='Status3') Status 3
-							option(value='Status4') Status 4
-				.row
-					.col-sm-1.space
-					.col-sm-5.space Product Code :*
-					.col-sm-6.space 
-						input#disabledInput(type="text" name='product_code' placeholder='Product Code' disabled='').form-control
-				.row
-					.col-sm-1.space
-					.col-sm-5.space Product Name :*
-					.col-sm-6.space 
-						input(type="text" name='product_name' placeholder='Product Name').form-control
-				.row
-					.col-sm-1.space
-					.col-sm-5.space Product Status :*
-					.col-sm-6.space 
-						select(name='product_status', value='product_status', placeholder='Product Status').form-control
-							option(value='Status1') Status 1
-							option(value='Status2') Status 2
-							option(value='Status3') Status 3
-							option(value='Status4') Status 4
-				.row
-					.col-sm-1.space
-					.col-sm-5.space	Product Image :
-					.col-sm-6.space 
-						img(src="images/pic.jpg")
-				.row
-					.col-sm-6.space
-					.col-sm-6.space
-						input(type="file" name='browse').form-control
+	div(ng-controller="ProductController")
+		form(name='myForm')
+			.row
+				//- Left side
+				.col-sm-6.space
+					.row
+						.col-sm-1.space
+						.col-sm-5.space Product Type :*
+						.col-sm-6.space 
+							select(ng-init="createProduct.pd_type = productTypes[0].value", ng-model='createProduct.pd_type', ng-options="type.value as type.name for type in productTypes").form-control
+					.row
+						.col-sm-1.space
+						.col-sm-5.space Product Code :*
+						.col-sm-6.space
+							input#disabledInput(ng-init='createProduct.pd_code = productsLength' ng-model='createProduct.pd_code' type="text" placeholder='Product Code' disabled='').form-control
+					.row
+						.col-sm-1.space
+						.col-sm-5.space Product Name :*
+						.col-sm-6.space 
+							input(ng-model='createProduct.pd_name' type="text" placeholder='Product Name' required='').form-control
+					.row
+						.col-sm-1.space
+						.col-sm-5.space Product Status :*
+						.col-sm-6.space 
+							select(ng-init="createProduct.pd_status = options[0].value", ng-model='createProduct.pd_status', ng-options="option.value as option.name for option in options").form-control
+					.row
+						.col-sm-1.space
+						.col-sm-5.space Product Image (<100KB) :
+						.col-sm-6.space 
+							input(type='file' id="imgInput" file-model="createProduct.pd_img").form-control
+					.row
+						.col-sm-6.space
+						.col-sm-6.space
+							img(id="blah" src="http://54.179.174.140/uploads/product_prototype.jpg" alt="logo" height="280" width="100%")
 				
-			
-			
-		.row
-				.col-sm-7.space
-				.col-sm-2.space
-					button.btn.btn-primary.btn-lg.btn-block(type='button',name='save') Save
-				.col-sm-2.space
-					a(href="SCN_PD010.html")
-						button.btn.btn-default.btn-lg.btn-block(type='button',name='cancel') Cancel
-				.col-sm-1.space
+				
+			.row
+					.col-sm-7.space
+					.col-sm-2.space
+						button.btn.btn-primary.btn-lg.btn-block(ng-click="createNewProduct()") Save
+					.col-sm-2.space
+						button.btn.btn-default.btn-lg.btn-block(ng-click="goToMainPage()" type='button',name='cancel') Cancel
+					.col-sm-1.space
 
 			

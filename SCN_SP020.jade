@@ -33,12 +33,12 @@ block content
 						.col-sm-1.space
 						.col-sm-5.space Delivery Lead Time :*
 						.col-sm-6.space 
-							input(ng-model='createSupplier.delivery_day' type="date" placeholder='Delivery Lead Time' required='').form-control
+							input(ng-model='createSupplier.delivery_day' type="number" min="1" placeholder='Delivery Lead Time' required='').form-control
 					.row
 						.col-sm-1.space
 						.col-sm-5.space Address :*
 						.col-sm-6.space 
-							textarea.input(ng-model='createSupplier.address' type="texta" placeholder='Delivery Lead Time' required='').form-control
+							textarea.input(ng-model='createSupplier.address' type="text" placeholder='Address' required='').form-control
 					.row
 						.col-sm-1.space
 						.col-sm-5.space	Logo:
@@ -46,7 +46,7 @@ block content
 							//- input(type="file" file-model="myFile" onchange="angular.element(this).scope().test()").form-control
 							input(type='file' id="imgInput" file-model="myFile").form-control
 							br
-							img(id="blah" src="images/pic.jpg" alt="logo" height="300" width="100%")
+							img(id="blah" src="http://54.179.174.140/uploads/default.png" alt="logo" height="300" width="100%")
 					
 				//- Right side
 				.col-sm-6.space

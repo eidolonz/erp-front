@@ -34,9 +34,10 @@ block content
 				.col-sm-1.space
 				.col-sm-3.space Supplier Status:
 				.col-md-3.space
-					select(ng-init="searchSupplierStatus = 'Active'" ng-model='searchSupplierStatus' name='supplier_status', value='', placeholder='Product Status').form-control
-						option(value='Active') Active
-						option(value='Inactive') Inactive
+					select(ng-init="searchSupplierStatus = options[0].value", ng-model='searchSupplierStatus', ng-options="option.value as option.name for option in options").form-control
+					//- select(ng-init="searchSupplierStatus = 'Available'" ng-model='searchSupplierStatus' name='supplier_status', value='', placeholder='Product Status').form-control
+					//- 	option(value='Obsolete') Obsolete
+					//- 	option(value='Available') Available
 
 				.col-sm-1.space
 				.col-sm-7.space
@@ -92,7 +93,7 @@ block content
 						.col-sm-1.space
 						.col-sm-5.space Delivery Lead Time :*
 						.col-sm-6.space 
-							input(ng-model='currentSupplier.delivery_day' type="text" placeholder='Delivery Lead Time').form-control
+							input(ng-model='currentSupplier.delivery_day' type="number" min="0" placeholder='Delivery Lead Time').form-control
 					.row
 						.col-sm-1.space
 						.col-sm-5.space Address :*
