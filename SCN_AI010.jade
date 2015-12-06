@@ -99,7 +99,7 @@ block content
 							th Edit
 							th View
 					tbody
-						tr(ng-repeat="pointer in inventory|orderBy:orderByField:reverseSort", ng-class="{checkquant : pointer.quantity < pointer.pd_id.safety_stock}")
+						tr(ng-repeat="pointer in filteredAI|orderBy:orderByField:reverseSort", ng-class="{checkquant : pointer.quantity < pointer.pd_id.safety_stock}")
 								td {{pointer.pd_id.pd_id}}
 								td {{pointer.pd_id.pd_type}}
 								td {{pointer.pd_id.pd_name}}
@@ -113,7 +113,12 @@ block content
 								td 
 									a(href='#' ng-click="setCurrentInventory(pointer); clickView(); getTransaction()")
 										[View]
-					
+
+			.row
+				.col-sm-11.space.text-right
+					div(data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true" style="margin-top:0;").pager
+				.col-sm-1.space
+						
 			.col-sm-1.space
 			.col-sm-7.space
 			.col-sm-4.space

@@ -76,13 +76,38 @@ block content
 				.col-sm-11.space
 					table.product-table.table.table-striped(style="padding: 50;")
 						tr
-							th Supplier
-							th Product
-							th Price
-							th Effective Date
-							th Min Order
-							th Action
-						tr(ng-repeat="pointer in price_list")
+							th 
+								span(ng-click="orderByField='sp_id.name'; reverseSort=!reverseSort") 
+									|	Supplier
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='pd_id.pd_name'; reverseSort=!reverseSort") 
+									|	Product
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='pd_price'; reverseSort=!reverseSort") 
+									|	Price
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='effective_date'; reverseSort=!reverseSort") 
+									|	Effective Date
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='minimun_order'; reverseSort=!reverseSort") 
+									|	Min Order
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+							th 
+								span(ng-click="orderByField='pd_id.pd_id'; reverseSort=!reverseSort") 
+									|	Action
+								span(ng-show="!reverseSort")
+								span(ng-show="reverseSort")
+
+						tr(ng-repeat="pointer in filteredPR|orderBy:orderByField:reverseSort")
 							td {{pointer.sp_id.name}}
 							td {{pointer.pd_id.pd_name}}
 							td {{pointer.pd_price}}
@@ -91,6 +116,11 @@ block content
 							td 
 								a(href='#', ng-click="setCurrentPrice(pointer)") [Edit]
 						
+				.col-sm-1.space
+					
+			.row
+				.col-sm-11.space.text-right
+					div(data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true" style="margin-top:0;").pager
 				.col-sm-1.space
 
 			.row		

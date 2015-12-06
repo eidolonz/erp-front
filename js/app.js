@@ -1410,7 +1410,7 @@ app.directive('fileModel', ['$parse', function ($parse) {
 // _____________________________PRICE__________________________
 
 function controllerPrice($scope, $http){
-  // $scope.price_list = [];
+  $scope.price_list = [];
   $scope.currentPrice = null;
   $scope.dateTemp = "";
   $scope.date = {
@@ -1419,12 +1419,21 @@ function controllerPrice($scope, $http){
   $scope.year = "";
   $scope.month = "";
   $scope.day = "";
+  $scope.reverseSort = 'false';
+  $scope.price = 0;
+
+  // setting variable of Pagination
+  $scope.filteredPR = [];
+  $scope.currentPage = 1;
+  $scope.numPerPage = 10;
+  $scope.maxSize = 5;
 
   $scope.getPriceList = function(){
     url = "http://54.179.174.140/api/price";
     $http.get(url)
       .success(function (response) {
         $scope.price_list = response;
+        $scope.filteredPR = $scope.price_list.slice(0, 10);
         // $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
         console.log(response);
       });
@@ -1492,7 +1501,6 @@ function controllerPrice($scope, $http){
 
     })
       .success(function (response) {
-        alert($scope.date.value);
         $scope.goToMainPage();
       });
   }
@@ -1564,6 +1572,20 @@ function controllerPrice($scope, $http){
       });
 
   }
+
+
+  // setting number of Pagination
+ 
+  $scope.numPages = function () {
+    console.log($scope.price_list);
+    return Math.ceil($scope.price_list.length / $scope.numPerPage);
+  };
+  $scope.$watch('currentPage + numPerPage', function() {
+    var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+    , end = begin + $scope.numPerPage;
+    
+  $scope.filteredPR = $scope.price_list.slice(begin, end);
+  });
 
 
 
