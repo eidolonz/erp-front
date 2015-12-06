@@ -36,7 +36,7 @@ block content
 					select(name='po_status', value='Find by supplier name').form-control
 						option(value='') Choose Status
 						option(value='Open') Open
-						option(value='Close') Close
+						option(value='Closed') Closed
 				.col-sm-1.space
 			.row
 				.col-sm-7.space
@@ -60,32 +60,32 @@ block content
 							th 
 								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
 									|	PO Number 
-									span(ng-show="!reverseSort") v
-									span(ng-show="reverseSort") ^
+									span(ng-show="reverseSort && orderByField == 'po_id'") ▼
+									span(ng-show="!reverseSort && orderByField == 'po_id'") ▲
 							th 
-								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+								span(ng-click="orderByField='sp_id.name'; reverseSort=!reverseSort") 
 									|	Supplier Name 
-									span(ng-show="!reverseSort") v
-									span(ng-show="reverseSort") ^
+									span(ng-show="reverseSort && orderByField == 'sp_id.name'") ▼
+									span(ng-show="!reverseSort && orderByField == 'sp_id.name'") ▲
 							th 
-								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+								span(ng-click="orderByField='order_date'; reverseSort=!reverseSort") 
 									|	Order Date 
-									span(ng-show="!reverseSort") v
-									span(ng-show="reverseSort") ^
+									span(ng-show="reverseSort && orderByField == 'order_date'") ▼
+									span(ng-show="!reverseSort && orderByField == 'order_date'") ▲
 							th 
-								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+								span(ng-click="orderByField='expected_date'; reverseSort=!reverseSort") 
 									|	Deliver Date
-									span(ng-show="!reverseSort") v
-									span(ng-show="reverseSort") ^
+									span(ng-show="reverseSort && orderByField == 'expected_date'") ▼
+									span(ng-show="!reverseSort && orderByField == 'expected_date'") ▲
 							th 
-								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+								span(ng-click="orderByField='po_status'; reverseSort=!reverseSort") 
 									|	Status 
-									span(ng-show="!reverseSort") v
-									span(ng-show="reverseSort") ^
+									span(ng-show="reverseSort && orderByField == 'po_status'") ▼
+									span(ng-show="!reverseSort && orderByField == 'po_status'") ▲
 							th Action
 								
 					tbody
-						tr(ng-repeat="pointer in filteredPO|orderBy:orderByField:reverseSort")
+						tr(ng-repeat="pointer in filteredPO|orderBy:orderByField:!reverseSort")
 							td {{ pointer.po_id }}
 							td {{ pointer.sp_id.name }}
 							td {{ pointer.order_date }}

@@ -32,7 +32,7 @@ block content
 					select(name='po_status', value='Find by supplier name').form-control
 							option(value='') Choose Status
 							option(value='Open') Open
-							option(value='Close') Close
+							option(value='Closed') Closed
 				.col-sm-1.space
 			.row
 				.col-sm-7.space
@@ -51,14 +51,30 @@ block content
 					thead
 						tr
 							th No.
-							th PO Number
-							th Supplier Name
-							th Deliverly Date
-							th Status
+							th 
+								span(ng-click="orderByField='po_id'; reverseSort=!reverseSort") 
+									|	PO Number
+									span(ng-show="reverseSort && orderByField == 'po_id'") ▼
+									span(ng-show="!reverseSort && orderByField == 'po_id'") ▲
+							th 
+								span(ng-click="orderByField='sp_id.name'; reverseSort=!reverseSort") 
+									|	Supplier Name
+									span(ng-show="reverseSort && orderByField == 'sp_id.name'") ▼
+									span(ng-show="!reverseSort && orderByField == 'sp_id.name'") ▲
+							th
+								span(ng-click="orderByField='expected_date'; reverseSort=!reverseSort") 
+									|	Deliverly Date
+									span(ng-show="reverseSort && orderByField == 'expected_date'") ▼
+									span(ng-show="!reverseSort && orderByField == 'expected_date'") ▲
+							th
+								span(ng-click="orderByField='po_status'; reverseSort=!reverseSort") 
+									|	Status
+									span(ng-show="reverseSort && orderByField == 'po_status'") ▼
+									span(ng-show="!reverseSort && orderByField == 'po_status'") ▲
 							th Details
 					tbody
-						tr(ng-repeat="pointer in filteredPO|orderBy:orderByField:reverseSort")
-							td {{ $index+1 }}
+						tr(ng-repeat="pointer in filteredPO|orderBy:orderByField:!reverseSort")
+							td {{ $index+1+((currentPage-1)*10) }}
 							td {{ pointer.po_id }}
 							td {{ pointer.sp_id.name }}
 							td {{ pointer.expected_date }}

@@ -38,7 +38,7 @@ function controllerIncoming($scope, $http, $location, $window){
     $http.get(url)
       .success(function (response) {
         $scope.purchaseOrder = response;
-        $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
+        $scope.filteredPO = $scope.purchaseOrder.slice(0, $scope.numPerPage);
       });
   };
   $scope.getpo();
@@ -319,7 +319,7 @@ app.service('SupplierSearch', function($q, $http, $window){
         console.log('succeed');
         console.log(response);
         if(response == 'Created'){
-          $window.location.href = '../PO_Report.html#/?po_num='+po_id.toUpperCase();
+          $window.location.href = 'PO_Report.html#/?po_num='+po_id.toUpperCase();
         }else{
           alert(response);
         }
@@ -478,29 +478,29 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
     });
   }
   $scope.searchProductPriceCode = function(code) {
-    names = $('input[name="product_name"]').val();
+    names = $('input[name="product_name_create"]').val();
     SupplierSearch.searchProductPriceCode(document.getElementById('supplier_code').value, code, "").then(function(PdCodes){
       $scope.PdCodes = PdCodes;
-      document.getElementById('product_name').value = "";
+      document.getElementById('product_name_create').value = "";
       SupplierSearch.searchProductPriceName(document.getElementById('supplier_code').value, code, "").then(function(PdNames){
         for (key in PdNames){
           if(PdNames.hasOwnProperty(key)){
             var value = PdNames[key];
-            document.getElementById('product_name').value = value;
+            document.getElementById('product_name_create').value = value;
           }else{            
-            document.getElementById('product_name').value = "";
+            document.getElementById('product_name_create').value = "";
           }
         }
       });
-      document.getElementById('product_price').value = "";
+      document.getElementById('product_price_create').value = "";
       SupplierSearch.searchProductPrice(document.getElementById('supplier_code').value, code, "").then(function(PdPrices){
         for (key in PdPrices){
           if(PdPrices.hasOwnProperty(key)){
             var value = PdPrices[key];
           $scope.PdPrice = value;
-            document.getElementById('product_price').value = value;
+            document.getElementById('product_price_create').value = value;
           }else{            
-            document.getElementById('product_price').value = "";
+            document.getElementById('product_price_create').value = "";
           }
         }
       });
@@ -517,29 +517,29 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
   }
 
   $scope.searchProductPriceName = function(name) {
-  codes = $('input[name="product_code"]').val();
+  codes = $('input[name="product_code_create"]').val();
   SupplierSearch.searchProductPriceName(document.getElementById('supplier_code').value,"", name).then(function(PdNames){
       $scope.PdNames = PdNames;
-      document.getElementById('product_code').value = "";
+      document.getElementById('product_code_create').value = "";
       SupplierSearch.searchProductPriceCode(document.getElementById('supplier_code').value,"", name).then(function(PdCodes){
         for (key in PdCodes){
           if(PdCodes.hasOwnProperty(key)){
             var value = PdCodes[key];
-            document.getElementById('product_code').value = value;
+            document.getElementById('product_code_create').value = value;
           }else{            
-            document.getElementById('product_code').value = "";
+            document.getElementById('product_code_create').value = "";
           }
         }
       });
-      document.getElementById('product_price').value = "";
+      document.getElementById('product_price_create').value = "";
       SupplierSearch.searchProductPrice(document.getElementById('supplier_code').value, "", name).then(function(PdPrices){
         for (key in PdPrices){
           if(PdPrices.hasOwnProperty(key)){
             var value = PdPrices[key];
           $scope.PdPrice = value;
-            document.getElementById('product_price').value = value;
+            document.getElementById('product_price_create').value = value;
           }else{            
-            document.getElementById('product_price').value = "";
+            document.getElementById('product_price_create').value = "";
           }
         }
       });
@@ -556,25 +556,30 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
     });
   }
   $scope.addProductPrice = function(){
-    var qty = document.getElementById('product_qty').value;
-    document.getElementById('product_price').value = $scope.PdPrice * qty;
+    var qty = document.getElementById('product_qty_create').value;
+    document.getElementById('product_price_create').value = $scope.PdPrice * qty;
+  }
+  $scope.addProductPriceEdit = function(){
+    var qty = document.getElementById('product_qty_edit').value;
+    document.getElementById('product_price_edit').value = $scope.PdPrice * qty;
   }
 
   $scope.getTotal = function(){
     var total = 0;
     for(var i = 0; i < $scope.items.length; i++){
         var product = $scope.items[i];
-        total += product.Total;
+        total += Number(product.Total);
     }
     return total;
   }
 
   $scope.addRow = function(){
-    var name = document.getElementById('product_name').value;
-    var qty = document.getElementById('product_qty').value;
-    var total = Number(document.getElementById('product_price').value);
+    var id = document.getElementById('product_code_create').value;
+    var name = document.getElementById('product_name_create').value;
+    var qty = document.getElementById('product_qty_create').value;
+    var total = Number(document.getElementById('product_price_create').value);
     // $scope.items.push({'ProductName': name, 'Cost': $scope.PdPrice, 'Qty': qty, 'Total':total});    
-    $scope.items.push({'ProductName': name,'Cost': $scope.PdPrice, 'Qty': qty, 'Total':total});
+    $scope.items.push({'ProductCode':id,'ProductName': name,'Cost': $scope.PdPrice, 'Qty': qty, 'Total':total});
     $scope.products.push({'pd_id':$scope.pd_id, 'quantity':qty, 'price':$scope.PdPrice});
     $scope.product_name = '';
     $scope.PdPrice = 0;
@@ -582,7 +587,24 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
     $scope.product_price = 0;
     $scope.isSpDisable = true;
   document.getElementById("productPriceSearchForm").reset();
+  }
 
+  $scope.delRow = function(index){
+    $scope.items.splice(index,1);
+  }
+  $scope.editRow = function(index){
+    $scope.currentIndex = index;
+    document.getElementById('product_code_edit').value = $scope.items[index].ProductCode;
+    document.getElementById('product_name_edit').value = $scope.items[index].ProductName;
+    document.getElementById('product_qty_edit').value = $scope.items[index].Qty;    
+    document.getElementById('product_price_edit').value = $scope.items[index].Total;
+    $scope.PdPrice = $scope.items[$scope.currentIndex].Cost;
+  }
+  $scope.addEditRow = function(){
+    $scope.items[$scope.currentIndex].ProductCode = document.getElementById('product_code_edit').value;
+    $scope.items[$scope.currentIndex].ProductName = document.getElementById('product_name_edit').value;
+    $scope.items[$scope.currentIndex].Qty = document.getElementById('product_qty_edit').value;
+    $scope.items[$scope.currentIndex].Total = document.getElementById('product_price_edit').value;
   }
 
   $scope.addPdAlert = function(){
@@ -617,13 +639,14 @@ app.controller('SearchSupplier',function($scope, $timeout, SupplierSearch, $wind
           var orderedDate = new Date(orderDate);
           var expectDate = orderedDate;
           expectDate.setDate(expectDate.getDate()+$scope.sp_deliverDate);
-          var expectedDate = expectDate.getFullYear()+'-'+("0" + expectDate.getMonth()).slice(-2)+'-'+("0" + expectDate.getDate()).slice(-2);
+          console.log('ex: '+ expectDate);
+          var expectedDate = expectDate.getFullYear()+'-'+("0"+(expectDate.getMonth()+1)).slice(-2)+'-'+("0" + expectDate.getDate()).slice(-2);
           console.log('expectDate: '+expectedDate);
 
           var total = Number(document.getElementById("totalInput").value);
           console.log($scope.poName);
           SupplierSearch.createPO($scope.poName,$scope.sp_id,orderDate,expectedDate,total, total*1.07, 'Open', 0,  $scope.products);
-          $scope.openPoReport;
+          //$scope.openPoReport;
         };
     };
   $scope.openPoReport = function(){
