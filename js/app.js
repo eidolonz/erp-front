@@ -1465,8 +1465,9 @@ function controllerPrice($scope, $http){
     url = "http://54.179.174.140/api/price";
     $http.get(url)
       .success(function (response) {
-        $scope.price_list = response;
         $scope.filteredPR = $scope.price_list.slice(0, 10);
+        $scope.filteredPR = response;
+        
         // $scope.filteredPO = $scope.purchaseOrder.slice(0, 10);
         console.log(response);
       });
@@ -1600,7 +1601,7 @@ function controllerPrice($scope, $http){
 
     $http.get(url)
       .success(function (response) {
-        $scope.price_list = response;
+        $scope.filteredPR = response;
         console.log(response);
       });
 
